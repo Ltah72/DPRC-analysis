@@ -12,10 +12,10 @@
 %Steps                                          Methodology - programme origin, algorithm/model, author
 %1. Noise correction                            (denoising -- MP-PCA, Veraart et al., 2016)
 %2. Gibbs ringing correction                    (local sub-voxel shift, Kellner et al., 2016)
-%3. Field distortion                            (TOPUP -- FSL)
-%4. Eddy current distortions                    (Eddy -- FSL)
-%5  Estimate a brain mask
-%6. Bias field correction                       (ANTs -- N4BiasFieldCorrection)
+%3. Field distortion                            (TOPUP -- FSL)  
+%4  Estimate a brain mask                       (BET -- FSL)
+%5. Eddy current distortions                    (Eddy -- FSL)             
+%6. Bias field correction                       (ANTs -- N4BiasFieldCorrection, Tustison et al., 2010)
 
 
 %Author: Lenore Tahara-Eckl
@@ -25,10 +25,9 @@ clc;
 clear all;
 close all;
 
-
 %Define script directory, so that it can be added to path below:
 %ScriptDirectory = input('Please enter script directory:', 's');
-ScriptDirectory = '/data/USERS/LENORE/scripts/dprc/DKI';
+ScriptDirectory = '/data/USERS/LENORE/scripts/dprc/diffusion';
 
 %go to the directory where your scripts are.
 cd(ScriptDirectory);
@@ -40,13 +39,12 @@ cd(ScriptDirectory);
 %shortcut for debugging purposes:
 startdir = '/data/USERS/LENORE';
 
-
 %ask user for what group they want to analyse:
 groupname = input('Please name a group that you want to analyse: ', 's');
 
 %make directories
-mkdir([startdir,'/test/derivatives/', groupname, '/preprocessed_dwi/']);
-mkdir([startdir,'/test/derivatives/', groupname, '/brain_mask/']);
+mkdir([startdir,'/derivatives/diff_data/', groupname, '/preprocessed_dwi/']);
+mkdir([startdir,'/derivatives/diff_data/', groupname, '/brain_mask/']);
 
 %Add your script and all necessary files (e.g. data, functions) to path
 addpath(genpath(startdir));
@@ -55,10 +53,9 @@ addpath(genpath(ScriptDirectory));
 %define dwi datafile
 datafile = '_acq_data_dwi';
 
-
 %go into your source data folder, where all participant files will be
 %there.
-cd([startdir '/test/']);
+cd([startdir '/sourcedata/']);
 
 %create BestB0 text file with header line
 fid3 = fopen('BestB0.txt', 'w');
@@ -77,24 +74,19 @@ for i = 1:length(subjects)
     [upper_path, PAR_NAME, ~] = fileparts(subjects{1,i});
     full_path = ([upper_path '/' PAR_NAME '/']);
     
-    %PAR_NAME = deepest_dir;
-    
-    %source = ([startdir '/sourcedata/', PAR_NAME, '/dwi/']);
-    source_dwi = ([startdir '/test/', PAR_NAME, '/dwi/']);
-    source_anat = ([startdir '/test/', PAR_NAME, '/anat/']);
+    source_dwi = ([startdir '/sourcedata/', PAR_NAME, '/dwi/']);
+    source_anat = ([startdir '/sourcedata/', PAR_NAME, '/anat/']);
     
     %create derivatives folder per each participant
-    %mkdir([startdir,'/derivatives/', PAR_NAME, '/dwi/']);
-    mkdir([startdir,'/test/derivatives/', PAR_NAME, '/dwi/']);
-    mkdir([startdir,'/test/derivatives/', PAR_NAME, '/anat/']);
+    mkdir([startdir,'/derivatives/diff_data/', PAR_NAME, '/dwi/']);
+    mkdir([startdir,'/derivatives/diff_data/', PAR_NAME, '/anat/']);
     
     %copy data from source folder into participants derivatives folder
-    copyfile ([source_dwi, '*'], [startdir,'/test/derivatives/', PAR_NAME, '/dwi/']);
-    copyfile ([source_anat, '*'], [startdir,'/test/derivatives/', PAR_NAME, '/anat/']);
+    copyfile ([source_dwi, '*'], [startdir,'/derivatives/diff_data/', PAR_NAME, '/dwi/']);
+    copyfile ([source_anat, '*'], [startdir,'/derivatives/diff_data/', PAR_NAME, '/anat/']);
     
     %move into participants folder
-    %cd([startdir '/derivatives/' PAR_NAME, '/dwi/']);
-    cd([startdir '/test/derivatives/' PAR_NAME, '/dwi/']);
+    cd([startdir '/derivatives/diff_data/' PAR_NAME, '/dwi/']);
     
     %count number of BDs that the participant has.
     BDs = dir([PAR_NAME '*BD*.nii']);
@@ -119,7 +111,7 @@ for i = 1:length(subjects)
     %Step 1: Denoising
     unix(['dwidenoise combined_', PAR_NAME, datafile,'.mif d', PAR_NAME, datafile,'.mif -noise noise_' PAR_NAME, datafile,'.mif']);
     
-    %create a copy in NIFIT format, in case you want to examine in fsleyes
+    %create a copy in NIFTI format, in case you want to examine in fsleyes
     unix(['mrconvert d', PAR_NAME, datafile,'.mif d', PAR_NAME, datafile, '.nii']);
     unix(['mrconvert noise_', PAR_NAME, datafile,'.mif noise_', PAR_NAME, datafile, '.nii']);
     
@@ -129,14 +121,14 @@ for i = 1:length(subjects)
     %images (this does not apply to the intial B0).
     unix(['mrcalc combined_', PAR_NAME, datafile,'.mif d', PAR_NAME, datafile '.mif -subtract res_' PAR_NAME, datafile,'.mif']);
     
-    %create a copy in NIFIT format
+    %create a copy in NIFTI format
     unix(['mrconvert res_', PAR_NAME, datafile,'.mif res_', PAR_NAME, datafile, '.nii']);
     
     %---------------------------------------------------------------------%
     %Step 2: Gibbs ringing
     unix(['mrdegibbs d' PAR_NAME, datafile,'.mif gd' PAR_NAME, datafile,'.mif']);
     
-    %create a copy in NIFIT format
+    %create a copy in NIFTI format
     unix(['mrconvert gd', PAR_NAME, datafile,'.mif gd', PAR_NAME, datafile, '.nii']);
     
     %---------------------------------------------------------------------%
@@ -175,6 +167,17 @@ for i = 1:length(subjects)
     %choose best pair using the 'BestB0' function
     BU_used = BestB0(PAR_NAME, datafile, NumBDs, startdir);
     
+    %---------------------------------------------------------------------%
+    %Step 4: Estimate brain mask
+    %estimate brain mask with the chosen best B0 pair with fsl's BET
+    unix(['fslmaths TUB0s_' PAR_NAME, datafile, '.nii -Tmean combinedTUB0s_' PAR_NAME, datafile, '.nii']);
+    unix(['bet combinedTUB0s_' PAR_NAME, datafile, '.nii bet_' PAR_NAME, datafile, '.nii -m -f 0.2']);
+    
+    %create a copy in mif format
+    unix(['mrconvert bet_', PAR_NAME, datafile,'_mask.nii.gz brain_mask_', PAR_NAME, datafile, '.mif']);
+    
+    %---------------------------------------------------------------------%
+    %Step 5: Run eddy
     %run topup, eddy (w/ -repol)
     if BU_used ~= 1
         %run eddy with gradient edit
@@ -183,40 +186,27 @@ for i = 1:length(subjects)
         %don't need to apply gradient edit with eddy
         unix(['dwifslpreproc bbcgd' PAR_NAME, datafile, '.mif ebbcgd' PAR_NAME, datafile, '.mif -rpe_pair -pe_dir AP -se_epi TUB0s_' PAR_NAME, datafile, '.mif -eddy_options " --repol --ol_nstd=4" -readout_time 0.07']);
     end
-    %---------------------------------------------------------------------%
-    %Step 5: Estimate a brain mask (initial)
     
-    %estimate brain mask
-    unix(['dwi2mask ebbcgd' PAR_NAME, datafile, '.mif initial_mask_' PAR_NAME, datafile, '.mif']);
-    
-    %create a copy in NIFIT format
-    unix(['mrconvert ebbcgd', PAR_NAME, datafile,'.mif ebbcgd', PAR_NAME, datafile, '.nii']); %eddy corrected data
-    unix(['mrconvert initial_mask_', PAR_NAME, datafile,'.mif initial_mask_', PAR_NAME, datafile, '.nii']); %brain mask
-    
+    %create a copy in NIFTI format
+    unix(['mrconvert ebbcgd', PAR_NAME, datafile,'.mif ebbcgd', PAR_NAME, datafile, '.nii']); %eddy corrected data    
     
     %---------------------------------------------------------------------%
     %Step 6: Bias field correction (B0s)
+    %estimate brain mask
+    unix(['dwi2mask ebbcgd' PAR_NAME, datafile, '.mif initial_mask_' PAR_NAME, datafile, '.mif']);
+    
+    %bias field correction with ants
     unix(['dwibiascorrect ants -mask initial_mask_' PAR_NAME, datafile, '.mif ebbcgd' PAR_NAME, datafile, '.mif febbcgd' PAR_NAME, datafile, '.mif']);
     
-    %create a copy in NIFIT format
+    %create a copy in NIFTI format
     unix(['mrconvert febbcgd', PAR_NAME, datafile,'.mif febbcgd', PAR_NAME, datafile, '.nii']);
-    
-    %generate a new brain mask after bias field correction has been
-    %applied.
-    unix(['dwi2mask -clean_scale 3 febbcgd' PAR_NAME, datafile, '.mif brain_mask_' PAR_NAME, datafile, '.mif']);
-    
-    %create a copy in NIFIT format
-    unix(['mrconvert brain_mask_', PAR_NAME, datafile,'.mif brain_mask_', PAR_NAME, datafile, '.nii']);
     
     %copy dwi file over and rename
     copyfile(['febbcgd', PAR_NAME, datafile,'.mif'], [PAR_NAME, datafile,'.mif']);
-    movefile([PAR_NAME, datafile, '.mif'], [startdir,'/test/derivatives/', groupname, '/preprocessed_dwi']);
+    movefile([PAR_NAME, datafile, '.mif'], [startdir,'/derivatives/diff_data/', groupname, '/preprocessed_dwi']);
     
     %copy brain mask file over
     copyfile(['brain_mask_', PAR_NAME, datafile,'.mif'], [PAR_NAME, datafile,'.mif']);
-    movefile([PAR_NAME, datafile, '.mif'], [startdir,'/test/derivatives/', groupname, '/brain_mask']);
-    
-    
+    movefile([PAR_NAME, datafile, '.mif'], [startdir,'/derivatives/diff_data/', groupname, '/brain_mask']);
+      
 end
-
-

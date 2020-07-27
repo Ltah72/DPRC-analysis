@@ -20,7 +20,11 @@
 % 5.Generate fixel-fixel connectivity matrix
 % 6.Smooth fixel data using fixel-fixel connectivity
 % 7.Perform statistical analysis of FD, FC, and FDC
-% 8.Visualise results
+% 8.Visualise results (with mrview)
+% 9.Display results with streamlines
+%   a.Reduce number of streamlines to 200k
+%   b.Create .tsf file (map fixels to streamlines)
+%   c.Visualise .tsf in mrview
 
 
 %Author: Lenore Tahara-Eckl
@@ -34,22 +38,22 @@ close all;
 startdir = '/data/USERS/LENORE';
 
 %Script directory is defined, so that it can be added to path below:
-ScriptDirectory = '/data/USERS/LENORE/scripts/dprc/DKI';
+ScriptDirectory = '/data/USERS/LENORE/scripts/dprc/diffusion';
 
 %should be a groupname from what the user analysed in the CSD script.  
 groupname = input('Which group do you want to analyse?: ', 's');
 
 %make directories for AFD data
-mkdir([startdir,'/test/derivatives/', groupname, '/log_fc_data/']);
-mkdir([startdir,'/test/derivatives/', groupname, '/fd_data/']);
-mkdir([startdir,'/test/derivatives/', groupname, '/fdc_data/']);
+mkdir([startdir,'/derivatives/diff_data/', groupname, '/log_fc_data/']);
+mkdir([startdir,'/derivatives/diff_data/', groupname, '/fd_data/']);
+mkdir([startdir,'/derivatives/diff_data/', groupname, '/fdc_data/']);
 
 %Add your script and all necessary files (e.g. data, functions) to path
 addpath(genpath(startdir));
 addpath(genpath(ScriptDirectory));
 
 %go into group folder
-cd([startdir '/test/derivatives/', groupname]);
+cd([startdir '/derivatives/diff_data/', groupname]);
 
 %record file numbers and names (participants) in the group folder name. 
 participants = dir(fullfile('preprocessed_dwi', '*.mif'));
@@ -68,16 +72,13 @@ for i = 1:length(participants)
     full_name = participants(i).name;
     PAR_NAME = full_name(1:15);
     
-    
     %a) Warp each participant's FOD images to template space.    
     unix(['mrtransform wmfod_norm_' PAR_NAME '.mif -warp ' PAR_NAME '_subject2template_warp.mif -reorient_fod no ' PAR_NAME '_fod_in_template_space_NOT_REORIENTED.mif']);
-
-
+    
     %b) segment FOD images to estimate fixels and their fibre density (FD)    
     mkdir(['fixel_directory/' PAR_NAME]);
     %unix(['fod2fixel -mask analysis_voxel_mask.mif ' PAR_NAME '_fod_in_template_space_NOT_REORIENTED.mif fixel_directory/' PAR_NAME '/fod_in_template_space_NOT_REORIENTED -afd fd.mif']);
     unix(['fod2fixel -mask fixel_directory/template_mask_intersection.mif ' PAR_NAME '_fod_in_template_space_NOT_REORIENTED.mif fixel_directory/' PAR_NAME '/fixel_in_template_space_NOT_REORIENTED -afd fd.mif']);
-
     
     %c) reorient fixel orientations
     unix(['fixelreorient fixel_directory/' PAR_NAME '/fixel_in_template_space_NOT_REORIENTED ' PAR_NAME '_subject2template_warp.mif fixel_directory/' PAR_NAME '/fixel_in_template_space']);
@@ -85,11 +86,9 @@ for i = 1:length(participants)
     %d) assign subject fixels to template fixels
     unix(['fixelcorrespondence fixel_directory/' PAR_NAME '/fixel_in_template_space/fd.mif fixel_directory/fixel_mask fixel_directory/' PAR_NAME '/fd fd.mif']);
     
-    
     %e) compute fibre cross-section (FC) metric
     unix(['warp2metric ' PAR_NAME '_subject2template_warp.mif -fc fixel_directory/fixel_mask fixel_directory/' PAR_NAME '/fc fc.mif']);
-        
-    
+       
     %for group analysis FC - take the log of FC
     mkdir(['fixel_directory/' PAR_NAME '/log_fc']);
     copyfile (['fixel_directory/' PAR_NAME '/fc/index.mif'], ['fixel_directory/' PAR_NAME '/log_fc']);
@@ -101,19 +100,16 @@ for i = 1:length(participants)
     copyfile (['fixel_directory/' PAR_NAME '/fc/index.mif'], ['fixel_directory/' PAR_NAME '/fdc']);
     copyfile (['fixel_directory/' PAR_NAME '/fc/directions.mif'], ['fixel_directory/' PAR_NAME '/fdc']);
     unix(['mrcalc fixel_directory/' PAR_NAME '/fd/fd.mif fixel_directory/' PAR_NAME '/fc/fc.mif -mult fixel_directory/' PAR_NAME '/fdc/fdc.mif']);
-
     
     %copy and rename each participant file into the 3 metric files (fd, fc, fdc) into separate folders
-    copyfile (['fixel_directory/' PAR_NAME '/fd/fd.mif'], ['fd_data/fd_' PAR_NAME '.mif']);
-    copyfile (['fixel_directory/' PAR_NAME '/log_fc/log_fc.mif'], ['log_fc_data/log_fc_' PAR_NAME '.mif']);
-    copyfile (['fixel_directory/' PAR_NAME '/fdc/fdc.mif'], ['fdc_data/fdc_' PAR_NAME '.mif']);
+    copyfile (['fixel_directory/' PAR_NAME '/fd/fd.mif'], ['fd_data/' PAR_NAME '_fd.mif']);
+    copyfile (['fixel_directory/' PAR_NAME '/log_fc/log_fc.mif'], ['log_fc_data/' PAR_NAME '_log_fc.mif']);
+    copyfile (['fixel_directory/' PAR_NAME '/fdc/fdc.mif'], ['fdc_data/' PAR_NAME '_fdc.mif']);
 
-
-    
 end 
 
 %copy 1 index and 1 directions file of each metric (fd, fc, and fdc) into 
-%the 3 metric files
+%the 3 metric files (any 1 participant file is okay to use for this).
 copyfile (['fixel_directory/' PAR_NAME '/fd/index.mif'], ['fd_data/']);
 copyfile (['fixel_directory/' PAR_NAME '/fd/directions.mif'], ['fd_data/']);
 copyfile (['fixel_directory/' PAR_NAME '/log_fc/index.mif'], ['log_fc_data/']);
@@ -122,21 +118,19 @@ copyfile (['fixel_directory/' PAR_NAME '/fdc/index.mif'], ['fdc_data/']);
 copyfile (['fixel_directory/' PAR_NAME '/fdc/directions.mif'], ['fdc_data/']);
 
 %-------------------------------------------------------------------------%
-%Step 3: Perform whole-brain fibre tractography on the FOD template -- this step
-%takes a long time to process
+%Step 3: Perform whole-brain fibre tractography on the FOD template -- this 
+%step is computationally expensive and takes a long time to process
 unix(['tckgen -angle 22.5 -maxlen 250 -minlen 10 -power 1.0 wmfod_template.mif -seed_image fixel_directory/template_mask_intersection.mif -mask fixel_directory/template_mask_intersection.mif -select 20000000 -cutoff 0.06 tracks_20_million.tck']);
 
 %-------------------------------------------------------------------------%
 %Step 4:Reduce biases in tractogram densities (using SIFT)
 unix(['tcksift tracks_20_million.tck wmfod_template.mif tracks_2_million_sift.tck -term_number 2000000']);
-
-     
+    
 %-------------------------------------------------------------------------%
 %Step 5: Generate fixel-fixel connectivity matrix
 unix(['fixelconnectivity fixel_directory/fixel_mask/ tracks_2_million_sift.tck matrix/']);
 
-%-------------------------------------------------------------------------%%-------------------------------------------------------------------------%
-
+%-------------------------------------------------------------------------%
 %Step 6: Smooth fixel data using fixel-fixel connectivity 
 unix(['fixelfilter fd_data smooth fd_smooth -matrix matrix/']);
 unix(['fixelfilter log_fc_data smooth log_fc_smooth -matrix matrix/']);
@@ -144,8 +138,8 @@ unix(['fixelfilter fdc_data smooth fdc_smooth -matrix matrix/']);
 
 
 %-------------------------------------------------------------------------%
-%Step 7: Perform statistical analysis of FD, FC, and FDC
-
+%Step 7: Perform statistical analysis of FD, FC, and FDC -- this step is 
+%computationally expensive and takes a long time to process
 
 %create text files of a participant list to run statistics 
 CreateParticipantFixelList;
@@ -156,10 +150,9 @@ CreateParticipantFixelList;
 
 %create contrast matrix - what type of test will you run? 
 %CreateContrastMatrix
-
-unix(['fixelcfestats fd_smooth/ fd_smooth/files_fd.txt design_matrix.txt contrast_matrix.txt matrix/ stats_fd/']);
-unix(['fixelcfestats log_fc_smooth/ log_fc_smooth/files_log_fc.txt design_matrix.txt contrast_matrix.txt matrix/ stats_log_fc/']);
-unix(['fixelcfestats fdc_smooth/ fdc_smooth/files_fdc.txt design_matrix.txt contrast_matrix.txt matrix/ stats_fdc/']);
+unix(['fixelcfestats fd_smooth/ files_fd.txt design_matrix.txt contrast_matrix.txt matrix/ stats_fd/']);
+unix(['fixelcfestats log_fc_smooth/ files_log_fc.txt design_matrix.txt contrast_matrix.txt matrix/ stats_log_fc/']);
+unix(['fixelcfestats fdc_smooth/ files_fdc.txt design_matrix.txt contrast_matrix.txt matrix/ stats_fdc/']);
 
 
 
@@ -173,7 +166,24 @@ unix(['fixelcfestats fdc_smooth/ fdc_smooth/files_fdc.txt design_matrix.txt cont
 
 
 
-    
+%-------------------------------------------------------------------------%
+%Step 9: Display results with streamlines
+%cropping streamlines from the template-derived whole-brain tractogram to include streamline points that correspond to significant fixels
+
+%Reduce number of streamlines to 200,000
+unix(['tckedit tracks_2_million_sift.tck -num 200000 tracks_200k_sift.tck']);
+
+%map fixel values to streamline points and save them in a 'track scalar file' (.tsf)
+unix(['fixel2tsf stats_fd/fwe_1mpvalue.mif tracks_200k_sift.tck fd_WholeBrainfwe_pvalue.tsf']);
+unix(['fixel2tsf stats_log_fc/fwe_1mpvalue.mif tracks_200k_sift.tck log_fc_WholeBrainfwe_pvalue.tsf']);
+unix(['fixel2tsf stats_fdc/fwe_1mpvalue.mif tracks_200k_sift.tck fdc_WholeBrainfwe_pvalue.tsf']);
+
+%visualise track scalar files using the tractogram tool in MRview. First 
+%load the streamlines (tracks_200k_sift.tck). Then to dynamically threshold 
+%(remove) streamline point by p-value select the “Thresholds” dropdown and 
+%select “Separate Scalar file” and set to 0.95.
+
+ 
     
     
     
