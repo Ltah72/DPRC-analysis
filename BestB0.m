@@ -31,7 +31,7 @@ function [BU_used] = BestB0(PAR_NAME, datafile, NumBDs, startdir)
 %           startdir = start directory that you defined in the script -
 %           where the data will be stored.
 
-%Outputs (none): Just editing the files.
+%Outputs (1): BU number used in the main dwi dataset sequence
 
 %Reference:
 %Alfaro-Almagro, F., Jenkinson, M., Bangerter, N. K., Andersson, J. L. R.,
