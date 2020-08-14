@@ -12,6 +12,7 @@ function GradientEdit_forBestB0(inputBU,PAR_NAME, datafile)
 % outputs (none) = we are editing the text files
 
 %Author: Lenore Tahara-Eckl
+%Email: Ltah262@aucklanduni.ac.nz
 %Date: 09/07/2020
 
 

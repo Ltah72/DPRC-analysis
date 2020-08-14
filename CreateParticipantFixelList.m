@@ -2,6 +2,11 @@ function CreateParticipantFixelList
 %Create a list of all of the participants which will be used for the 
 %fixel-based analysis. For the metrics of FD, FC, and FDC.   
 
+
+%Author: Lenore Tahara-Eckl
+%Email: Ltah262@aucklanduni.ac.nz
+%Date: 15/07/2020
+
 %for fd list
 fid1 = fopen('files_fd.txt', 'w');
 files1 = dir('fd_smooth/*sub*');

@@ -41,6 +41,7 @@ function [BU_used] = BestB0(PAR_NAME, datafile, NumBDs, startdir)
 
 
 %Author: Lenore Tahara-Eckl
+%Email: Ltah262@aucklanduni.ac.nz
 %Date: 01/07/2020
 
 %convert AP and PA from .mif to .nii

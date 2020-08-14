@@ -1,24 +1,26 @@
 %Preprocessing script for DPRC diffusion data. Preprocessing is based upon
 %MRtrix recommended pre-processing steps:
-%https://mrtrix.readthedocs.io/en/0.3.16/workflows/DWI_preprocessing_for_quantitative_analysis.html
-%And UKB data recommendation:
-%Maximov & Westlye (2019).Towards an optimised processing pipeline for diffusion magnetic resonance imaging data: Effects of artefact corrections on diffusion metrics and their age associations in UK Biobank.
+%   https://mrtrix.readthedocs.io/en/0.3.16/workflows/DWI_preprocessing_for_quantitative_analysis.html
+%   https://mrtrix.readthedocs.io/en/latest/fixel_based_analysis/mt_fibre_density_cross-section.html
+%And in working with UKB data:
+%   Maximov & Westlye (2019).Towards an optimised processing pipeline for diffusion magnetic resonance imaging data: Effects of artefact corrections on diffusion metrics and their age associations in UK Biobank.
+%   Alfaro-Almagro et al., (2018). Image processing and Quality Control for the first 10,000 brain imaging datasets from UK Biobank
 
 %All preprocessing steps are deployed through the MRtrix3 programme.
 %Utilised neuroimaging programs are FSL, MRtrix3, and ANTs are for
 %these steps. Assumes BIDS formatting and organisation. This script calls
 %upon 6 preprocessing steps (as functions) which are, in order:
 
-%Steps                                          Methodology - programme origin, algorithm/model, author
+%Steps:                                         Methodology - programme origin, algorithm/model, author
 %1. Noise correction                            (denoising -- MP-PCA, Veraart et al., 2016)
 %2. Gibbs ringing correction                    (local sub-voxel shift, Kellner et al., 2016)
-%3. Field distortion                            (TOPUP -- FSL)  
-%4  Estimate a brain mask                       (BET -- FSL)
-%5. Eddy current distortions                    (Eddy -- FSL)             
+%3. Field distortion                            (TOPUP -- FSL, Andersson et al., 2003; Smith, 2004)  
+%4  Estimate a brain mask                       (BET -- FSL, Smith, 2002)
+%5. Eddy current distortions                    (Eddy -- FSL, Andersson & Sotiropoulos, 2016)             
 %6. Bias field correction                       (ANTs -- N4BiasFieldCorrection, Tustison et al., 2010)
 
-
 %Author: Lenore Tahara-Eckl
+%Email: Ltah262@aucklanduni.ac.nz
 %Date: 30/06/20
 
 clc;
@@ -39,8 +41,9 @@ cd(ScriptDirectory);
 %shortcut for debugging purposes:
 startdir = '/data/USERS/LENORE';
 
-%ask user for what group they want to analyse:
-groupname = input('Please name a group that you want to analyse: ', 's');
+%ask user for what kind of group/study analysis they will conduct (e.g. 
+%cross-sectional, F0s, longitudinal, F0 vs. F2, etc.):
+groupname = input('Please name the group/study analysis: ', 's');
 
 %make directories
 mkdir([startdir,'/derivatives/diff_data/', groupname, '/preprocessed_dwi/']);
@@ -60,7 +63,7 @@ cd([startdir '/sourcedata/']);
 %create BestB0 text file with header line
 fid3 = fopen('BestB0.txt', 'w');
 if (fid3 == -1)
-    disp('Error in opening in one or both of the correlation score files.')
+    disp('Error in creating the text file.')
 else
     fprintf(fid3, '%s     %s %s %s', 'Participant', 'B0_status', 'BU_used', 'BD_used');
     fclose(fid3);
@@ -156,7 +159,7 @@ for i = 1:length(subjects)
     unix(['mrconvert bcgd', PAR_NAME, datafile,'.mif bcgd', PAR_NAME, datafile, '.nii']);
     
     %---------------------------------------------------------------------%
-    %Step 3-4: Field distortion (topup, eddy)
+    %Step 3-5: Field distortion (topup, eddy)
     
     %extract all B0s from the dataset
     unix(['dwiextract -bzero bcgd' PAR_NAME, datafile,'.mif AP_' PAR_NAME, datafile,'.mif']);
@@ -180,11 +183,11 @@ for i = 1:length(subjects)
     %Step 5: Run eddy
     %run topup, eddy (w/ -repol)
     if BU_used ~= 1
-        %run eddy with gradient edit
-        unix(['dwifslpreproc -fslgrad ', PAR_NAME, datafile,'.bvec ' PAR_NAME, datafile,'.bval bbcgd' PAR_NAME, datafile, '.mif ebbcgd' PAR_NAME, datafile, '.mif -rpe_pair -pe_dir AP -se_epi TUB0s_' PAR_NAME, datafile, '.mif -eddy_options " --repol --ol_nstd=4" -readout_time 0.07']);
+        %run eddy with gradient edit if you've switched the first BU
+        unix(['dwifslpreproc -fslgrad ', PAR_NAME, datafile,'.bvec ' PAR_NAME, datafile,'.bval bbcgd' PAR_NAME, datafile, '.mif ebbcgd' PAR_NAME, datafile, '.mif -rpe_pair -pe_dir AP -se_epi TUB0s_' PAR_NAME, datafile, '.mif -eddy_options " --repol --ol_nstd=3 --ol_type=both --mb=3" -readout_time 0.07']);
     else
-        %don't need to apply gradient edit with eddy
-        unix(['dwifslpreproc bbcgd' PAR_NAME, datafile, '.mif ebbcgd' PAR_NAME, datafile, '.mif -rpe_pair -pe_dir AP -se_epi TUB0s_' PAR_NAME, datafile, '.mif -eddy_options " --repol --ol_nstd=4" -readout_time 0.07']);
+        %don't need to apply gradient edit with eddy, if you have not switched the first BU
+        unix(['dwifslpreproc bbcgd' PAR_NAME, datafile, '.mif ebbcgd' PAR_NAME, datafile, '.mif -rpe_pair -pe_dir AP -se_epi TUB0s_' PAR_NAME, datafile, '.mif -eddy_options " --repol --ol_nstd=3 --ol_type=both --mb=3" -readout_time 0.07']);
     end
     
     %create a copy in NIFTI format

@@ -8,6 +8,7 @@ function LastB0AddOn(PAR_NAME, datafile)
 %           outputs (none) = we are editing the text files
 
 %Author: Lenore Tahara-Eckl
+%Email: Ltah262@aucklanduni.ac.nz
 %Date: 15/04/2020
 
 fid = fopen([PAR_NAME, datafile,'.bval'], 'r');

@@ -6,10 +6,14 @@ function FiveTTImageCheck(PAR_NAME)
 %   1 input = PAR_NAME: current participant. 
 
 %Author: Lenore Tahara-Eckl
+%Email: Ltah262@aucklanduni.ac.nz
 %Date: 25/07/2020
 
 
 fid5 = fopen('5ttImageCheck.txt','a+');
+
+%unix(['5ttcheck 5ttimage_' PAR_NAME, '.mif >> 5ttImageCheck.txt']);
+
 
 results = unix(['5ttcheck 5ttimage_' PAR_NAME, '.mif']);
 

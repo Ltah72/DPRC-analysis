@@ -7,27 +7,31 @@
 %MRtrix manual: https://mrtrix.readthedocs.io/en/latest/fixel_based_analysis/mt_fibre_density_cross-section.html
 	
 % Steps:
-% 1.Compute a white matter template analysis fixel mask 
-% 2.Estimate participants’ fixels and diffusion fibre metric 
+% 1. Compute a white matter template analysis fixel mask 
+% 2. Estimate participants’ fixels and diffusion fibre metric 
 %   a.Warp FOD images to template space
 %   b.Segment FOD images to estimate fixels and their FD metric
 %   c.Reorient fixels
-%   d.Assign subject fixels to template fixels
+%   d.Assign subject fixels to template fixels (compute FD)
 %   e.Compute FC metric
 %   f.Compute FDC metric
-% 3.Perform whole-brain fibre tractography on the FOD template
-% 4.Reduce biases in tractogram densities (using SIFT)
-% 5.Generate fixel-fixel connectivity matrix
-% 6.Smooth fixel data using fixel-fixel connectivity
-% 7.Perform statistical analysis of FD, FC, and FDC
-% 8.Visualise results (with mrview)
-% 9.Display results with streamlines
+% 3. Perform whole-brain fibre tractography on the FOD template
+% 4. Reduce biases in tractogram densities (using SIFT)
+% 5. Generate fixel-fixel connectivity matrix
+% 6. Smooth fixel data using fixel-fixel connectivity
+% 7. Perform statistical analysis of FD, FC, and FDC
+% 8. Visualise results (with mrview)
+% 9. Display results with streamlines
 %   a.Reduce number of streamlines to 200k
 %   b.Create .tsf file (map fixels to streamlines)
 %   c.Visualise .tsf in mrview
-
+% 10. FBA post-statistical inference
+%   a.Calculate whole-brain FBA metrics per each participant and put onto a
+%   text file
+%   b.Express the effect size relative to controls
 
 %Author: Lenore Tahara-Eckl
+%Email: Ltah262@aucklanduni.ac.nz
 %Date: 30/06/20
 
 clc;
@@ -40,8 +44,8 @@ startdir = '/data/USERS/LENORE';
 %Script directory is defined, so that it can be added to path below:
 ScriptDirectory = '/data/USERS/LENORE/scripts/dprc/diffusion';
 
-%should be a groupname from what the user analysed in the CSD script.  
-groupname = input('Which group do you want to analyse?: ', 's');
+%should be the same groupname from what the user analysed in the CSD script.  
+groupname = input('Which pre-processed group / study do you want to continue to analyse?: ', 's');
 
 %make directories for AFD data
 mkdir([startdir,'/derivatives/diff_data/', groupname, '/log_fc_data/']);
@@ -65,8 +69,7 @@ unix(['fod2fixel -mask fixel_directory/template_mask_intersection.mif -fmls_peak
 
 
 %-------------------------------------------------------------------------%
-%Step 2: Estimate participants’ fixels and diffusion fibre metric 
-
+%Step 2: Estimate participants’ fixels and FBA metrics 
 for i = 1:length(participants)
     
     full_name = participants(i).name;
@@ -83,7 +86,7 @@ for i = 1:length(participants)
     %c) reorient fixel orientations
     unix(['fixelreorient fixel_directory/' PAR_NAME '/fixel_in_template_space_NOT_REORIENTED ' PAR_NAME '_subject2template_warp.mif fixel_directory/' PAR_NAME '/fixel_in_template_space']);
     
-    %d) assign subject fixels to template fixels
+    %d) assign subject fixels to template fixels (compute FD)
     unix(['fixelcorrespondence fixel_directory/' PAR_NAME '/fixel_in_template_space/fd.mif fixel_directory/fixel_mask fixel_directory/' PAR_NAME '/fd fd.mif']);
     
     %e) compute fibre cross-section (FC) metric
@@ -144,15 +147,16 @@ unix(['fixelfilter fdc_data smooth fdc_smooth -matrix matrix/']);
 %create text files of a participant list to run statistics 
 CreateParticipantFixelList;
 
-%create design matrix that corresponds to the participant list (participant
+%use the design matrix (e.g. design_matrix.txt) that corresponds to the participant list (participant
 %groups - i.e. status)
-%CreateDesignMatrix;
 
-%create contrast matrix - what type of test will you run? 
-%CreateContrastMatrix
-unix(['fixelcfestats fd_smooth/ files_fd.txt design_matrix.txt contrast_matrix.txt matrix/ stats_fd/']);
-unix(['fixelcfestats log_fc_smooth/ files_log_fc.txt design_matrix.txt contrast_matrix.txt matrix/ stats_log_fc/']);
-unix(['fixelcfestats fdc_smooth/ files_fdc.txt design_matrix.txt contrast_matrix.txt matrix/ stats_fdc/']);
+%create contrast matrix to specify the tests and/or co-variates that you
+%will include in your analysis (e.g. contrast_matrix.txt)
+
+%Run statistical tests for each AFD metric
+unix(['fixelcfestats fd_smooth/ files_fd.txt stats_matrices/design_matrix.txt stats_matrices/contrast_matrix.txt matrix/ stats_fd/']);
+unix(['fixelcfestats log_fc_smooth/ files_log_fc.txt stats_matrices/design_matrix.txt stats_matrices/contrast_matrix.txt matrix/ stats_log_fc/']);
+unix(['fixelcfestats fdc_smooth/ files_fdc.txt stats_matrices/design_matrix.txt stats_matrices/contrast_matrix.txt matrix/ stats_fdc/']);
 
 
 
@@ -183,9 +187,24 @@ unix(['fixel2tsf stats_fdc/fwe_1mpvalue.mif tracks_200k_sift.tck fdc_WholeBrainf
 %(remove) streamline point by p-value select the “Thresholds” dropdown and 
 %select “Separate Scalar file” and set to 0.95.
 
- 
-    
-    
+
+%-------------------------------------------------------------------------%
+%Step 10: FBA post-statistical inference
+
+%a) Calculate whole-brain FBA metrics per each participant and put onto a text file. 
+CreateWholeBrainFBAMetricFiles(participants);
+%use this files as inputs into a statistical programme in order to 
+%calculate the statistics of the group differences
+
+
+%b) Expressing the effect size relative to controls
+%for fd
+unix(['mrcalc stats_fd/abs_effect.mif stats_fd/beta0.mif  -div 100 -mult stats_fd/percentage_effect.mif -force']);
+%for fdc
+unix(['mrcalc stats_fdc/abs_effect.mif stats_fdc/beta0.mif  -div 100 -mult stats_fdc/percentage_effect.mif']);
+%for fc
+unix(['mrcalc 1 1 stats_log_fc/abs_effect.mif -exp -div -sub stats_log_fc/percentage_effect.mif']);
+
     
     
     
