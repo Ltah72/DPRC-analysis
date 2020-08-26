@@ -11,13 +11,19 @@
 %these steps. Assumes BIDS formatting and organisation. This script calls
 %upon 6 preprocessing steps (as functions) which are, in order:
 
-%Steps:                                         Methodology - programme origin, algorithm/model, author
+%Steps:                                         Methodology - programme, algorithm/model, author
+
+%0. 'Pre-steps'                                 (organise files/directories, define variaiables, etc.)
 %1. Noise correction                            (denoising -- MP-PCA, Veraart et al., 2016)
 %2. Gibbs ringing correction                    (local sub-voxel shift, Kellner et al., 2016)
-%3. Field distortion                            (TOPUP -- FSL, Andersson et al., 2003; Smith, 2004)  
+%3. Field distortion                            (TOPUP -- FSL, Andersson et al., 2003; Smith, 2004)
+%  a)Best B0 pair selection                     (BestB0 – in-house function, Alfaro-Almagro, et al., 2018)
 %4  Estimate a brain mask                       (BET -- FSL, Smith, 2002)
-%5. Eddy current distortions                    (Eddy -- FSL, Andersson & Sotiropoulos, 2016)             
+%5. Eddy current distortions                    (Eddy -- FSL, Andersson & Sotiropoulos, 2016)
+%  a) Run eddy quality control                  (eddy_quad -- FSL, Bastiani et al., 2019)
 %6. Bias field correction                       (ANTs -- N4BiasFieldCorrection, Tustison et al., 2010)
+%  a) Estimate initial brain mask               (dwi2mask)
+%o  Perform group motion (eddy) qc              (eddy_squad -- FSL, Bastiani et al., 2019) 
 
 %Author: Lenore Tahara-Eckl
 %Email: Ltah262@aucklanduni.ac.nz
@@ -48,6 +54,7 @@ groupname = input('Please name the group/study analysis: ', 's');
 %make directories
 mkdir([startdir,'/derivatives/diff_data/', groupname, '/preprocessed_dwi/']);
 mkdir([startdir,'/derivatives/diff_data/', groupname, '/brain_mask/']);
+mkdir([startdir,'/derivatives/diff_data/dwiqc/']);
 
 %Add your script and all necessary files (e.g. data, functions) to path
 addpath(genpath(startdir));
@@ -56,18 +63,13 @@ addpath(genpath(ScriptDirectory));
 %define dwi datafile
 datafile = '_acq_data_dwi';
 
+%create the qc text files in the dwiqc directory
+QC_CreateFiles(startdir);
+
 %go into your source data folder, where all participant files will be
 %there.
 cd([startdir '/sourcedata/']);
 
-%create BestB0 text file with header line
-fid3 = fopen('BestB0.txt', 'w');
-if (fid3 == -1)
-    disp('Error in creating the text file.')
-else
-    fprintf(fid3, '%s     %s %s %s', 'Participant', 'B0_status', 'BU_used', 'BD_used');
-    fclose(fid3);
-end
 %choose participants you want to include in the group.
 subjects = uipickfiles;
 
@@ -167,7 +169,7 @@ for i = 1:length(subjects)
     %place a-p and p-a images into one file
     unix(['mrcat AP_' PAR_NAME, datafile,'.mif ' 'PA_' PAR_NAME, datafile,'.mif ' 'allB0s_' PAR_NAME, datafile,'.mif']);
     
-    %choose best pair using the 'BestB0' function
+    %a) choose best pair using the 'BestB0' function
     BU_used = BestB0(PAR_NAME, datafile, NumBDs, startdir);
     
     %---------------------------------------------------------------------%
@@ -176,26 +178,35 @@ for i = 1:length(subjects)
     unix(['fslmaths TUB0s_' PAR_NAME, datafile, '.nii -Tmean combinedTUB0s_' PAR_NAME, datafile, '.nii']);
     unix(['bet combinedTUB0s_' PAR_NAME, datafile, '.nii bet_' PAR_NAME, datafile, '.nii -m -f 0.2']);
     
+    %make a copy (must convert) of the brain mask as a .nii file
+    unix(['mrconvert bet_', PAR_NAME, datafile,'_mask.nii.gz brain_mask_', PAR_NAME, datafile, '.nii']);
     %create a copy in mif format
-    unix(['mrconvert bet_', PAR_NAME, datafile,'_mask.nii.gz brain_mask_', PAR_NAME, datafile, '.mif']);
+    unix(['mrconvert brain_mask_', PAR_NAME, datafile,'.nii brain_mask_', PAR_NAME, datafile, '.mif']);
     
     %---------------------------------------------------------------------%
     %Step 5: Run eddy
     %run topup, eddy (w/ -repol)
     if BU_used ~= 1
         %run eddy with gradient edit if you've switched the first BU
-        unix(['dwifslpreproc -fslgrad ', PAR_NAME, datafile,'.bvec ' PAR_NAME, datafile,'.bval bbcgd' PAR_NAME, datafile, '.mif ebbcgd' PAR_NAME, datafile, '.mif -rpe_pair -pe_dir AP -se_epi TUB0s_' PAR_NAME, datafile, '.mif -eddy_options " --repol --ol_nstd=3 --ol_type=both --mb=3" -readout_time 0.07']);
+        unix(['dwifslpreproc -fslgrad ', PAR_NAME, datafile,'.bvec ' PAR_NAME, datafile,'.bval bbcgd' PAR_NAME, datafile, '.mif ebbcgd' PAR_NAME, datafile, '.mif -rpe_pair -pe_dir AP -se_epi TUB0s_' PAR_NAME, datafile, '.mif -eddy_options " --repol --ol_nstd=3 --ol_type=both --mb=3 --cnr_maps --residuals" -eddyqc_all eddyqc -readout_time 0.07']);
     else
         %don't need to apply gradient edit with eddy, if you have not switched the first BU
-        unix(['dwifslpreproc bbcgd' PAR_NAME, datafile, '.mif ebbcgd' PAR_NAME, datafile, '.mif -rpe_pair -pe_dir AP -se_epi TUB0s_' PAR_NAME, datafile, '.mif -eddy_options " --repol --ol_nstd=3 --ol_type=both --mb=3" -readout_time 0.07']);
+        unix(['dwifslpreproc bbcgd' PAR_NAME, datafile, '.mif ebbcgd' PAR_NAME, datafile, '.mif -rpe_pair -pe_dir AP -se_epi TUB0s_' PAR_NAME, datafile, '.mif -eddy_options " --repol --ol_nstd=3 --ol_type=both --mb=3 --cnr_maps --residuals" -eddyqc_all eddyqc -readout_time 0.07']);
     end
     
     %create a copy in NIFTI format
     unix(['mrconvert ebbcgd', PAR_NAME, datafile,'.mif ebbcgd', PAR_NAME, datafile, '.nii']); %eddy corrected data    
     
+    %a) Perform eddy quality control (qc) per each participant
+    
+    %Run 'eddy_quad' on participant for quality check as well. 
+    RunEddyQuad(startdir, ScriptDirectory, PAR_NAME, datafile);
+    %add participants eddy qc data onto the collated text file.
+    eddyqc_ToText(PAR_NAME, startdir);
+    
     %---------------------------------------------------------------------%
     %Step 6: Bias field correction (B0s)
-    %estimate brain mask
+    % a) estimate an initial brain mask
     unix(['dwi2mask ebbcgd' PAR_NAME, datafile, '.mif initial_mask_' PAR_NAME, datafile, '.mif']);
     
     %bias field correction with ants
@@ -213,3 +224,8 @@ for i = 1:length(subjects)
     movefile([PAR_NAME, datafile, '.mif'], [startdir,'/derivatives/diff_data/', groupname, '/brain_mask']);
       
 end
+
+%o Run 'eddy_squad' to conduct group quality control on eddy
+RunEddySquad(subjects, startdir);
+
+

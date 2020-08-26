@@ -48,7 +48,6 @@ function [BU_used] = BestB0(PAR_NAME, datafile, NumBDs, startdir)
 unix(['mrconvert AP_' PAR_NAME, datafile,'.mif AP_' PAR_NAME, datafile,'.nii']);
 unix(['mrconvert PA_' PAR_NAME, datafile,'.mif PA_' PAR_NAME, datafile,'.nii']);
 
-
 %put into separate vols to prepare for registration
 
 %for APs or BUs
@@ -58,7 +57,6 @@ unix(['mrconvert AP_' PAR_NAME, datafile '.nii BU3.nii -coord 3 2']);
 unix(['mrconvert AP_' PAR_NAME, datafile '.nii BU4.nii -coord 3 3']);
 unix(['mrconvert AP_' PAR_NAME, datafile '.nii BU5.nii -coord 3 4']);
 unix(['mrconvert AP_' PAR_NAME, datafile '.nii BU6.nii -coord 3 5']);
-
 
 %for PAs or BDs
 if NumBDs == 1
@@ -71,7 +69,6 @@ elseif NumBDs == 3
     unix(['mrconvert PA_' PAR_NAME, datafile '.nii BD2.nii -coord 3 1']);
     unix(['mrconvert PA_' PAR_NAME, datafile '.nii BD3.nii -coord 3 2']);
 end
-
 
 %create the registered image for the BU
 unix(['flirt -in BU2.nii -ref BU1.nii -dof 6 -out BU_Registered_' PAR_NAME, '.nii']);
@@ -105,10 +102,8 @@ if (NumBDs == 2 || NumBDs == 3)
     unix(['fslcc BD_Registered_' PAR_NAME '.nii.gz PA_' PAR_NAME, datafile '.nii > BDScores.txt']);
 end
 
-
 %read scores and put into a vector
 fid = fopen('BUScores.txt', 'r');
-
 if (fid == -1)
     disp('Error in opening the BU correlation score file (BUScores.txt).')
 else
@@ -144,24 +139,22 @@ end
 %create a text file to note down the BU and BD used for the B0, and if any
 %participants have been flagged. Also, choose the best B0 according to
 %Jesper's criterion (see info above and/or in paper referenced)
-cd([startdir '/test/']);
+cd([startdir '/derivatives/diff_data/dwiqc/']);
+
 fid3 = fopen('BestB0.txt', 'a+');
 if (fid3 == -1)
-    disp('Error in opening in one or both of the correlation score files.')
+    disp('Error in opening in the BestB0.txt file.')
 else
-    cd([startdir '/test/derivatives/' PAR_NAME, '/dwi/']);
+    cd([startdir '/derivatives/diff_data/' PAR_NAME, '/dwi/']);
 end
 
 %check that at least 1 B0 is > 0.95; if not, then flag the participant.
 if NumBDs == 1
     
     if ((BUCorrScore(1,2) > 0.95) || (BUCorrScore(2,2) > 0.95) || (BUCorrScore(3,2) > 0.95) || (BUCorrScore(4,2) > 0.95) || (BUCorrScore(5,2) > 0.95) || (BUCorrScore(6,2) > 0.95)) || (BDCorrScore(1,2) > 0.95)
-        B0_status = 'OK!';
-        
+        B0_status = 'OK!'; 
     else
-        
         B0_status = 'all < 0.95';
-        
     end
     
     %use BU if greater than 0.98, in sequential order
@@ -181,7 +174,6 @@ if NumBDs == 1
         %if no BU is greater than 0.98, then use the largest (and earliest,
         %tied) available BU.
         [BU_score, BU_used] = max(BUCorrScore(:,2));
-        
     end
     
     BD_used = 1;
@@ -190,11 +182,8 @@ elseif NumBDs == 2
     
     if ((BUCorrScore(1,2) > 0.95) || (BUCorrScore(2,2) > 0.95) || (BUCorrScore(3,2) > 0.95) || (BUCorrScore(4,2) > 0.95) || (BUCorrScore(5,2) > 0.95) || (BUCorrScore(6,2) > 0.95)) || (BDCorrScore(1,2) > 0.95) || (BDCorrScore(2,2) > 0.95)
         B0_status = 'OK!';
-        
     else
-        
         B0_status = 'all < 0.95';
-        
     end
     %use BU if greater than 0.98, in sequential order
     if (BUCorrScore(1,2) >= 0.98)
@@ -212,8 +201,7 @@ elseif NumBDs == 2
     else
         %if no BU is greater than 0.98, then use the largest (and earliest,
         %tied) available BU.
-        [BU_score, BU_used] = max(BUCorrScore(:,2));
-        
+        [BU_score, BU_used] = max(BUCorrScore(:,2)); 
     end
     
     %use BD if greater than 0.98, in sequential order
@@ -231,11 +219,8 @@ elseif NumBDs == 3
     
     if ((BUCorrScore(1,2) > 0.95) || (BUCorrScore(2,2) > 0.95) || (BUCorrScore(3,2) > 0.95) || (BUCorrScore(4,2) > 0.95) || (BUCorrScore(5,2) > 0.95) || (BUCorrScore(6,2) > 0.95)) || (BDCorrScore(1,2) > 0.95) || (BDCorrScore(2,2) > 0.95) || (BDCorrScore(3,2) > 0.95)
         B0_status = 'OK!';
-        
-    else
-        
+    else 
         B0_status = 'all < 0.95';
-        
     end
     %use BU if greater than 0.98, in sequential order
     if (BUCorrScore(1,2) >= 0.98)
@@ -254,7 +239,6 @@ elseif NumBDs == 3
         %if no BU is greater than 0.98, then use the largest (and earliest,
         %tied) available BU.
         [BU_score, BU_used] = max(BUCorrScore(:,2));
-        
     end
     %use BD if greater than 0.98, in sequential order
     if (BDCorrScore(1,2) >= 0.98)
@@ -274,22 +258,17 @@ end
 fprintf(fid3, '\n');
 fprintf(fid3, '%s %s       %d       %d', PAR_NAME, B0_status, BU_used, BD_used);
 
-
 fclose(fid3);
 
-
 %create B0 pair to use for topup.
-
 inputBU = num2str(BU_used-1);
 inputBD = num2str(BD_used+5);
 
 unix(['mrconvert -coord 3 ' inputBU, ',' inputBD, ' allB0s_' PAR_NAME, datafile,'.mif TUB0s_' PAR_NAME, datafile,'.mif']);
 unix(['mrconvert TUB0s_' PAR_NAME, datafile '.mif TUB0s_' PAR_NAME, datafile '.nii']);
 
-
 unix(['mrconvert allB0s_' PAR_NAME, datafile, '.mif allB0s_' PAR_NAME, datafile, '.nii']);
 %-------------------------------------------------------------------------%
-
 
 %Last thing you need to do, is change the main dwi sequence, so that the BU
 %image used comes first in the sequence. And switch places with the other
@@ -303,7 +282,6 @@ unix(['mrconvert newBU1.mif newBU1.nii']);
 %no changes needed if the BestB0 for the BU was vol 0.
 if inputBU == '0'
     copyfile (['bcgd' PAR_NAME, datafile '.mif'], ['bbcgd' PAR_NAME, datafile '.mif']);
-    
 elseif inputBU == '1'
     %edit the sequence
     unix(['mrconvert -coord 3 1:20 bcgd' PAR_NAME, datafile,'.mif beforeBestB0' PAR_NAME, datafile,'.mif']);
@@ -311,7 +289,6 @@ elseif inputBU == '1'
     unix(['mrcat bbcgd-pre1' PAR_NAME, datafile,'.mif BU1.nii bbcgd-pre2' PAR_NAME, datafile,'.mif']);
     unix(['mrconvert -coord 3 22:105 bcgd' PAR_NAME, datafile,'.mif afterBestB0' PAR_NAME, datafile,'.mif']);
     unix(['mrcat bbcgd-pre2' PAR_NAME, datafile,'.mif afterBestB0' PAR_NAME, datafile,'.mif bbcgd' PAR_NAME, datafile,'.mif']);
-    
     %make a nifti copy
     unix(['mrconvert bbcgd' PAR_NAME, datafile '.mif bbcgd' PAR_NAME, datafile '.nii']);
     
