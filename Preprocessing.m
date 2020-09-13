@@ -33,19 +33,18 @@ clc;
 clear all;
 close all;
 
+%Choose directory where the diffusion data is (same level as sourcedata
+%folder).
+%startdir = input('Please enter data directory:', 's');
+%shortcut for debugging purposes:
+startdir = '/data/USERS/LENORE';
+
 %Define script directory, so that it can be added to path below:
 %ScriptDirectory = input('Please enter script directory:', 's');
 ScriptDirectory = '/data/USERS/LENORE/scripts/dprc/diffusion';
 
 %go to the directory where your scripts are.
 cd(ScriptDirectory);
-
-%Choose directory where the diffusion data is (same level as sourcedata
-%folder).
-%startdir = input('Please enter data directory:', 's');
-
-%shortcut for debugging purposes:
-startdir = '/data/USERS/LENORE';
 
 %ask user for what kind of group/study analysis they will conduct (e.g. 
 %cross-sectional, F0s, longitudinal, F0 vs. F2, etc.):
@@ -71,6 +70,8 @@ QC_CreateFiles(startdir);
 cd([startdir '/sourcedata/']);
 
 %choose participants you want to include in the group.
+msgfig = 'Please choose participants for analysis.';
+uiwait(msgbox(msgfig));
 subjects = uipickfiles;
 
 %Preprocessing starts here:
@@ -78,17 +79,13 @@ for i = 1:length(subjects)
     
     [upper_path, PAR_NAME, ~] = fileparts(subjects{1,i});
     full_path = ([upper_path '/' PAR_NAME '/']);
-    
     source_dwi = ([startdir '/sourcedata/', PAR_NAME, '/dwi/']);
-    source_anat = ([startdir '/sourcedata/', PAR_NAME, '/anat/']);
     
     %create derivatives folder per each participant
     mkdir([startdir,'/derivatives/diff_data/', PAR_NAME, '/dwi/']);
-    mkdir([startdir,'/derivatives/diff_data/', PAR_NAME, '/anat/']);
     
     %copy data from source folder into participants derivatives folder
     copyfile ([source_dwi, '*'], [startdir,'/derivatives/diff_data/', PAR_NAME, '/dwi/']);
-    copyfile ([source_anat, '*'], [startdir,'/derivatives/diff_data/', PAR_NAME, '/anat/']);
     
     %move into participants folder
     cd([startdir '/derivatives/diff_data/' PAR_NAME, '/dwi/']);
@@ -131,7 +128,7 @@ for i = 1:length(subjects)
     
     %---------------------------------------------------------------------%
     %Step 2: Gibbs ringing
-    unix(['mrdegibbs d' PAR_NAME, datafile,'.mif gd' PAR_NAME, datafile,'.mif']);
+    unix(['mrdegibbs d' PAR_NAME, datafile,'.mif gd' PAR_NAME, datafile,'.mif -axes 0,1']);
     
     %create a copy in NIFTI format
     unix(['mrconvert gd', PAR_NAME, datafile,'.mif gd', PAR_NAME, datafile, '.nii']);
@@ -188,10 +185,10 @@ for i = 1:length(subjects)
     %run topup, eddy (w/ -repol)
     if BU_used ~= 1
         %run eddy with gradient edit if you've switched the first BU
-        unix(['dwifslpreproc -fslgrad ', PAR_NAME, datafile,'.bvec ' PAR_NAME, datafile,'.bval bbcgd' PAR_NAME, datafile, '.mif ebbcgd' PAR_NAME, datafile, '.mif -rpe_pair -pe_dir AP -se_epi TUB0s_' PAR_NAME, datafile, '.mif -eddy_options " --repol --ol_nstd=3 --ol_type=both --mb=3 --cnr_maps --residuals" -eddyqc_all eddyqc -readout_time 0.07']);
+        unix(['dwifslpreproc -fslgrad ', PAR_NAME, datafile,'.bvec ' PAR_NAME, datafile,'.bval bbcgd' PAR_NAME, datafile, '.mif ebbcgd' PAR_NAME, datafile, '.mif -rpe_pair -pe_dir AP -se_epi TUB0s_' PAR_NAME, datafile, '.mif -eddy_mask brain_mask_' PAR_NAME, datafile, '.mif -eddy_options " --repol --ol_nstd=3 --ol_type=both --mb=3 --cnr_maps --residuals" -eddyqc_all eddyqc -readout_time 0.07']);
     else
         %don't need to apply gradient edit with eddy, if you have not switched the first BU
-        unix(['dwifslpreproc bbcgd' PAR_NAME, datafile, '.mif ebbcgd' PAR_NAME, datafile, '.mif -rpe_pair -pe_dir AP -se_epi TUB0s_' PAR_NAME, datafile, '.mif -eddy_options " --repol --ol_nstd=3 --ol_type=both --mb=3 --cnr_maps --residuals" -eddyqc_all eddyqc -readout_time 0.07']);
+        unix(['dwifslpreproc bbcgd' PAR_NAME, datafile, '.mif ebbcgd' PAR_NAME, datafile, '.mif -rpe_pair -pe_dir AP -se_epi TUB0s_' PAR_NAME, datafile, '.mif -eddy_mask brain_mask_' PAR_NAME, datafile, '.mif -eddy_options " --repol --ol_nstd=3 --ol_type=both --mb=3 --cnr_maps --residuals" -eddyqc_all eddyqc -readout_time 0.07']);
     end
     
     %create a copy in NIFTI format

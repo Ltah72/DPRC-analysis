@@ -31,18 +31,18 @@ close all;
 
 
 %define/add pathways
+%startdir = input('Please enter data directory:', 's');
 startdir = '/data/USERS/LENORE';
 
 %Script directory is defined, so that it can be added to path below:
+%ScriptDirectory = input('Please enter script directory:', 's');
 ScriptDirectory = '/data/USERS/LENORE/scripts/dprc/diffusion';
 
 %should be the same groupname from what the user analysed in the previous scripts (e.g. CSD.m).  
 groupname = input('Which pre-processed group / study do you want to continue to analyse?: ', 's');
 
-
 %create a connectome folder to place all of the data and analysis in
 mkdir([startdir,'/derivatives/diff_data/', groupname, '/connectome/']);
-
 
 %go into the group/study analysis folder
 cd([startdir '/derivatives/diff_data/', groupname]);
@@ -66,6 +66,18 @@ cd([startdir '/derivatives/diff_data/', groupname, '/connectome']);
 %define variables
 participants = dir(fullfile('preprocessed_dwi', '*.mif'));
 datafile = '_acq_data_dwi';
+
+%create 5ttImageCheck text file with header line
+cd([startdir '/derivatives/diff_data/', groupname, '/qc/']);
+fid4 = fopen('5ttImageCheck.txt', 'w');
+if (fid4 == -1)
+    disp('Error in creating the text file.')
+else
+    fprintf(fid4, '%s     %s', 'Participant', '5ttImage_status');
+    fclose(fid4);
+end
+
+
 
 
 %-------------------------------------------------------------------------%
