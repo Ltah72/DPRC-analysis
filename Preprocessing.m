@@ -50,6 +50,10 @@ cd(ScriptDirectory);
 %cross-sectional, F0s, longitudinal, F0 vs. F2, etc.):
 groupname = input('Please name the group/study analysis: ', 's');
 
+%ask user if they want to do slice-to-volume motion correction
+%(mp_order), with eddy CUDA/GPU requirement?
+SlicetoVol_Corr = input('Do you want to perform slice-to-vol motion correction (mp_order)? *Requires eddy cuda and GPU. y or n: ', 's');
+
 %make directories
 mkdir([startdir,'/derivatives/diff_data/', groupname, '/preprocessed_dwi/']);
 mkdir([startdir,'/derivatives/diff_data/', groupname, '/brain_mask/']);
@@ -182,14 +186,8 @@ for i = 1:length(subjects)
     
     %---------------------------------------------------------------------%
     %Step 5: Run eddy
-    %run topup, eddy (w/ -repol)
-    if BU_used ~= 1
-        %run eddy with gradient edit if you've switched the first BU
-        unix(['dwifslpreproc -fslgrad ', PAR_NAME, datafile,'.bvec ' PAR_NAME, datafile,'.bval bbcgd' PAR_NAME, datafile, '.mif ebbcgd' PAR_NAME, datafile, '.mif -rpe_pair -pe_dir AP -se_epi TUB0s_' PAR_NAME, datafile, '.mif -eddy_mask brain_mask_' PAR_NAME, datafile, '.mif -eddy_options " --repol --ol_nstd=3 --ol_type=both --mb=3 --cnr_maps --residuals" -eddyqc_all eddyqc -readout_time 0.07']);
-    else
-        %don't need to apply gradient edit with eddy, if you have not switched the first BU
-        unix(['dwifslpreproc bbcgd' PAR_NAME, datafile, '.mif ebbcgd' PAR_NAME, datafile, '.mif -rpe_pair -pe_dir AP -se_epi TUB0s_' PAR_NAME, datafile, '.mif -eddy_mask brain_mask_' PAR_NAME, datafile, '.mif -eddy_options " --repol --ol_nstd=3 --ol_type=both --mb=3 --cnr_maps --residuals" -eddyqc_all eddyqc -readout_time 0.07']);
-    end
+    %run topup, eddy (w/ -repol and option w/ gradient change and mp_order)
+    RunEddy(BU_used, SlicetoVol_Corr, PAR_NAME, datafile, ScriptDirectory);
     
     %create a copy in NIFTI format
     unix(['mrconvert ebbcgd', PAR_NAME, datafile,'.mif ebbcgd', PAR_NAME, datafile, '.nii']); %eddy corrected data    
@@ -224,5 +222,3 @@ end
 
 %o Run 'eddy_squad' to conduct group quality control on eddy
 RunEddySquad(subjects, startdir);
-
-
