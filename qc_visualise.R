@@ -21,8 +21,11 @@ library(ggplot2)
 library(dplyr)
 library(tidyr)
 
-#define pathway of where you excel sheet is
-xl_data <- "H:/ltah262/PhD/Diffusion/data/eddy/eddy_qc_movement.xlsx"
+#define pathway of where you excel sheet is - prompt the user
+xl_data <- readline(prompt="Enter directory and the file name of the eddy quality control (qc) excel file: ")
+
+#example below: 
+#xl_data <- "H:/ltah262/PhD/Diffusion/data/eddy/eddy_qc_movement.xlsx"
 
 
 #Read in the excel file which contains the eddy qc values generated from the preprocessing pipeline. 
