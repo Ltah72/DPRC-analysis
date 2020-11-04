@@ -28,9 +28,8 @@ function CreateStudyMatrices(excelFile,fileLocation, startdir, groupname)
 %Email: Ltah262@aucklanduni.ac.nz
 %Date: 05/09/20
 
-cd ~ ;
-cd ../;
-cd ../;
+%navigate to the most basic file directory and then to the file location
+cd /;
 cd ([fileLocation]);
 
 %read in excel file into matlab format

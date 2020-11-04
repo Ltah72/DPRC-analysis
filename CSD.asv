@@ -131,7 +131,6 @@ unix(['responsemean ' startdir, '/derivatives/diff_data/' groupname, '/IN/respon
 for j = 1:length(participants)
     
     [upper_path, PAR_NAME, ~] = fileparts(participants{1,j});
-    PAR_NAME = PAR_NAME(1:15);
     
     %a) upsample DW images
     %regrid option (Gaussian smoothing)
@@ -194,7 +193,6 @@ unix(['population_template IN/pop_temp_wmFOD template/wmfod_template.mif IN/pop_
 for k = 1:length(participants)
     
     [upper_path, PAR_NAME, ~] = fileparts(participants{1,k});
-    PAR_NAME = PAR_NAME(1:15);
     
     %register all subject FOD images to the FOD template
     unix(['mrregister IN/wmfod_norm_' PAR_NAME '.mif -mask1 IN/upsampled_mask_' PAR_NAME '.mif template/wmfod_template.mif -nl_warp IN/' PAR_NAME '_subject2template_warp.mif IN/' PAR_NAME '_template2subject_warp.mif']);

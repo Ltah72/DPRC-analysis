@@ -31,7 +31,7 @@ if BU_used ~= 1 && SlicetoVol_Corr == 'y'
     %run eddy with gradient edit if you've switched the first BU, and the run mp_order correction
     unix(['dwifslpreproc -fslgrad ', PAR_NAME, datafile, '.bvec ' PAR_NAME, datafile, '.bval bbcgd' PAR_NAME, datafile, '.mif ebbcgd' PAR_NAME, datafile, '.mif -rpe_pair -pe_dir AP -se_epi TUB0s_' PAR_NAME, datafile, '.mif -eddy_mask brain_mask_' PAR_NAME, datafile, '.mif -eddy_options " --repol --ol_nstd=3 --ol_type=both --mporder=6 --s2v_niter=5 --cnr_maps --residuals" -eddy_slspec=' ScriptDirectory '/files/DPRC_slspec.txt -eddyqc_all eddyqc -readout_time 0.07']);
 elseif BU_used ~= 1
-    %run eddy with gradient edit if you've switched the first BU
+    %run eddy with gradient edit if you've switched the first BU, and don't apply mp_order correction
     unix(['dwifslpreproc -fslgrad ', PAR_NAME, datafile, '.bvec ' PAR_NAME, datafile, '.bval bbcgd' PAR_NAME, datafile, '.mif ebbcgd' PAR_NAME, datafile, '.mif -rpe_pair -pe_dir AP -se_epi TUB0s_' PAR_NAME, datafile, '.mif -eddy_mask brain_mask_' PAR_NAME, datafile, '.mif -eddy_options " --repol --ol_nstd=3 --ol_type=both --mb=3 --cnr_maps --residuals" -eddyqc_all eddyqc -readout_time 0.07']);
 elseif SlicetoVol_Corr == 'y'
     %run just the mp_order correction
