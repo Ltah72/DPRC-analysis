@@ -22,7 +22,7 @@
 %5. Eddy current distortions                    (Eddy -- FSL, Andersson & Sotiropoulos, 2016)
 %  a) Run eddy quality control                  (eddy_quad -- FSL, Bastiani et al., 2019)
 %6. Bias field correction                       (ANTs -- N4BiasFieldCorrection, Tustison et al., 2010)
-%  a) Estimate initial brain mask               (dwi2mask)
+%  (run twice)                                  (dwi2mask)
 %o  Perform group motion (eddy) qc              (eddy_squad -- FSL, Bastiani et al., 2019) 
 
 %Author: Lenore Tahara-Eckl
@@ -201,20 +201,22 @@ for i = 1:length(subjects)
     
     %---------------------------------------------------------------------%
     %Step 6: Bias field correction (B0s)
-    % a) estimate an initial brain mask
-    unix(['dwi2mask ebbcgd' PAR_NAME, datafile, '.mif initial_mask_' PAR_NAME, datafile, '.mif']);
     
     %bias field correction with ants
-    unix(['dwibiascorrect ants -mask initial_mask_' PAR_NAME, datafile, '.mif ebbcgd' PAR_NAME, datafile, '.mif febbcgd' PAR_NAME, datafile, '.mif']);
+    unix(['dwibiascorrect ants ebbcgd' PAR_NAME, datafile, '.mif febbcgd' PAR_NAME, datafile, '.mif']);
     
+    %run bias field correction with ants again for improved mask and bias field
+    %corrected image
+    unix(['dwibiascorrect ants febbcgd' PAR_NAME, datafile, '.mif f2ebbcgd' PAR_NAME, datafile, '.mif']);
+
     %create a copy in NIFTI format
-    unix(['mrconvert febbcgd', PAR_NAME, datafile,'.mif febbcgd', PAR_NAME, datafile, '.nii']);
+    unix(['mrconvert f2ebbcgd', PAR_NAME, datafile,'.mif f2ebbcgd', PAR_NAME, datafile, '.nii']);
     
     %copy dwi file over and rename
-    copyfile(['febbcgd', PAR_NAME, datafile,'.mif'], [PAR_NAME, datafile,'.mif']);
+    copyfile(['f2ebbcgd', PAR_NAME, datafile,'.mif'], [PAR_NAME, datafile,'.mif']);
     movefile([PAR_NAME, datafile, '.mif'], [startdir,'/derivatives/diff_data/', groupname, '/preprocessed_dwi']);
     
-    %copy brain mask file over
+    %copy brain mask (generated from fsl's BET) file over
     copyfile(['brain_mask_', PAR_NAME, datafile,'.mif'], [PAR_NAME, datafile,'.mif']);
     movefile([PAR_NAME, datafile, '.mif'], [startdir,'/derivatives/diff_data/', groupname, '/brain_mask']);
       
