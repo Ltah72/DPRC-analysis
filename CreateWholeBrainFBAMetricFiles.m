@@ -48,15 +48,18 @@ end
 %print results onto the text files
 for i = 1:length(participants)
     
-    full_name = participants(i).name;
-    PAR_NAME = full_name(1:15);
+    %full_name = participants(i).name;
+    %PAR_NAME = full_name(1:15);
+    
+    full_name = participants{i};
+    PAR_NAME = full_name(50:64);
     
     %for FD
     fid6 = fopen('FD.txt', 'a+');
     if (fid6 == -1)
         disp('Error in opening the text file.')
     else
-        unix(['mrstats fd_smooth/' PAR_NAME '_fd.mif -output mean -output median -output std -output std_rv -output min -output max -output count >> FD.txt']);
+        unix(['mrstats template/fd_smooth/' PAR_NAME '_fd.mif -output mean -output median -output std -output std_rv -output min -output max -output count >> FD.txt']);
         fclose(fid6);
     end
     
@@ -65,7 +68,7 @@ for i = 1:length(participants)
     if (fid7 == -1)
         disp('Error in opening the text file.')
     else
-        unix(['mrstats log_fc_smooth/' PAR_NAME '_log_fc.mif -output mean -output median -output std -output std_rv -output min -output max -output count >> FC_log.txt']);
+        unix(['mrstats template/log_fc_smooth/' PAR_NAME '_log_fc.mif -output mean -output median -output std -output std_rv -output min -output max -output count >> FC_log.txt']);
         fclose(fid7);
     end
     
@@ -74,7 +77,7 @@ for i = 1:length(participants)
     if (fid8 == -1)
         disp('Error in opening the text file.')
     else
-        unix(['mrstats fdc_smooth/' PAR_NAME '_fdc.mif -output mean -output median -output std -output std_rv -output min -output max -output count >> FDC.txt']);
+        unix(['mrstats template/fdc_smooth/' PAR_NAME '_fdc.mif -output mean -output median -output std -output std_rv -output min -output max -output count >> FDC.txt']);
         fclose(fid8);
     end
     

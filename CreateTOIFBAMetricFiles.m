@@ -55,8 +55,8 @@ end
 %print results onto the text files
 for i = 1:length(participants)
     
-    full_name = participants(i).name;
-    PAR_NAME = full_name(1:15);
+    [upper_path, PAR_NAME, ~] = fileparts(participants{1,i});
+    PAR_NAME = PAR_NAME(1:15);
     
     %for FD
     fid9 = fopen(FDstr, 'a+');
@@ -64,7 +64,7 @@ for i = 1:length(participants)
     if (fid9 == -1)
         disp('Error in opening the text file.')
     else
-        unix(['mrstats -mask output_' TOI '_TOI_fixel_directory/' TOI '_fixel_mask_thr.mif ' startdir '/derivatives/diff_data/' groupname '/fd_smooth/' PAR_NAME '_fd.mif -output mean -output median -output std -output std_rv -output min -output max -output count >> FD_' TOI '_TOI.txt']);
+        unix(['mrstats -mask template/SLF/output_' TOI '_fixel_mask/' TOI '_fixel_mask_thr.mif ' startdir '/derivatives/diff_data/' groupname '/template/fd_smooth/' PAR_NAME '_fd.mif -output mean -output median -output std -output std_rv -output min -output max -output count >> FD_' TOI '_TOI.txt']);
         fclose(fid9);
     end
     
@@ -73,7 +73,7 @@ for i = 1:length(participants)
     if (fid10 == -1)
         disp('Error in opening the text file.')
     else
-        unix(['mrstats -mask output_' TOI '_TOI_fixel_directory/' TOI '_fixel_mask_thr.mif ' startdir '/derivatives/diff_data/' groupname '/log_fc_smooth/' PAR_NAME '_log_fc.mif -output mean -output median -output std -output std_rv -output min -output max -output count >> FC_log_' TOI '_TOI.txt']);
+        unix(['mrstats -mask template/SLF/output_' TOI '_fixel_mask/' TOI '_fixel_mask_thr.mif ' startdir '/derivatives/diff_data/' groupname '/template/log_fc_smooth/' PAR_NAME '_log_fc.mif -output mean -output median -output std -output std_rv -output min -output max -output count >> FC_log_' TOI '_TOI.txt']);
         fclose(fid10);
     end
     
@@ -82,7 +82,7 @@ for i = 1:length(participants)
     if (fid11 == -1)
         disp('Error in opening the text file.')
     else
-        unix(['mrstats -mask output_' TOI '_TOI_fixel_directory/' TOI '_fixel_mask_thr.mif ' startdir '/derivatives/diff_data/' groupname '/fdc_smooth/' PAR_NAME '_fdc.mif -output mean -output median -output std -output std_rv -output min -output max -output count >> FDC_' TOI '_TOI.txt']);
+        unix(['mrstats -mask template/SLF/output_' TOI '_fixel_mask/' TOI '_fixel_mask_thr.mif ' startdir '/derivatives/diff_data/' groupname '/template/fdc_smooth/' PAR_NAME '_fdc.mif -output mean -output median -output std -output std_rv -output min -output max -output count >> FDC_' TOI '_TOI.txt']);
         fclose(fid11);
     end
     
