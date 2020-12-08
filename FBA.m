@@ -101,6 +101,7 @@ unix(['fod2fixel -mask template/template_mask.mif -fmls_peak_value 0.06 template
 for i = 1:length(participants)
     
     [upper_path, PAR_NAME, ~] = fileparts(participants{1,i});
+    PAR_NAME = PAR_NAME(1:15);
     
     %a) Warp each participant's FOD images to template space.
     unix(['mrtransform IN/wmfod_norm_' PAR_NAME '.mif -warp IN/' PAR_NAME '_subject2template_warp.mif -reorient_fod no IN/' PAR_NAME '_fod_in_template_space_NOT_REORIENTED.mif']);
@@ -184,11 +185,12 @@ CreateParticipantFixelList;
 %will include in your analysis (e.g. contrast_matrix.txt)
 
 %Run statistical tests for each AFD metric
-unix(['fixelcfestats template/fd_smooth/ files_fd.txt stats_matrices/design_matrix_test.txt stats_matrices/contrast_matrix_test.txt template/matrix/ stats_fd/']);
-unix(['fixelcfestats template/log_fc_smooth/ files_log_fc.txt stats_matrices/design_matrix_test.txt stats_matrices/contrast_matrix_test.txt template/matrix/ stats_log_fc/']);
-unix(['fixelcfestats template/fdc_smooth/ files_fdc.txt stats_matrices/design_matrix_test.txt stats_matrices/contrast_matrix_test.txt template/matrix/ stats_fdc/']);
+unix(['fixelcfestats template/fd_smooth/ files_fd.txt stats_matrices/design_matrix_two-tailed_covar.txt stats_matrices/contrast_matrix_two-tailed_covar.txt template/matrix/ stats_fd/']);
+unix(['fixelcfestats template/log_fc_smooth/ files_log_fc.txt stats_matrices/design_matrix_two-tailed_covar.txt stats_matrices/contrast_matrix_two-tailed_covar.txt template/matrix/ stats_log_fc/']);
+unix(['fixelcfestats template/fdc_smooth/ files_fdc.txt stats_matrices/design_matrix_two-tailed_covar.txt stats_matrices/contrast_matrix_two-tailed_covar.txt template/matrix/ stats_fdc/']);
 
 
+%%%%% Below, you will need to manually edit and do these steps on your own. 
 
 %-------------------------------------------------------------------------%
 %Step 8: Visualise results
@@ -205,12 +207,12 @@ unix(['fixelcfestats template/fdc_smooth/ files_fdc.txt stats_matrices/design_ma
 %cropping streamlines from the template-derived whole-brain tractogram to include streamline points that correspond to significant fixels
 
 %Reduce number of streamlines to 200,000
-unix(['tckedit template/tracks_2_million_sift.tck -num 200000 template/tracks_200k_sift.tck']);
+%unix(['tckedit template/tracks_2_million_sift.tck -num 200000 template/tracks_200k_sift.tck']);
 
 %map fixel values to streamline points and save them in a 'track scalar file' (.tsf)
-unix(['fixel2tsf stats_fd/fwe_1mpvalue.mif template/tracks_200k_sift.tck fd_WholeBrainfwe_pvalue.tsf']);
-unix(['fixel2tsf stats_log_fc/fwe_1mpvalue.mif template/tracks_200k_sift.tck log_fc_WholeBrainfwe_pvalue.tsf']);
-unix(['fixel2tsf stats_fdc/fwe_1mpvalue.mif template/tracks_200k_sift.tck fdc_WholeBrainfwe_pvalue.tsf']);
+%unix(['fixel2tsf stats_fd/fwe_1mpvalue.mif template/tracks_200k_sift.tck fd_WholeBrainfwe_pvalue.tsf']);
+%unix(['fixel2tsf stats_log_fc/fwe_1mpvalue.mif template/tracks_200k_sift.tck log_fc_WholeBrainfwe_pvalue.tsf']);
+%unix(['fixel2tsf stats_fdc/fwe_1mpvalue.mif template/tracks_200k_sift.tck fdc_WholeBrainfwe_pvalue.tsf']);
 
 %visualise track scalar files using the tractogram tool in MRview. First
 %load the streamlines (tracks_200k_sift.tck). Then to dynamically threshold
@@ -222,18 +224,18 @@ unix(['fixel2tsf stats_fdc/fwe_1mpvalue.mif template/tracks_200k_sift.tck fdc_Wh
 %Step 10: FBA post-statistical inference
 
 %a) Calculate whole-brain FBA metrics per each participant and put onto a text file.
-CreateWholeBrainFBAMetricFiles(participants);
+%CreateWholeBrainFBAMetricFiles(participants);
 %use this files as inputs into a statistical programme in order to
 %calculate the statistics of the group differences
 
 
 %b) Expressing the effect size relative to controls
 %for fd
-unix(['mrcalc stats_fd/abs_effect.mif stats_fd/beta0.mif  -div 100 -mult stats_fd/percentage_effect.mif -force']);
+%unix(['mrcalc stats_fd/abs_effect.mif stats_fd/beta0.mif  -div 100 -mult stats_fd/percentage_effect.mif -force']);
 %for fdc
-unix(['mrcalc stats_fdc/abs_effect.mif stats_fdc/beta0.mif  -div 100 -mult stats_fdc/percentage_effect.mif']);
+%unix(['mrcalc stats_fdc/abs_effect.mif stats_fdc/beta0.mif  -div 100 -mult stats_fdc/percentage_effect.mif']);
 %for fc
-unix(['mrcalc 1 1 stats_log_fc/abs_effect.mif -exp -div -sub stats_log_fc/percentage_effect.mif']);
+%unix(['mrcalc 1 1 stats_log_fc/abs_effect.mif -exp -div -sub stats_log_fc/percentage_effect.mif']);
 
 
 
