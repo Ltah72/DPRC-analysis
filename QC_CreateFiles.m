@@ -1,16 +1,20 @@
-function QC_CreateFiles(startdir)
+function QC_CreateFiles(startdir, period)
 %The purpose of this function is to create all of the collated quality 
 %control (qc) files in the dwiqc directory. This directory will hold all 
 %participants' data together on one file for qc checks/analysis.So far, 
 %the data qc includes checking for the best B0 and checking for the
 %total movement with the eddy correction. 
 
+%Inputs (2): period = time period of the participant MRI scans
+%            startdir = start directory that you defined in the script -
+
+
 %Author: Lenore Tahara-Eckl
 %Email: Ltah262@aucklanduni.ac.nz
 %Date: 18/08/20
 
 
-cd ([startdir '/derivatives/diff_data/dwiqc/']);
+cd ([startdir '/derivatives/' period '/dwiqc/']);
 
 %create BestB0 text file with header line
 fid = fopen('BestB0.txt', 'w');

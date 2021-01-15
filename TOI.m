@@ -34,13 +34,16 @@ ScriptDirectory = '/data/USERS/LENORE/scripts/dprc/diffusion';
 %should be the same groupname from what the user analysed in the FBA script.  
 groupname = input('Which pre-processed group / study do you want to continue to analyse?: ', 's');
 
+%choose time period
+period = input('Which time period do you want to analyse, e.g. F0, F2, all, etc?: ', 's');
+
 %Create TOI folder
 TOI = input('Please name a tract of interest (TOI) that you want to analyse: ', 's');
 
-mkdir([startdir,'/derivatives/diff_data/', groupname, '/' TOI]);
+mkdir([startdir,'/derivatives/' period, '/diff_data/', groupname, '/' TOI]);
 
 %go into group folder
-cd([startdir '/derivatives/diff_data/', groupname]);
+cd([startdir '/derivatives/' period, '/diff_data/', groupname]);
 
 %define variables
 participants = dir(fullfile('preprocessed_dwi', '*.mif'));
@@ -51,11 +54,11 @@ addpath(genpath(ScriptDirectory));
 
 
 %copy needed files into the TOI directory
-copyfile ([startdir '/derivatives/diff_data/' groupname '/wmfod_template.mif'], [startdir,'/derivatives/diff_data/', groupname '/' TOI]);
-copyfile ([startdir '/derivatives/diff_data/' groupname '/tracks_2_million_sift.tck'], [startdir,'/derivatives/diff_data/', groupname '/' TOI]);
+copyfile ([startdir '/derivatives/' period, '/diff_data/' groupname '/wmfod_template.mif'], [startdir,'/derivatives/' period, '/diff_data/', groupname '/' TOI]);
+copyfile ([startdir '/derivatives/' period, '/diff_data/' groupname '/tracks_2_million_sift.tck'], [startdir,'/derivatives/' period, '/diff_data/', groupname '/' TOI]);
 
 %go into TOI directory
-cd ([startdir,'/derivatives/diff_data/', groupname, '/' TOI]);
+cd ([startdir,'/derivatives/' period, '/diff_data/', groupname, '/' TOI]);
 
 
 %-------------------------------------------------------------------------%
@@ -101,10 +104,10 @@ ManualEdits = input('After viewing your TOI, did you make additional edits? (y o
 
 %with edits
 if ManualEdits == 'y'
-    unix(['tck2fixel ' TOI '_sift_edit.tck ' startdir,'/derivatives/diff_data/', groupname '/fixel_directory/fixel_mask output_' TOI '_TOI_fixel_directory ' TOI '_fixel_mask.mif']);
+    unix(['tck2fixel ' TOI '_sift_edit.tck ' startdir,'/derivatives/' period, '/diff_data/', groupname '/fixel_directory/fixel_mask output_' TOI '_TOI_fixel_directory ' TOI '_fixel_mask.mif']);
 %no edits done    
 elseif ManualEdits == 'n'
-    unix(['tck2fixel ' TOI '_sift.tck ' startdir,'/derivatives/diff_data/', groupname '/fixel_directory/fixel_mask output_' TOI '_TOI_fixel_directory ' TOI '_fixel_mask.mif']);
+    unix(['tck2fixel ' TOI '_sift.tck ' startdir,'/derivatives/' period, '/diff_data/', groupname '/fixel_directory/fixel_mask output_' TOI '_TOI_fixel_directory ' TOI '_fixel_mask.mif']);
 end
 
 %e.g. of full command:
@@ -118,7 +121,7 @@ unix(['mrthreshold -abs 0.95 output_' TOI '_TOI_fixel_directory/' TOI '_fixel_ma
 
 %-------------------------------------------------------------------------%
 %Step 7: Compute fixel-based metrics (FD, FC, FDC) with the TOI fixel mask per each participant.
-CreateTOIFBAMetricFiles(participants, TOI, startdir, groupname);
+CreateTOIFBAMetricFiles(participants, TOI, startdir, groupname, period);
 
 
 

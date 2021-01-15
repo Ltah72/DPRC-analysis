@@ -1,4 +1,4 @@
-function CreateStudyMatrices(excelFile,fileLocation, startdir, groupname)
+function CreateStudyMatrices(excelFile,fileLocation, startdir, groupname, period)
 %Create your matrices (design_matrix.txt and contrast_matrix.txt) to run
 %your statistics on them using the general linear model (GLM). These
 %matrices have been customised to my own study design, in which I am
@@ -12,7 +12,7 @@ function CreateStudyMatrices(excelFile,fileLocation, startdir, groupname)
 %will be analysing with the given pipeline matches up with the participants
 %in the excel file.
 
-%      Inputs (4): excelFile - Name of the excel file containing
+%      Inputs (5): excelFile - Name of the excel file containing
 %                               particpant info.
 %                  fileLocation - directory of where the excelFile is
 %                                 contained.
@@ -20,6 +20,7 @@ function CreateStudyMatrices(excelFile,fileLocation, startdir, groupname)
 %                              stored
 %                  groupname - name of the group/study that you are
 %                              analysing
+%                  period - time period of the participant MRI scans
 
 %       Outputs (none): You writing the matrices to a text file.
 
@@ -153,8 +154,8 @@ else
 end
 
 %move both your matrices files into the stats_matrices folder.
-movefile('design_matrix.txt', [startdir, '/derivatives/diff_data/' groupname, '/stats_matrices']);
-movefile('contrast_matrix.txt', [startdir, '/derivatives/diff_data/' groupname, '/stats_matrices']);
+movefile('design_matrix.txt', [startdir, '/derivatives/' period, '/diff_data/' groupname, '/stats_matrices']);
+movefile('contrast_matrix.txt', [startdir, '/derivatives/' period, '/diff_data/' groupname, '/stats_matrices']);
 
 
 

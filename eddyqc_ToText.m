@@ -1,12 +1,14 @@
-function eddyqc_ToText(PAR_NAME, startdir)
+function eddyqc_ToText(PAR_NAME, startdir, period)
 %This function will copy the information and values from the eddy qc files,
 %such movement and outlier values from all participants, and will place
 %these all into one text file for the user to collate together into a 
 %visual graph.
 
-%Inputs(2): PAR_NAME = participant ID - current participant for input
+%Inputs(3): PAR_NAME = participant ID - current participant for input
 %           startdir = start directory that you defined in the script -
 %           where the data will be stored.
+%           period = time period of the participant MRI scans
+
 %Output(none): You are writing values to the file.
 
 %Author: Lenore Tahara-Eckl
@@ -37,7 +39,7 @@ else
     fclose(fid);
     
     %go into the main qc folder
-    cd ([startdir '/derivatives/diff_data/dwiqc/']);
+    cd ([startdir '/derivatives/' period '/diff_data/dwiqc/']);
     
     %edit / add the participant's values to the file
     fid2 = fopen('eddyqc_movement_all_vols.txt', 'a+');
@@ -66,7 +68,7 @@ else
 end
 
 %go back into the current participant's qc directory
-cd([startdir '/derivatives/diff_data/' PAR_NAME, '/dwi/eddyqc/']);
+cd([startdir '/derivatives/' period '/diff_data/' PAR_NAME, '/dwi/eddyqc/']);
 
 %get data from the specific outlier file. Skip the first header line and
 %place all values into a matrix.
@@ -88,7 +90,7 @@ TotalNumberValues = numel(eddy_outlier_map_values)-outliers_B0;
 PercentOutliers = (NumOutliers / TotalNumberValues) * 100;
 
 %go into the main qc folder
-cd ([startdir '/derivatives/diff_data/dwiqc/']);
+cd ([startdir '/derivatives/' period '/diff_data/dwiqc/']);
 
 %print the result to the collated file (eddyqc_num_outliers.txt)
 fid4 = fopen('eddyqc_outliers.txt', 'a+');
@@ -102,7 +104,7 @@ fclose(fid4);
 
 %get the eddy SNR and CNR values and print the text to file
 %go into participant's main dwi eddyqc file
-cd([startdir '/derivatives/diff_data/' PAR_NAME, '/dwi/eddyqc/eddy_quad.qc/']);
+cd([startdir '/derivatives/' period '/diff_data/' PAR_NAME, '/dwi/eddyqc/eddy_quad.qc/']);
 
 %read in .json file
 fname = 'qc.json';
@@ -114,7 +116,7 @@ CNR_B1000value = qcFile.qc_cnr_avg(2,1);
 CNR_B2000value = qcFile.qc_cnr_avg(3,1);
 
 %go into the main qc folder
-cd ([startdir '/derivatives/diff_data/dwiqc/']);
+cd ([startdir '/derivatives/' period '/diff_data/dwiqc/']);
 
 %print values to the SNR/CNR text file
 fid5 = fopen('eddyqc_SNR&CNR.txt', 'a+');
@@ -128,7 +130,7 @@ fclose(fid5);
 
 
 %go back into the current participant's directory
-cd([startdir '/derivatives/diff_data/' PAR_NAME, '/dwi/']);
+cd([startdir '/derivatives/' period '/diff_data/' PAR_NAME, '/dwi/']);
 
 end
 

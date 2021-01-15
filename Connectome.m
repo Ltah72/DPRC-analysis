@@ -1,34 +1,61 @@
 %This script will create a connectome to represent the number of
-%streamlines connecting different parts of the brain. This script assumes 
-%that the user has ran the previous pipelines (preprocessing and CSD), and 
-%it will use that processed data for this pipeline. The tractography inputs 
-%for this will be with using ACT and SIFT. The brain will be parcellated 
-%into different regions or nodes using an atlas. 
+%streamlines connecting different parts of the brain. Preprocessing is done 
+%via fmriprep (this should be done as the first step of this pipeline. This 
+%script also assumes that the user has ran the previous pipelines 
+%(preprocessing and constrained spherical deconvolution (CSD)), and it will 
+%use that processed data for this pipeline. The tractography inputs for 
+%this will be with using anatomically constrained tractography (ACT) and 
+%spherical-deconvolution informed filtering (SIFT). The brain will be 
+%parcellated into different regions or nodes using an atlas, as specified 
+%in the code below and in the manual. 
 
 %See MRtrix documentation: 
 %https://mrtrix.readthedocs.io/en/latest/quantitative_structural_connectivity/structural_connectome.html
 
 % Steps: 
-% 1. Create a 5tt image for ACT
-%   a. Perform bias field correction on t1w and t2 FLAIR images
-%   b. Co-registration t1w and dwi image
-%   c. Generate a '4tt image'
-%   d. Edit in a pathological image to create a 5ttimage
-%   e. Create a 'seed' boundary between the white and grey matter for
+% 1. Preprocess anatomical images (T1w and T2 FLAIR images) 
+%   a. Gibbs ringing correction (mrdegibbs)
+%   b. Run fmriprep to preprocess anat + func images
+% 2. Create a 5tt image for ACT
+%   a. Co-registration t1w and t2 FLAIR to dwi image
+%   b. Generate a '4tt image'
+%   c. Edit in a pathological image to create a '5ttimage'
+%   d. Create a 'seed' boundary between the white and grey matter for
 %   streamline generation
 % 2. Create streamlines for tractography with ACT
 % 3. Refine streamlines with SIFT
 % 4. Parcellate brain regions/nodes with an atlas (e.g. FreeSurfer)
 % 5. Create the connectome
-%   a. Convert the labels to MRtrix format
-%   b. Co-register the parcellation to the grey matter boundary
-%   c. Create the whole-brain connectome
+%   Option 1: Create an 84 x 84 connectome (simple)
+%       a. Convert the labels to MRtrix format
+%       b. Co-register the parcellation to the grey matter boundary
+%       c. Create the whole-brain connectome
+%   Option 2: Use HCP MMP 1.0 atlas - 379 x 379 connectome
+%       a. Map annotation file of HCP MMP atlas from fsaverage to your subject
+%       b. Map HCP MMP annotations onto volumetric image and add
+%       subcortical segmentation
+%       c. Replace random integers of hcpmmp1 file with integers that start
+%       at and increase by 1
+%       d. Register the ordered atlas-based volumetric parcellation to
+%       diffusion space
+%       e. Create the whole-brain connectome
+% 6. Select a specific tract between regions from the connectome
+% 7. Perform group-wise statistics of the connectome using non-parametric 
+% permutation testing
+%       a. On whole-brain connectome (all nodes)
+%       b. On nodes / connections of interest
+% 8. Options for connectome visualisation
+%       a. Make the connectome appear more ‘anatomical’
+%       b.	Check over connectome files
+
+%Author: Lenore Tahara-Eckl
+%Email: Ltah262@aucklanduni.ac.nz
+%Date: 20/12/20
 
 
 clc;
 clear all;
 close all;
-
 
 %define/add pathways
 %startdir = input('Please enter data directory:', 's');
@@ -41,34 +68,50 @@ ScriptDirectory = '/data/USERS/LENORE/scripts/dprc/diffusion';
 %should be the same groupname from what the user analysed in the previous scripts (e.g. CSD.m).  
 groupname = input('Which pre-processed group / study do you want to continue to analyse?: ', 's');
 
+%choose time period
+period = input('Which time period do you want to analyse, e.g. F0, F2, all, etc?: ', 's');
+
 %create a connectome folder to place all of the data and analysis in
-mkdir([startdir,'/derivatives/diff_data/', groupname, '/connectome/']);
+mkdir([startdir,'/derivatives/' period, '/diff_data/', groupname, '/connectome/']);
 
-%go into the group/study analysis folder
-cd([startdir '/derivatives/diff_data/', groupname]);
-
-%copy necessary files into the connectome folder
-%dwi preprocessed folder
-preprocessed_dwi = fullfile('preprocessed_dwi');
-connectome = fullfile('connectome');
-copyfile(preprocessed_dwi, fullfile(connectome, 'preprocessed_dwi'));
-%wmfod bias field corrected and intensity normalised data
-copyfile ('wmfod_norm_*', [startdir,'/derivatives/diff_data/', groupname, '/connectome/']);
-
+%make directory to hold your matrices (e.g. design and contrast)for
+%statistical tests - for connectome analysis. You need to manually create and
+%store the files in here.
+mkdir([startdir,'/derivatives/' period, '/diff_data/', groupname, '/connectome/stats_matrices/']);
 
 %Add your script and all necessary files (e.g. data, functions) to path
 addpath(genpath(startdir));
 addpath(genpath(ScriptDirectory));
 
-%go into the connectome folder
-cd([startdir '/derivatives/diff_data/', groupname, '/connectome']);
+%go into the participant analysed folder + choose participants
+cd([startdir '/derivatives/' period, '/diff_data/', groupname, '/IN']);
 
 %define variables
-participants = dir(fullfile('preprocessed_dwi', '*.mif'));
+msgfig = 'Choose participants for analysis (all should be included from this directory.)';
+uiwait(msgbox(msgfig));
+participants = uipickfiles;
+%participants = dir(fullfile('preprocessed_dwi', '*.mif'));
 datafile = '_acq_data_dwi';
 
-%create 5ttImageCheck text file with header line
-cd([startdir '/derivatives/diff_data/', groupname, '/qc/']);
+%create stat matrices for analysis - can automate this or can be manual
+warningMessage = 'Automaticity of study matrices for running stats have only been customised to this script''s creator (e.g 5 groups - HC, SCD, aMCI, mMCI, AD). If you have your own group design, then you will have to manually create your matrices.';
+uiwait(warndlg(warningMessage));
+UserAutomate = input('Do you want to automate your matrice creation? y or n: ', 's');
+if UserAutomate == 'y'
+    excelFile = input('Please name the excel file you wish to use: ', 's');
+    fileLocation = input(['Where is this file, ' excelFile  ', located? Name the directory: '], 's');
+    CreateStudyMatrices(excelFile, fileLocation, startdir, groupname);
+elseif UserAutomate == 'n'
+    UserMatrices = input('Have you created your own matrices? y or n: ', 's');
+    if UserMatrices == 'y'
+        disp('Make sure you have already placed your matrix files into the stats_matrices folder.');
+    elseif UserMatrices == 'n'
+        error('Pipeline stopped; please first create you matrix files and place into the stats_matrices folder.');
+    end
+end
+
+%create 5ttImageCheck text file w/ header line and put into quality control (qc)
+cd([startdir '/derivatives/' period, '/diff_data/', groupname, '/qc/']);
 fid4 = fopen('5ttImageCheck.txt', 'w');
 if (fid4 == -1)
     disp('Error in creating the text file.')
@@ -77,54 +120,64 @@ else
     fclose(fid4);
 end
 
+%go into the connectome folder
+cd([startdir '/derivatives/' period, '/diff_data/', groupname, '/connectome/']);
 
 
-
-%-------------------------------------------------------------------------%
-%Step 1: Create a 5tt image for ACT
 for i = 1:length(participants)
     
-    full_name = participants(i).name;
-    PAR_NAME = full_name(1:15);
+    [upper_path, PAR_NAME, ~] = fileparts(participants{1,i}); 
+ 
+    %copy preprocessed dwi, brain mask, + wmfod_norm file into connectome folder
+    copyfile ([startdir '/derivatives/' period, '/diff_data/' groupname, '/IN/brain_mask/' PAR_NAME, datafile, '.mif'], [startdir,'/derivatives/', period, '/diff_data/', groupname, '/connectome/']);
+    movefile([PAR_NAME, datafile,'.mif'], ['brain_mask_', PAR_NAME, datafile,'.mif']);
+    copyfile ([startdir '/derivatives/' period, '/diff_data/' groupname, '/IN/preprocessed_dwi/' PAR_NAME, datafile, '.mif'], [startdir,'/derivatives/', period, '/diff_data/', groupname, '/connectome/']);
+    copyfile ([startdir '/derivatives/' period, '/diff_data/' groupname, '/IN/wmfod_norm_', PAR_NAME, '.mif'], [startdir,'/derivatives/', period, '/diff_data/', groupname, '/connectome/']);
+
+    %copy preprocessed t1w + t2 FLAIR images from fmriprep, and the WMH lesion masks into connectome folder
+    copyfile ([stardir, '/fmriprep_test/derivatives/', PAR_NAME, '/anat/', PAR_NAME, '_desc-preproc_T1w.nii.gz'], [startdir,'/derivatives/', period, '/diff_data/', groupname, '/connectome']);
+    copyfile ([stardir, '/fmriprep_test/sourcedata/', PAR_NAME, '/anat/', PAR_NAME, '_FLAIR.nii'], [startdir,'/derivatives/', period, '/diff_data/', groupname, '/connectome']);
+    copyfile ([startdir, '/WMH_lesion_masks/ples_lpa_mr' PAR_NAME '_FLAIR', '.nii'], [startdir,'/derivatives/', period, '/diff_data/', groupname, '/connectome']);
     
-    %copy participant's raw t1w and t2 FLAIR images, and the preprocessed/segmented
-    %t2 FLAIR images into main group folder
-    copyfile ([startdir '/sourcedata/' PAR_NAME '/anat/', '*.nii'], [startdir,'/derivatives/diff_data/', groupname, '/connectome']);
+    %copy FreeSurfer's recon-all output into FreeSurfer's $SUBJECTS directory
+    unix(['cp -r ' startdir, '/fmriprep_test/derivatives/freesurfer/', PAR_NAME, '/ $SUBJECTS_DIR']);
+
+    %convert T1 image to .nii format
+    unix(['mrconvert ' PAR_NAME, '_desc-preproc_T1w.nii.gz ' PAR_NAME, '_T1w.nii']);
     
-    %a) perform bias field correct t1w and t2 FLAIR images
-    %get brain mask from both images
-    unix(['bet ' PAR_NAME, '_T1w.nii bet_' PAR_NAME, '_T1w.nii -m -f 0.2']);
+    %Have to apply bias field correction on T2 FLAIR using BET and ANTs - N4 algorithm
+    %get brain mask from FLAIR
     unix(['bet ' PAR_NAME, '_FLAIR.nii bet_' PAR_NAME, '_FLAIR.nii -m -f 0.2']);
-    
-    %bias field correct directly with ants programme
-    unix(['N4BiasFieldCorrection -d 3 -x bet_' PAR_NAME '_T1w_mask.nii.gz -i ' PAR_NAME, '_T1w.nii -o ' PAR_NAME '_bfc_T1w.nii']);
+    %bias field correct directly with ANTs programme
     unix(['N4BiasFieldCorrection -d 3 -x bet_' PAR_NAME '_FLAIR_mask.nii.gz -i ' PAR_NAME, '_FLAIR.nii -o ' PAR_NAME '_bfc_FLAIR.nii']);
     
-    %b) co-registration of t1w and t2 FLAIR to dwi image through fsl FLIRT
+    %---------------------------------------------------------------------%
+    %Step 2: Create a 5tt image for ACT
+    %a) co-registration of t1w and t2 FLAIR to dwi image through fsl FLIRT
     %convert to nii format to run fsl's FLIRT - use the best B0 volume,
     %which will be the first vol in the dwi sequence (vol 0).
-    unix(['mrconvert -coord 3 0 preprocessed_dwi/', PAR_NAME, datafile,'.mif ref_b0_', PAR_NAME, '.nii']);
+    unix(['mrconvert -coord 3 0 ', PAR_NAME, datafile,'.mif ref_b0_', PAR_NAME, '.nii']);
     
-    %linear registration with 6 dof and the tranformation matrix output
-    unix(['flirt -in ', PAR_NAME, '_bfc_T1w.nii -ref ref_b0_', PAR_NAME, '.nii -dof 6 -out t1_flirt_' PAR_NAME, '.nii -omat transform_flirt_t12dwi.mat']);
-    unix(['flirt -in ', PAR_NAME, '_bfc_FLAIR.nii -ref ref_b0_', PAR_NAME, '.nii -dof 6 -out t2_flirt_' PAR_NAME, '.nii -omat transform_flirt_t22dwi.mat']);
+    %linear registration with 6 dof and the transformation matrix output
+    unix(['flirt -in ', PAR_NAME, '_T1w.nii -ref ref_b0_', PAR_NAME, '.nii -dof 6 -out t1_flirt_' PAR_NAME, '.nii -omat transform_flirt_t12dwi_' PAR_NAME '.mat']);
+    unix(['flirt -in ', PAR_NAME, '_bfc_FLAIR.nii -ref ref_b0_', PAR_NAME, '.nii -dof 6 -out t2_flirt_' PAR_NAME, '.nii -omat transform_flirt_t22dwi_' PAR_NAME '.mat']);
     
     %apply the linear transformation to the t1 and t2 image
-    unix(['transformconvert transform_flirt_t12dwi.mat ' PAR_NAME, '_bfc_T1w.nii ref_b0_', PAR_NAME, '.nii flirt_import transform_mrtrix_t12dwi.txt']);
-    unix(['transformconvert transform_flirt_t22dwi.mat ' PAR_NAME, '_bfc_FLAIR.nii ref_b0_', PAR_NAME, '.nii flirt_import transform_mrtrix_t22dwi.txt']);
-    unix(['mrtransform ' PAR_NAME, '_bfc_T1w.nii -linear transform_mrtrix_t12dwi.txt ' PAR_NAME, '_T1coreg.nii']);
-    unix(['mrtransform ' PAR_NAME, '_bfc_FLAIR.nii -linear transform_mrtrix_t12dwi.txt -template ' PAR_NAME, '_T1coreg.nii ' PAR_NAME, '_T2coreg.nii']);
+    unix(['transformconvert transform_flirt_t12dwi_' PAR_NAME '.mat ' PAR_NAME, '_T1w.nii ref_b0_', PAR_NAME, '.nii flirt_import transform_mrtrix_t12dwi_' PAR_NAME '.txt']);
+    unix(['transformconvert transform_flirt_t22dwi_' PAR_NAME '.mat ' PAR_NAME, '_bfc_FLAIR.nii ref_b0_', PAR_NAME, '.nii flirt_import transform_mrtrix_t22dwi_' PAR_NAME '.txt']);
+    unix(['mrtransform ' PAR_NAME, '_T1w.nii -linear transform_mrtrix_t12dwi_' PAR_NAME '.txt ' PAR_NAME, '_T1coreg.nii']);
+    unix(['mrtransform ' PAR_NAME, '_bfc_FLAIR.nii -linear transform_mrtrix_t12dwi_' PAR_NAME '.txt -template ' PAR_NAME, '_T1coreg.nii ' PAR_NAME, '_T2coreg.nii']);
     
     %convert to .mif (mrtrix) format
     unix(['mrconvert ' PAR_NAME, '_T1coreg.nii ' PAR_NAME '_T1coreg.mif']);
     unix(['mrconvert ' PAR_NAME, '_T2coreg.nii ' PAR_NAME '_T2coreg.mif']);
     
-    %c) generate 5tt image with brain mask, t1, and t2 FLAIR
-    unix(['5ttgen fsl -mask brain_mask/', PAR_NAME, datafile, '.mif -t2 ' PAR_NAME, '_T2coreg.mif ' PAR_NAME '_T1coreg.mif 4ttimage_' PAR_NAME '.mif']);
-    
-    %d) edit in the pathological tissue (WMH) to the 5tt image:
+    %b) generate 5tt image with brain mask, t1, and t2 FLAIR
+    unix(['5ttgen fsl -mask brain_mask_', PAR_NAME, datafile, '.mif -t2 ' PAR_NAME, '_T2coreg.mif ' PAR_NAME '_T1coreg.mif 4ttimage_' PAR_NAME '.mif']);
+
+    %c) edit in the pathological tissue (WMH) to the 5tt image:
     %convert WMH lesion mask to .mif file
-    unix(['mrconvert ples_lpa_mr', PAR_NAME, '_FLAIR.nii.gz ples_lpa_mr', PAR_NAME, '_FLAIR.mif']);
+    unix(['mrconvert ples_lpa_mr', PAR_NAME, '_FLAIR.nii ples_lpa_mr', PAR_NAME, '_FLAIR.mif']);
     
     %reslice the WMH lesion mask to match the 4tt image
     unix(['mrtransform ples_lpa_mr' PAR_NAME, '_FLAIR.mif -template 4ttimage_' PAR_NAME, '.mif ' PAR_NAME, '_WMH_mask_transformed.mif']);
@@ -133,66 +186,110 @@ for i = 1:length(participants)
     unix(['5ttedit -path ', PAR_NAME, '_WMH_mask_transformed.mif 4ttimage_' PAR_NAME, '.mif 5ttimage_' PAR_NAME '.mif']);
     
     %check that your 5ttimage conforms to MRtrix's expected format
-    FiveTTImageCheck(PAR_NAME);
+    FiveTTImageCheck(PAR_NAME, startdir, period, groupname);
 
-    %e) Create a 'seed' boundary between the white and grey matter for
+    %d) Create a 'seed' boundary between the white and gray matter for
     %streamline generation
     unix(['5tt2gmwmi 5ttimage_' PAR_NAME '.mif gmwmSeed_mask_' PAR_NAME '.mif']);
    
-   
     %---------------------------------------------------------------------%
-    %Step 2: Generate streamline tracks with -act
+    %Step 3: Generate streamline tracks with -act
     unix(['tckgen -act 5ttimage_' PAR_NAME '.mif -backtrack -seed_gmwmi gmwmSeed_mask_' PAR_NAME '.mif -maxlength 250 -cutoff 0.06 -select 10000000 wmfod_norm_' PAR_NAME '.mif tracks_10M_' PAR_NAME '.tck']);
     
     %if you want to view the tracks, make a smaller version of them:
-    unix(['tckedit tracks_10M_' PAR_NAME '.tck -number 200k smallerTracks_200k_' PAR_NAME '.tck']);
+    %unix(['tckedit tracks_10M_' PAR_NAME '.tck -number 200k smallerTracks_200k_' PAR_NAME '.tck']);
     
-   
     %---------------------------------------------------------------------%
-    %Step 3: Refine streamlines with tcksift2
+    %Step 4: Refine streamlines with tcksift2
     unix(['tcksift2 -act 5ttimage_' PAR_NAME '.mif -out_mu sift_mu_' PAR_NAME '.txt -out_coeffs sift_coeffs_' PAR_NAME '.txt tracks_10M_' PAR_NAME '.tck wmfod_norm_' PAR_NAME '.mif sift_1M_' PAR_NAME '.txt']);
-
-%     %if you want to see the .tck SIFT file, you can generate the image using tcksift 
-%     unix(['tcksift -act 5ttimage_' PAR_NAME '.mif -term_number 1000000 tracks_10M_' PAR_NAME '.tck wmfod_norm_' PAR_NAME '.mif sift_1M_' PAR_NAME '.tck']);
     
+    %Also, generate the .tck 1M SIFT file, used for connectome visualisation later on 
+    unix(['tcksift -act 5ttimage_' PAR_NAME '.mif -term_number 1000000 tracks_10M_' PAR_NAME '.tck wmfod_norm_' PAR_NAME '.mif sift_1M_' PAR_NAME '.tck']);
+    
+
 %     %Compare the tracks with and without SIFT with 10k tracks (for
 %     %visualation only)
 %     unix(['tckedit tracks_10M_' PAR_NAME '.tck -number 10k SuperSmallTracks_10k_' PAR_NAME '.tck']);
 %     unix(['tckedit sift_1M_' PAR_NAME '.tck -number 10k SuperSmallTracks_10k_' PAR_NAME '_sift.tck -force']);
 % 
-%     
-    %---------------------------------------------------------------------%
-    %Step 4: Parcellate brain regions/nodes with FreeSurfer
-%     %FreeSurfer command below - run this command if you are not using the
-%     %output from the fmriprep pipeline
-%     unix(['recon-all -i ' PAR_NAME '_T1w.nii -s ' PAR_NAME ' -all']);
-%     
-      %get necessary freesurfer output from fmriprep
-
-
+%   
+ 
     %---------------------------------------------------------------------%
     %Step 5: Create the connectome
-    
+    %Option 1: Create a 'simple' connectome, using MRtrix default atlas (84 x 84)
     %a) Convert labels to mrtrix format
-    unix(['labelconvert ' PAR_NAME '/mri/aparc+aseg.mgz $FREESURFER_HOME/FreeSurferColorLUT.txt /data/SOFTWARE/mrtrix3/share/mrtrix3/labelconvert/fs_default.txt ' PAR_NAME '_parcels.mif']);
+    %unix(['labelconvert ' PAR_NAME '/mri/aparc+aseg.mgz $FREESURFER_HOME/FreeSurferColorLUT.txt /SOFTWARE/anaconda3/share/mrtrix3/labelconvert/fs_default.txt ' PAR_NAME '_parcels.mif']);
     
     %b) Co-register the parcellation to the grey matter boundary
-    unix(['mrtransform ' PAR_NAME '_parcels.mif -interp nearest -linear transform_mrtrix_t12dwi.txt -inverse -datatype uint32 ' PAR_NAME '_parcels_coreg.mif']);
+    %unix(['mrtransform ' PAR_NAME '_parcels.mif -interp nearest -linear transform_mrtrix_t12dwi.txt -inverse -datatype uint32 ' PAR_NAME '_parcels_coreg.mif']);
     
     %c) Create whole-brain connectome
-    unix(['tck2connectome -symmetric -zero_diagonal -scale_invnodevol -tck_weights_in sift_1M_' PAR_NAME '.txt tracks_10M_' PAR_NAME '.tck ' PAR_NAME '_parcels_coreg.mif ' PAR_NAME '_parcels_coreg.csv -out_assignment assignments_' PAR_NAME '_parcels_coreg.csv']);
+    %unix(['tck2connectome -symmetric -zero_diagonal -scale_invnodevol -tck_weights_in sift_1M_' PAR_NAME '.txt tracks_10M_' PAR_NAME '.tck ' PAR_NAME '_parcels_coreg.mif ' PAR_NAME '_parcels_coreg.csv -out_assignment assignments_' PAR_NAME '_parcels_coreg.csv']);
     
-%     %visualise the connectome matrix in matlab:
+%     %visualise the connectome matrix in Matlab:
 %     %cannot view on dementia vm, as their is no openGL for viewing gui. 
 %     connectome = importdata([PAR_NAME '_parcels_coreg.csv']);
 %     imagesc(connectome)
 
 
 
+    %Option 2: use HCP MMP1 atlas (379 x 379):
+    %a) map the annotation file of the HCP MMP 1.0 atlas from fsaverage to
+    %your subject. Remember to do that for both hemispheres. 
+    unix(['mri_surf2surf --srcsubject fsaverage --trgsubject ' PAR_NAME ' --hemi lh --sval-annot $SUBJECTS_DIR/fsaverage/label/lh.hcpmmp1.annot --tval $SUBJECTS_DIR/' PAR_NAME '/label/lh.hcpmmp1.annot']);
+    unix(['mri_surf2surf --srcsubject fsaverage --trgsubject ' PAR_NAME ' --hemi rh --sval-annot $SUBJECTS_DIR/fsaverage/label/rh.hcpmmp1.annot --tval $SUBJECTS_DIR/' PAR_NAME '/label/rh.hcpmmp1.annot']);
+    
+    %b) map the HCP MMP 1.0 annotations onto the volumetric image and add
+    %(FreeSurfer-specific) subcortical segmentation. Convert the resulting
+    %file to .mif format (use datatype uint32, which is liked best by
+    %MRtrix). 
+    unix(['mri_aparc2aseg --old-ribbon --s ' PAR_NAME ' --annot hcpmmp1 --o ' PAR_NAME '_hcpmmp1.mgz']);
+    unix(['mrconvert -datatype uint32 ' PAR_NAME '_hcpmmp1.mgz ' PAR_NAME '_hcpmmp1.mif']);
+    
+    %c) Replace the random integers of the hcpmmp1.mif file with integers that
+    %start at 1 and increase by 1. 
+    unix(['labelconvert ' PAR_NAME '_hcpmmp1.mif /SOFTWARE/anaconda3/share/mrtrix3/labelconvert/hcpmmp1_original.txt /SOFTWARE/anaconda3/share/mrtrix3/labelconvert/hcpmmp1_ordered.txt ' PAR_NAME '_hcpmmp1_parcels_nocoreg.mif']);
+   
+    %d) Register the ordered atlas-based volumetric parcellation to diffusion
+    %space. 
+    unix(['mrtransform ' PAR_NAME '_hcpmmp1_parcels_nocoreg.mif -linear transform_mrtrix_t12dwi.txt -inverse -datatype uint32 ' PAR_NAME '_hcpmmp1_parcels_coreg.mif']);
+    
+    %e) Create the whole-brain connectome: 
+    unix(['tck2connectome -symmetric -zero_diagonal -scale_invnodevol sift_1M_' PAR_NAME '.tck ' PAR_NAME '_hcpmmp1_parcels_coreg.mif hcpmmp1_' PAR_NAME '.csv -out_assignment assignments_hcpmmp1_' PAR_NAME '.csv']);
+    
+    %try with weights (but will give you too 'bright' of a connectome image):
+    unix(['tck2connectome -symmetric -zero_diagonal -scale_invnodevol -tck_weights_in sift_1M_' PAR_NAME '.txt tracks_10M_' PAR_NAME '.tck ' PAR_NAME '_hcpmmp1_parcels_coreg.mif hcpmmp1w_' PAR_NAME '.csv -out_assignment assignments_hcpmmp1w_' PAR_NAME '.csv']);
 
     
+    %---------------------------------------------------------------------%
+    %Step 6: Select a specfic tract between specific regions from the connectome
+    %tic
+    %for the whole FPN (complete) 
+    %unix(['connectome2tck -nodes 73,253,67,247,97,277,98,278,26,206,70,250,71,251,87,267,68,248,83,263,85,265,84,264,86,266,40,220,41,221,55,235,44,224,43,223,36,216,39,219,37,217,48,228,95,275,49,229,117,297,50,230,47,227,42,222,45,225,46,226,29,209,143,323,151,331,150,330,149,329,148,328,116,296,147,327,146,326,145,325,144,324 -files single -exclusive sift_1M_' PAR_NAME '.tck assignments_hcpmmp1_' PAR_NAME '.csv ' PAR_NAME '_whole-FPN']);
+    %toc
+    %tic
+    %for the whole FPN (complete) with weights: 
+    %unix(['connectome2tck -nodes 73,253,67,247,97,277,98,278,26,206,70,250,71,251,87,267,68,248,83,263,85,265,84,264,86,266,40,220,41,221,55,235,44,224,43,223,36,216,39,219,37,217,48,228,95,275,49,229,117,297,50,230,47,227,42,222,45,225,46,226,29,209,143,323,151,331,150,330,149,329,148,328,116,296,147,327,146,326,145,325,144,324 -files single -exclusive tracks_10M_' PAR_NAME '.tck -tck_weights_in sift_1M_' PAR_NAME '.txt assignments_hcpmmp1w_' PAR_NAME '.csv ' PAR_NAME '_whole-FPN_w']);
+    %toc
+    
+    
+end 
+
+
+    %---------------------------------------------------------------------%
+    %Step 7: Perform group-wise statistics of the connectome using
+    %non-parametric permuation testing
+    
+    %write participants to file
+    InputConnectomeFileList(participants);
+    
+    %run connectome stats
+    unix(['connectomestats ConnectomeInput.txt tfnbs stats_matrices/design_matrix_CvAD_clinsite_covar.txt stats_matrices/contrast_matrix_CvAD_clinsite_covar.txt output_CvAD_connectome_stats/output_CvAD']);
+   
     
     
     
     
-end
+    
+    
+   

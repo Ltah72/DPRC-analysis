@@ -49,22 +49,25 @@ ScriptDirectory = '/data/USERS/LENORE/scripts/dprc/diffusion';
 %should be the same groupname from what the user analysed in the CSD script.
 groupname = input('Which pre-processed group / study do you want to continue to analyse?: ', 's');
 
-%make directories for AFD data
-mkdir([startdir,'/derivatives/diff_data/', groupname, '/template/log_fc_data/']);
-mkdir([startdir,'/derivatives/diff_data/', groupname, '/template/fd_data/']);
-mkdir([startdir,'/derivatives/diff_data/', groupname, '/template/fdc_data/']);
+%choose time period
+period = input('Which time period do you want to analyse, e.g. F0, F2, all, etc?: ', 's');
+
+%make directories for FBA data
+mkdir([startdir,'/derivatives/' period, '/diff_data/', groupname, '/template/log_fc_data/']);
+mkdir([startdir,'/derivatives/' period, '/diff_data/', groupname, '/template/fd_data/']);
+mkdir([startdir,'/derivatives/' period, '/diff_data/', groupname, '/template/fdc_data/']);
 
 %make directory to hold your matrices (e.g. design and contrast)for
 %statistical tests - for FBA analysis. You need to manually create and
 %store the files in here.
-mkdir([startdir,'/derivatives/diff_data/', groupname, '/stats_matrices/']);
+mkdir([startdir,'/derivatives/' period, '/diff_data/', groupname, '/stats_matrices/']);
 
 %Add your script and all necessary files (e.g. data, functions) to path
 addpath(genpath(startdir));
 addpath(genpath(ScriptDirectory));
 
 %go into participant derivatives folder
-cd([startdir '/derivatives/diff_data/']);
+cd([startdir '/derivatives/' period, '/diff_data/']);
 
 %choose participants for analysis (do not include excluded participants).
 msgfig = 'Choose participants for analysis (do not include excluded participants)';
@@ -88,7 +91,7 @@ elseif UserAutomate == 'n'
     end
 end
 %go back into group folder
-cd([startdir '/derivatives/diff_data/', groupname]);
+cd([startdir '/derivatives/' period, '/diff_data/', groupname]);
 
 
 %FBA steps begin below:
@@ -185,12 +188,12 @@ CreateParticipantFixelList;
 %will include in your analysis (e.g. contrast_matrix.txt)
 
 %Run statistical tests for each AFD metric
-unix(['fixelcfestats template/fd_smooth/ files_fd.txt stats_matrices/design_matrix_two-tailed_covar.txt stats_matrices/contrast_matrix_two-tailed_covar.txt template/matrix/ stats_fd/']);
-unix(['fixelcfestats template/log_fc_smooth/ files_log_fc.txt stats_matrices/design_matrix_two-tailed_covar.txt stats_matrices/contrast_matrix_two-tailed_covar.txt template/matrix/ stats_log_fc/']);
-unix(['fixelcfestats template/fdc_smooth/ files_fdc.txt stats_matrices/design_matrix_two-tailed_covar.txt stats_matrices/contrast_matrix_two-tailed_covar.txt template/matrix/ stats_fdc/']);
+unix(['fixelcfestats template/fd_smooth/ files_fd.txt stats_matrices/design_matrix.txt stats_matrices/contrast_matrix.txt template/matrix/ stats_fd/']);
+unix(['fixelcfestats template/log_fc_smooth/ files_log_fc.txt stats_matrices/design_matrix.txt stats_matrices/contrast_matrix.txt template/matrix/ stats_log_fc/']);
+unix(['fixelcfestats template/fdc_smooth/ files_fdc.txt stats_matrices/design_matrix.txt stats_matrices/contrast_matrix.txt template/matrix/ stats_fdc/']);
 
 
-%%%%% Below, you will need to manually edit and do these steps on your own. 
+%%%%% Below, you will need to manually edit these commands specific to your data. 
 
 %-------------------------------------------------------------------------%
 %Step 8: Visualise results
@@ -206,18 +209,23 @@ unix(['fixelcfestats template/fdc_smooth/ files_fdc.txt stats_matrices/design_ma
 %Step 9: Display results with streamlines
 %cropping streamlines from the template-derived whole-brain tractogram to include streamline points that correspond to significant fixels
 
-%Reduce number of streamlines to 200,000
+% a) Reduce number of streamlines to 200,000
 %unix(['tckedit template/tracks_2_million_sift.tck -num 200000 template/tracks_200k_sift.tck']);
 
-%map fixel values to streamline points and save them in a 'track scalar file' (.tsf)
-%unix(['fixel2tsf stats_fd/fwe_1mpvalue.mif template/tracks_200k_sift.tck fd_WholeBrainfwe_pvalue.tsf']);
-%unix(['fixel2tsf stats_log_fc/fwe_1mpvalue.mif template/tracks_200k_sift.tck log_fc_WholeBrainfwe_pvalue.tsf']);
-%unix(['fixel2tsf stats_fdc/fwe_1mpvalue.mif template/tracks_200k_sift.tck fdc_WholeBrainfwe_pvalue.tsf']);
+%b) map fixel values to streamline points and save them in a 'track scalar file' (.tsf)
+%unix(['fixel2tsf stats_fd/fwe_1mpvalue.mif template/tracks_200k_sift.tck stats_fd/fd_WholeBrainfwe_pvalue.tsf']);
+%unix(['fixel2tsf stats_log_fc/fwe_1mpvalue.mif template/tracks_200k_sift.tck stats_log_fc/fc_WholeBrainfwe_pvalue.tsf']);
+%unix(['fixel2tsf stats_fdc/fwe_1mpvalue.mif template/tracks_200k_sift.tck stats_fdc/fdc_WholeBrainfwe_pvalue.tsf']);
 
-%visualise track scalar files using the tractogram tool in MRview. First
+%c) visualise track scalar files using the tractogram tool in MRview. First
 %load the streamlines (tracks_200k_sift.tck). Then to dynamically threshold
 %(remove) streamline point by p-value select the “Thresholds” dropdown and
 %select “Separate Scalar file” and set to 0.95.
+
+%d) Smooth the .tsf file
+%unix(['tsfsmooth -stdev 4 stats_fd/fd_WholeBrainfwe_pvalue.tsf stats_fd/smoothed_fd_WholeBrainfwe_pvalue.tsf']);
+%unix(['tsfsmooth -stdev 4 stats_fc/fc_WholeBrainfwe_pvalue.tsf stats_fc/smoothed_fc_WholeBrainfwe_pvalue.tsf']);
+%unix(['tsfsmooth -stdev 4 stats_fdc/fdc_WholeBrainfwe_pvalue.tsf stats_fdc/smoothed_fdc_WholeBrainfwe_pvalue.tsf']);
 
 
 %-------------------------------------------------------------------------%

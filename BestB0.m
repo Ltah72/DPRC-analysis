@@ -1,4 +1,4 @@
-function [BU_used] = BestB0(PAR_NAME, datafile, NumBDs, startdir)
+function [BU_used] = BestB0(PAR_NAME, datafile, NumBDs, startdir, period)
 
 %This function will calculate the 'BestB0' to find the most suitable pair
 %of blip-up (BU or AP) and blip-down (BD or PA) volumes used for topup in
@@ -25,11 +25,12 @@ function [BU_used] = BestB0(PAR_NAME, datafile, NumBDs, startdir)
 %selected, will now be the first volume in the dwi sequence - the first
 %volume and selected volume will switch places (if this is done).
 
-%Inputs(4): PAR_NAME = participant ID
+%Inputs(5): PAR_NAME = participant ID
 %           datafile = dwi datafile
 %           NumBDs = number of BD files participant has (typically 3)
 %           startdir = start directory that you defined in the script -
 %           where the data will be stored.
+%           period = time period of the participant MRI scans
 
 %Outputs (1): BU number used in the main dwi dataset sequence
 
@@ -139,13 +140,13 @@ end
 %create a text file to note down the BU and BD used for the B0, and if any
 %participants have been flagged. Also, choose the best B0 according to
 %Jesper's criterion (see info above and/or in paper referenced)
-cd([startdir '/derivatives/diff_data/dwiqc/']);
+cd([startdir '/derivatives/' period '/diff_data/dwiqc/']);
 
 fid3 = fopen('BestB0.txt', 'a+');
 if (fid3 == -1)
     disp('Error in opening in the BestB0.txt file.')
 else
-    cd([startdir '/derivatives/diff_data/' PAR_NAME, '/dwi/']);
+    cd([startdir '/derivatives/' period '/diff_data/' PAR_NAME, '/dwi/']);
 end
 
 %check that at least 1 B0 is > 0.95; if not, then flag the participant.

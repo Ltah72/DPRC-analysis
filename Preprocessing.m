@@ -50,14 +50,17 @@ cd(ScriptDirectory);
 %cross-sectional, F0s, longitudinal, F0 vs. F2, etc.):
 groupname = input('Please name the group/study analysis: ', 's');
 
+%choose time period
+period = input('Which time period do you want to analyse, e.g. F0, F2, all, etc?: ', 's');
+
 %ask user if they want to do slice-to-volume motion correction
 %(mp_order), with eddy CUDA/GPU requirement?
 SlicetoVol_Corr = input('Do you want to perform slice-to-vol motion correction (mp_order)? *Requires eddy cuda and GPU. y or n: ', 's');
 
 %make directories
-mkdir([startdir,'/derivatives/diff_data/', groupname, '/preprocessed_dwi/']);
-mkdir([startdir,'/derivatives/diff_data/', groupname, '/brain_mask/']);
-mkdir([startdir,'/derivatives/diff_data/dwiqc/']);
+mkdir([startdir,'/derivatives/' period '/diff_data/', groupname, '/preprocessed_dwi/']);
+mkdir([startdir,'/derivatives/' period '/diff_data/', groupname, '/brain_mask/']);
+mkdir([startdir,'/derivatives/' period '/diff_data/dwiqc/']);
 
 %Add your script and all necessary files (e.g. data, functions) to path
 addpath(genpath(startdir));
@@ -67,32 +70,32 @@ addpath(genpath(ScriptDirectory));
 datafile = '_acq_data_dwi';
 
 %create the qc text files in the dwiqc directory
-QC_CreateFiles(startdir);
+QC_CreateFiles(startdir, period);
 
-%go into your source data folder, where all participant files will be
+%go into your sourcedata folder, where all participant files will be
 %there.
-cd([startdir '/sourcedata/']);
+cd(['/data/sourcedata/' period]);
 
 %choose participants you want to include in the group.
 msgfig = 'Please choose participants for analysis.';
 uiwait(msgbox(msgfig));
-subjects = uipickfiles;
+participants = uipickfiles;
 
 %Preprocessing starts here:
-for i = 1:length(subjects)
+for i = 1:length(participants)
     
-    [upper_path, PAR_NAME, ~] = fileparts(subjects{1,i});
+    [upper_path, PAR_NAME, ~] = fileparts(participants{1,i});
     full_path = ([upper_path '/' PAR_NAME '/']);
-    source_dwi = ([startdir '/sourcedata/', PAR_NAME, '/dwi/']);
+    source_dwi = (['/data/sourcedata/', period, '/' PAR_NAME, '/dwi/']);
     
     %create derivatives folder per each participant
-    mkdir([startdir,'/derivatives/diff_data/', PAR_NAME, '/dwi/']);
+    mkdir([startdir,'/derivatives/' period, '/diff_data/', PAR_NAME, '/dwi/']);
     
     %copy data from source folder into participants derivatives folder
-    copyfile ([source_dwi, '*'], [startdir,'/derivatives/diff_data/', PAR_NAME, '/dwi/']);
+    copyfile ([source_dwi, '*'], [startdir,'/derivatives/' period, '/diff_data/', PAR_NAME, '/dwi/']);
     
     %move into participants folder
-    cd([startdir '/derivatives/diff_data/' PAR_NAME, '/dwi/']);
+    cd([startdir '/derivatives/' period, '/diff_data/' PAR_NAME, '/dwi/']);
     
     %count number of BDs that the participant has.
     BDs = dir([PAR_NAME '*BD*.nii']);
@@ -171,7 +174,7 @@ for i = 1:length(subjects)
     unix(['mrcat AP_' PAR_NAME, datafile,'.mif ' 'PA_' PAR_NAME, datafile,'.mif ' 'allB0s_' PAR_NAME, datafile,'.mif']);
     
     %a) choose best pair using the 'BestB0' function
-    BU_used = BestB0(PAR_NAME, datafile, NumBDs, startdir);
+    BU_used = BestB0(PAR_NAME, datafile, NumBDs, startdir, period);
     
     %---------------------------------------------------------------------%
     %Step 4: Estimate brain mask
@@ -195,9 +198,9 @@ for i = 1:length(subjects)
     %a) Perform eddy quality control (qc) per each participant
     
     %Run 'eddy_quad' on participant for quality check as well. 
-    RunEddyQuad(startdir, ScriptDirectory, PAR_NAME, datafile);
+    RunEddyQuad(startdir, ScriptDirectory, PAR_NAME, datafile, period);
     %add participants eddy qc data onto the collated text file.
-    eddyqc_ToText(PAR_NAME, startdir);
+    eddyqc_ToText(PAR_NAME, startdir, period);
     
     %---------------------------------------------------------------------%
     %Step 6: Bias field correction (B0s)
@@ -214,13 +217,13 @@ for i = 1:length(subjects)
     
     %copy dwi file over and rename
     copyfile(['f2ebbcgd', PAR_NAME, datafile,'.mif'], [PAR_NAME, datafile,'.mif']);
-    movefile([PAR_NAME, datafile, '.mif'], [startdir,'/derivatives/diff_data/', groupname, '/preprocessed_dwi']);
+    movefile([PAR_NAME, datafile, '.mif'], [startdir, '/derivatives/' period, '/diff_data/', groupname, '/preprocessed_dwi']);
     
     %copy brain mask (generated from fsl's BET) file over
     copyfile(['brain_mask_', PAR_NAME, datafile,'.mif'], [PAR_NAME, datafile,'.mif']);
-    movefile([PAR_NAME, datafile, '.mif'], [startdir,'/derivatives/diff_data/', groupname, '/brain_mask']);
+    movefile([PAR_NAME, datafile, '.mif'], [startdir, '/derivatives/' period, '/diff_data/', groupname, '/brain_mask']);
       
 end
 
 %o Run 'eddy_squad' to conduct group quality control on eddy
-RunEddySquad(subjects, startdir);
+RunEddySquad(participants, startdir, period);

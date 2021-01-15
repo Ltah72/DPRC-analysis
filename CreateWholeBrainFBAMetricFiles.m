@@ -6,7 +6,7 @@ function CreateWholeBrainFBAMetricFiles(participants)
 %group comparisons.
 
 %   Inputs(1) - participants: this will give the number of participants to 
-%               calcaluate the metrics per each of them. 
+%               calculate the metrics per each of them. 
 
 
 %Author: Lenore Tahara-Eckl

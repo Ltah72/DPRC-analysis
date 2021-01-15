@@ -1,4 +1,4 @@
-function RunEddyQuad(startdir, ScriptDirectory, PAR_NAME, datafile)
+function RunEddyQuad(startdir, ScriptDirectory, PAR_NAME, datafile, period)
 %Run eddy_quad on all participants. This will generate a report of the
 %quality control of eddy for all participants. It will create an 
 %eddy_quad.qc folder, which will be used later to input into a group eddy 
@@ -6,12 +6,14 @@ function RunEddyQuad(startdir, ScriptDirectory, PAR_NAME, datafile)
 %the outliers of the participants. 
 
 %       
-%Inputs(4): startdir = start directory that you defined in the script -
+%Inputs(5): startdir = start directory that you defined in the script -
 %           where the data will be stored.
 %           ScriptDirectory = where you defined where all your diffusion
 %           scripts are
 %           PAR_NAME = participant ID - current participant for input
 %           datafile = dwi definition file (i.e. '_acq_data_dwi')
+%           period = time period of the participant MRI scans
+
 
 %Output(none): eddy_quad will generate a folder per each participant, 
 %              which will each hold the eddy qc files, needed for the group
@@ -38,7 +40,7 @@ for i = 1:length(files)
 end
 
 %go back into main participant folder
-cd([startdir '/derivatives/diff_data/' PAR_NAME, '/dwi/']);
+cd([startdir '/derivatives/' period, '/diff_data/' PAR_NAME, '/dwi/']);
 
 %make a copy and rename the eddy corrected datafile, and place into the
 %eddyqc folder
@@ -48,10 +50,10 @@ copyfile(['ebbcgd', PAR_NAME, datafile,'.nii'], 'eddyqc/eddy_quad.nii');
 cd eddyqc;
 
 %perform eddy quad on the participant
-unix(['eddy_quad eddy_quad -idx ' ScriptDirectory '/files/index.txt -par ' ScriptDirectory '/files/acqparams.txt -m ' startdir '/derivatives/diff_data/' PAR_NAME '/dwi/brain_mask_' PAR_NAME, datafile, '.nii -b ' startdir '/derivatives/diff_data/' PAR_NAME '/dwi/' PAR_NAME, datafile, '.bval']);
+unix(['eddy_quad eddy_quad -idx ' ScriptDirectory '/files/index.txt -par ' ScriptDirectory '/files/acqparams.txt -m ' startdir '/derivatives/' period, '/diff_data/' PAR_NAME '/dwi/brain_mask_' PAR_NAME, datafile, '.nii -b ' startdir '/derivatives/' period, '/diff_data/' PAR_NAME '/dwi/' PAR_NAME, datafile, '.bval']);
 
 %go back into main participant folder
-cd([startdir '/derivatives/diff_data/' PAR_NAME, '/dwi/']);
+cd([startdir '/derivatives/' period, '/diff_data/' PAR_NAME, '/dwi/']);
 
 end
 
