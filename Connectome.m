@@ -252,7 +252,7 @@ for i = 1:length(participants)
    
     %d) Register the ordered atlas-based volumetric parcellation to diffusion
     %space. 
-    unix(['mrtransform ' PAR_NAME '_hcpmmp1_parcels_nocoreg.mif -linear transform_mrtrix_t12dwi.txt -inverse -datatype uint32 ' PAR_NAME '_hcpmmp1_parcels_coreg.mif']);
+    unix(['mrtransform ' PAR_NAME '_hcpmmp1_parcels_nocoreg.mif -linear transform_mrtrix_t12dwi_' PAR_NAME '.txt -inverse -datatype uint32 ' PAR_NAME '_hcpmmp1_parcels_coreg.mif']);
     
     %e) Create the whole-brain connectome: 
     unix(['tck2connectome -symmetric -zero_diagonal -scale_invnodevol sift_1M_' PAR_NAME '.tck ' PAR_NAME '_hcpmmp1_parcels_coreg.mif hcpmmp1_' PAR_NAME '.csv -out_assignment assignments_hcpmmp1_' PAR_NAME '.csv']);
