@@ -74,10 +74,13 @@ period = input('Which time period do you want to analyse, e.g. F0, F2, all, etc?
 %create a connectome folder to place all of the data and analysis in
 mkdir([startdir,'/derivatives/' period, '/diff_data/', groupname, '/connectome/']);
 
-%make directory to hold your matrices (e.g. design and contrast)for
-%statistical tests - for connectome analysis. You need to manually create and
-%store the files in here.
+%make directory to hold your matrices (e.g. design and contrast)for statistical tests - for connectome analysis. 
+%You need to manually create and store the files in here.
 mkdir([startdir,'/derivatives/' period, '/diff_data/', groupname, '/connectome/stats_matrices/']);
+
+%make directories to hold the statistical tests for the whole and interested connectome networks
+mkdir([startdir,'/derivatives/' period, '/diff_data/', groupname, '/connectome/outputWhole_connectome_stats/']);
+mkdir([startdir,'/derivatives/' period, '/diff_data/', groupname, '/connectome/outputFPN_stats/']);
 
 %Add your script and all necessary files (e.g. data, functions) to path
 addpath(genpath(startdir));
@@ -284,11 +287,14 @@ end
     InputConnectomeFileList(participants);
     
     %run connectome stats
-    unix(['connectomestats ConnectomeInput.txt tfnbs stats_matrices/design_matrix_CvAD_clinsite_covar.txt stats_matrices/contrast_matrix_CvAD_clinsite_covar.txt output_CvAD_connectome_stats/output_CvAD']);
+    unix(['connectomestats ConnectomeInput.txt tfnbs stats_matrices/design_matrix_CvAD_clinsite_covar.txt stats_matrices/contrast_matrix_CvAD_clinsite_covar.txt outputWhole_connectome_stats/output_CvAD']);
    
+    %create connectome template to visualise group differences. 
+    CreateConnectomeTemplate(participants);
     
-    
-    
+    %for a subnetwork, like the FPN, use vectorstats: 
+    unix(['vectorstats InputFPN_list.txt stats_matrices/design_matrix_CvAD_clinsite_covar.txt stats_matrices/contrast_matrix_CvAD_clinsite_covar.txt outputFPN_stats/output_FPN_stats-']);
+
     
     
     
