@@ -16,8 +16,9 @@
 setwd("/Connectome_test/FPN_connectome_csv_files/done/output")  
 
 #read in the family-wise error (fwe) stat files
-FPN_stats_connectome_fwe1 <- read.csv('output_FPN_stats-fwe_1mpvalue_t1.csv', header = FALSE)
-FPN_stats_connectome_fwe2 <- read.csv('output_FPN_stats-fwe_1mpvalue_t2.csv', header = FALSE)
+FPN_stats_connectome_fwe0 <- read.csv('output_FPN_2tail_stats-fwe_1mpvalue.csv', header = FALSE) #two-tailed (C != AD)
+FPN_stats_connectome_fwe1 <- read.csv('output_FPN_stats-fwe_1mpvalue_t1.csv', header = FALSE) #one-tailed (C > AD)
+FPN_stats_connectome_fwe2 <- read.csv('output_FPN_stats-fwe_1mpvalue_t2.csv', header = FALSE) #one-tailed (AD > C)
 
 
 #use the same node pair as in the previous script (create_FPN_connectome_files.R) 
@@ -30,23 +31,26 @@ node_combos <- combn(nodes,2)
 
 #Preallocate zeros to .csv files, per each participant. 
 #In my case,I have a 379 x 379 matrix. 
+connectome_matrix0 <- matrix(data=0, nrow=379, ncol=379)
 connectome_matrix1 <- matrix(data=0, nrow=379, ncol=379)
 connectome_matrix2 <- matrix(data=0, nrow=379, ncol=379)
 
 #put connectome values from your stats output file into the connectome matrix, 
 #using the coordinates from the node combination vector. 
-#connectome_matrix1 <- connectome_matrix1[]
-
 
 for (i in 1:(length(node_combos)/2)) {
   
   current_pair1 <- node_combos[1,i]
   current_pair2 <- node_combos[2,i]
   
+  node_value0 <- FPN_stats_connectome_fwe0[2,i]
   node_value1 <- FPN_stats_connectome_fwe1[2,i]
   node_value2 <- FPN_stats_connectome_fwe2[2,i]
   
   #fill both combinations of the pairs with the node value from the stats sheet. 
+  connectome_matrix0[current_pair1, current_pair2] <- node_value0
+  connectome_matrix0[current_pair2, current_pair1] <- node_value0
+  
   connectome_matrix1[current_pair1, current_pair2] <- node_value1
   connectome_matrix1[current_pair2, current_pair1] <- node_value1
   
@@ -57,8 +61,9 @@ for (i in 1:(length(node_combos)/2)) {
 }
 
 #write matrices as a .csv file. 
-write.table(connectome_matrix1, 'transferred_values_FPN_connectome_stats_fwe_1mpvalue_t1.csv', row.names=FALSE, col.names=FALSE, quote=FALSE)
-write.table(connectome_matrix2, 'transferred_values_FPN_connectome_stats_fwe_1mpvalue_t2.csv', row.names=FALSE, col.names=FALSE, quote=FALSE)
+write.table(connectome_matrix0, 'transferred_values_FPN_connectome_2tailed_fwe_1mpvalue.csv', row.names=FALSE, col.names=FALSE, quote=FALSE) #two-tailed (C != AD)
+write.table(connectome_matrix1, 'transferred_values_FPN_connectome_stats_fwe_1mpvalue_t1.csv', row.names=FALSE, col.names=FALSE, quote=FALSE) #one-tailed (C > AD)
+write.table(connectome_matrix2, 'transferred_values_FPN_connectome_stats_fwe_1mpvalue_t2.csv', row.names=FALSE, col.names=FALSE, quote=FALSE) #one-tailed (AD > C)
 
 
 
