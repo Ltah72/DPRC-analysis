@@ -24,18 +24,18 @@ setwd("N:/DPRC/Neuropsych Summary Files/Participant Files/")
 files_all <- list.files() 
 
 #set up the neuropsych matrix headers to carry all participant data
-neuropsych_matrixF0 <- matrix(nrow = length(files_all), ncol=119)
-neuropsych_matrixF1 <- matrix(nrow = length(files_all), ncol=119)
-neuropsych_matrixF2 <- matrix(nrow = length(files_all), ncol=119)
-neuropsych_matrixF3 <- matrix(nrow = length(files_all), ncol=119)
-neuropsych_matrixF4 <- matrix(nrow = length(files_all), ncol=119)
+neuropsych_matrixF0 <- matrix(nrow = length(files_all), ncol=127)
+neuropsych_matrixF1 <- matrix(nrow = length(files_all), ncol=127)
+neuropsych_matrixF2 <- matrix(nrow = length(files_all), ncol=127)
+neuropsych_matrixF3 <- matrix(nrow = length(files_all), ncol=127)
+neuropsych_matrixF4 <- matrix(nrow = length(files_all), ncol=127)
 
 #set up column names (119 variables total) 
-colnames(neuropsych_matrixF0) <- c('ParticipantID', 'Age', 'EduLevel', 'Group', 'Neuropsych_TestDate', 'TOPF-Raw', 'TOPF-Z', 'TOPF-Scaled', 'DSF-Raw', 'DSF-Z', 'DSF-Scaled', 'DSB-Raw', 'DSB-Z', 'DSB-Scaled', 'TrailsA-Raw', 'TrailsA-Z', 'TrailsA-Scaled', 'TrailsB-Raw', 'TrailsB-Z', 'TrialsB-Scaled', 'Coding-Raw', 'Coding-Z', 'Coding-Scaled', 'ColorNaming-Raw', 'ColorNaming-Z', 'ColorNaming-Scaled', 'WordReading-Raw', 'WordReading-Z', 'WordReading-Scaled', 'Inhibition-Raw', 'Inhibition-Z', 'Inhibition-Scaled', 'SYDBATNaming-Raw', 'SYDBATNaming-Z', 'SYDBATNaming-Scaled', 'SYDBATComp-Raw', 'SYDBATComp-Z', 'SYDBATComp-Scaled', 'SYDBATSemAss-Raw', 'SYDBATSemAss-Z', 'SYDBATSemAss-Scaled', 'BNTManual-Raw', 'BNTManual-Z', 'BNTManual-Scaled', 'BNTIvnik-Raw', 'BNTIvnik-Z', 'BNTIvnik-Scaled', 'Similarities-Raw', 'Similarities-Z', 'Similarities-Scaled', 'LineO-Raw', 'LineO-Z', 'LineO-Scaled', 'BD-Raw', 'BD-Z', 'BD-Scaled', 'Matrix-Raw', 'Matrix-Z', 'Matrix-Scaled', 'LM_I-Raw', 'LM_I-Z', 'LM_I-Scaled', 'LM_II-Raw', 'LM_II-Z', 'LM_II-Scaled', 'StoryAI-Raw', 'StoryAI-Z', 'StoryAI-Scaled', 'StoryAII-Raw', 'StoryAII-Z', 'StoryAII-Scaled',  'CVLT-II_Total-Raw', 'CVLT-II_Total-Z', 'CVLT-II_Total-Scaled', 'CVLT-II_Short-Raw', 'CVLT-II_Short-Z', 'CVLT-II_Short-Scaled', 'CVLT-II_Long-Raw', 'CVLT-II_Long-Z', 'CVLT-II_Long-Scaled', 'CVLT-II_RecogD-Raw', 'CVLT-II_RecogD-Z', 'CVLT-II_RecogD-Scaled', 'RCFT_lmm-Raw', 'RCFT_lmm-Z', 'RCFT_lmm-Scaled', 'RCFT_Del-Raw', 'RCFT_Del-Z', 'RCFT_Del-Scaled', 'RCFT_Recog-Raw', 'RCFT_Recog-Z', 'RCFT_Recog-Scaled', 'BVMT-R_Total-Raw', 'BVMT-R_Total-Z', 'BVMT-R_Total-Scaled', 'BVMT-R_Total-zGale', 'BVMT-R_Del-Raw', 'BVMT-R_Del-Z', 'BVMT-R_Del-Scaled', 'BVMT-R_Del-zGale', 'BVMT-R_RecogDis-Raw', 'BVMT-R_RecogDis-Z', 'BVMT-R_RecogDis-Scaled', 'BVMT-R_RecogDis-zGale', 'RCFT_Copy-Raw', 'RCFT_Copy-Z', 'RCFT-Copy-Scaled', 'LetFluency-Raw', 'LetFluency-Z', 'LetFluency-Scaled', 'CatFluency-Raw', 'CatFluency-Z', 'CatFluency-Scaled', 'Fluency-Raw', 'Fluency-Z', 'Fluency-Scaled', 'C/W_Inhib-Raw', 'C/W_Inhib-Z', 'C/W_Inhib-Scaled')
-colnames(neuropsych_matrixF1) <- c('ParticipantID', 'Age', 'EduLevel', 'Group', 'Neuropsych_TestDate', 'TOPF-Raw', 'TOPF-Z', 'TOPF-Scaled', 'DSF-Raw', 'DSF-Z', 'DSF-Scaled', 'DSB-Raw', 'DSB-Z', 'DSB-Scaled', 'TrailsA-Raw', 'TrailsA-Z', 'TrailsA-Scaled', 'TrailsB-Raw', 'TrailsB-Z', 'TrialsB-Scaled', 'Coding-Raw', 'Coding-Z', 'Coding-Scaled', 'ColorNaming-Raw', 'ColorNaming-Z', 'ColorNaming-Scaled', 'WordReading-Raw', 'WordReading-Z', 'WordReading-Scaled', 'Inhibition-Raw', 'Inhibition-Z', 'Inhibition-Scaled', 'SYDBATNaming-Raw', 'SYDBATNaming-Z', 'SYDBATNaming-Scaled', 'SYDBATComp-Raw', 'SYDBATComp-Z', 'SYDBATComp-Scaled', 'SYDBATSemAss-Raw', 'SYDBATSemAss-Z', 'SYDBATSemAss-Scaled', 'BNTManual-Raw', 'BNTManual-Z', 'BNTManual-Scaled', 'BNTIvnik-Raw', 'BNTIvnik-Z', 'BNTIvnik-Scaled', 'Similarities-Raw', 'Similarities-Z', 'Similarities-Scaled', 'LineO-Raw', 'LineO-Z', 'LineO-Scaled', 'BD-Raw', 'BD-Z', 'BD-Scaled', 'Matrix-Raw', 'Matrix-Z', 'Matrix-Scaled', 'LM_I-Raw', 'LM_I-Z', 'LM_I-Scaled', 'LM_II-Raw', 'LM_II-Z', 'LM_II-Scaled', 'StoryAI-Raw', 'StoryAI-Z', 'StoryAI-Scaled', 'StoryAII-Raw', 'StoryAII-Z', 'StoryAII-Scaled',  'CVLT-II_Total-Raw', 'CVLT-II_Total-Z', 'CVLT-II_Total-Scaled', 'CVLT-II_Short-Raw', 'CVLT-II_Short-Z', 'CVLT-II_Short-Scaled', 'CVLT-II_Long-Raw', 'CVLT-II_Long-Z', 'CVLT-II_Long-Scaled', 'CVLT-II_RecogD-Raw', 'CVLT-II_RecogD-Z', 'CVLT-II_RecogD-Scaled', 'RCFT_lmm-Raw', 'RCFT_lmm-Z', 'RCFT_lmm-Scaled', 'RCFT_Del-Raw', 'RCFT_Del-Z', 'RCFT_Del-Scaled', 'RCFT_Recog-Raw', 'RCFT_Recog-Z', 'RCFT_Recog-Scaled', 'BVMT-R_Total-Raw', 'BVMT-R_Total-Z', 'BVMT-R_Total-Scaled', 'BVMT-R_Total-zGale', 'BVMT-R_Del-Raw', 'BVMT-R_Del-Z', 'BVMT-R_Del-Scaled', 'BVMT-R_Del-zGale', 'BVMT-R_RecogDis-Raw', 'BVMT-R_RecogDis-Z', 'BVMT-R_RecogDis-Scaled', 'BVMT-R_RecogDis-zGale', 'RCFT_Copy-Raw', 'RCFT_Copy-Z', 'RCFT-Copy-Scaled', 'LetFluency-Raw', 'LetFluency-Z', 'LetFluency-Scaled', 'CatFluency-Raw', 'CatFluency-Z', 'CatFluency-Scaled', 'Fluency-Raw', 'Fluency-Z', 'Fluency-Scaled', 'C/W_Inhib-Raw', 'C/W_Inhib-Z', 'C/W_Inhib-Scaled')
-colnames(neuropsych_matrixF2) <- c('ParticipantID', 'Age', 'EduLevel', 'Group', 'Neuropsych_TestDate', 'TOPF-Raw', 'TOPF-Z', 'TOPF-Scaled', 'DSF-Raw', 'DSF-Z', 'DSF-Scaled', 'DSB-Raw', 'DSB-Z', 'DSB-Scaled', 'TrailsA-Raw', 'TrailsA-Z', 'TrailsA-Scaled', 'TrailsB-Raw', 'TrailsB-Z', 'TrialsB-Scaled', 'Coding-Raw', 'Coding-Z', 'Coding-Scaled', 'ColorNaming-Raw', 'ColorNaming-Z', 'ColorNaming-Scaled', 'WordReading-Raw', 'WordReading-Z', 'WordReading-Scaled', 'Inhibition-Raw', 'Inhibition-Z', 'Inhibition-Scaled', 'SYDBATNaming-Raw', 'SYDBATNaming-Z', 'SYDBATNaming-Scaled', 'SYDBATComp-Raw', 'SYDBATComp-Z', 'SYDBATComp-Scaled', 'SYDBATSemAss-Raw', 'SYDBATSemAss-Z', 'SYDBATSemAss-Scaled', 'BNTManual-Raw', 'BNTManual-Z', 'BNTManual-Scaled', 'BNTIvnik-Raw', 'BNTIvnik-Z', 'BNTIvnik-Scaled', 'Similarities-Raw', 'Similarities-Z', 'Similarities-Scaled', 'LineO-Raw', 'LineO-Z', 'LineO-Scaled', 'BD-Raw', 'BD-Z', 'BD-Scaled', 'Matrix-Raw', 'Matrix-Z', 'Matrix-Scaled', 'LM_I-Raw', 'LM_I-Z', 'LM_I-Scaled', 'LM_II-Raw', 'LM_II-Z', 'LM_II-Scaled', 'StoryAI-Raw', 'StoryAI-Z', 'StoryAI-Scaled', 'StoryAII-Raw', 'StoryAII-Z', 'StoryAII-Scaled',  'CVLT-II_Total-Raw', 'CVLT-II_Total-Z', 'CVLT-II_Total-Scaled', 'CVLT-II_Short-Raw', 'CVLT-II_Short-Z', 'CVLT-II_Short-Scaled', 'CVLT-II_Long-Raw', 'CVLT-II_Long-Z', 'CVLT-II_Long-Scaled', 'CVLT-II_RecogD-Raw', 'CVLT-II_RecogD-Z', 'CVLT-II_RecogD-Scaled', 'RCFT_lmm-Raw', 'RCFT_lmm-Z', 'RCFT_lmm-Scaled', 'RCFT_Del-Raw', 'RCFT_Del-Z', 'RCFT_Del-Scaled', 'RCFT_Recog-Raw', 'RCFT_Recog-Z', 'RCFT_Recog-Scaled', 'BVMT-R_Total-Raw', 'BVMT-R_Total-Z', 'BVMT-R_Total-Scaled', 'BVMT-R_Total-zGale', 'BVMT-R_Del-Raw', 'BVMT-R_Del-Z', 'BVMT-R_Del-Scaled', 'BVMT-R_Del-zGale', 'BVMT-R_RecogDis-Raw', 'BVMT-R_RecogDis-Z', 'BVMT-R_RecogDis-Scaled', 'BVMT-R_RecogDis-zGale', 'RCFT_Copy-Raw', 'RCFT_Copy-Z', 'RCFT-Copy-Scaled', 'LetFluency-Raw', 'LetFluency-Z', 'LetFluency-Scaled', 'CatFluency-Raw', 'CatFluency-Z', 'CatFluency-Scaled', 'Fluency-Raw', 'Fluency-Z', 'Fluency-Scaled', 'C/W_Inhib-Raw', 'C/W_Inhib-Z', 'C/W_Inhib-Scaled')
-colnames(neuropsych_matrixF3) <- c('ParticipantID', 'Age', 'EduLevel', 'Group', 'Neuropsych_TestDate', 'TOPF-Raw', 'TOPF-Z', 'TOPF-Scaled', 'DSF-Raw', 'DSF-Z', 'DSF-Scaled', 'DSB-Raw', 'DSB-Z', 'DSB-Scaled', 'TrailsA-Raw', 'TrailsA-Z', 'TrailsA-Scaled', 'TrailsB-Raw', 'TrailsB-Z', 'TrialsB-Scaled', 'Coding-Raw', 'Coding-Z', 'Coding-Scaled', 'ColorNaming-Raw', 'ColorNaming-Z', 'ColorNaming-Scaled', 'WordReading-Raw', 'WordReading-Z', 'WordReading-Scaled', 'Inhibition-Raw', 'Inhibition-Z', 'Inhibition-Scaled', 'SYDBATNaming-Raw', 'SYDBATNaming-Z', 'SYDBATNaming-Scaled', 'SYDBATComp-Raw', 'SYDBATComp-Z', 'SYDBATComp-Scaled', 'SYDBATSemAss-Raw', 'SYDBATSemAss-Z', 'SYDBATSemAss-Scaled', 'BNTManual-Raw', 'BNTManual-Z', 'BNTManual-Scaled', 'BNTIvnik-Raw', 'BNTIvnik-Z', 'BNTIvnik-Scaled', 'Similarities-Raw', 'Similarities-Z', 'Similarities-Scaled', 'LineO-Raw', 'LineO-Z', 'LineO-Scaled', 'BD-Raw', 'BD-Z', 'BD-Scaled', 'Matrix-Raw', 'Matrix-Z', 'Matrix-Scaled', 'LM_I-Raw', 'LM_I-Z', 'LM_I-Scaled', 'LM_II-Raw', 'LM_II-Z', 'LM_II-Scaled', 'StoryAI-Raw', 'StoryAI-Z', 'StoryAI-Scaled', 'StoryAII-Raw', 'StoryAII-Z', 'StoryAII-Scaled',  'CVLT-II_Total-Raw', 'CVLT-II_Total-Z', 'CVLT-II_Total-Scaled', 'CVLT-II_Short-Raw', 'CVLT-II_Short-Z', 'CVLT-II_Short-Scaled', 'CVLT-II_Long-Raw', 'CVLT-II_Long-Z', 'CVLT-II_Long-Scaled', 'CVLT-II_RecogD-Raw', 'CVLT-II_RecogD-Z', 'CVLT-II_RecogD-Scaled', 'RCFT_lmm-Raw', 'RCFT_lmm-Z', 'RCFT_lmm-Scaled', 'RCFT_Del-Raw', 'RCFT_Del-Z', 'RCFT_Del-Scaled', 'RCFT_Recog-Raw', 'RCFT_Recog-Z', 'RCFT_Recog-Scaled', 'BVMT-R_Total-Raw', 'BVMT-R_Total-Z', 'BVMT-R_Total-Scaled', 'BVMT-R_Total-zGale', 'BVMT-R_Del-Raw', 'BVMT-R_Del-Z', 'BVMT-R_Del-Scaled', 'BVMT-R_Del-zGale', 'BVMT-R_RecogDis-Raw', 'BVMT-R_RecogDis-Z', 'BVMT-R_RecogDis-Scaled', 'BVMT-R_RecogDis-zGale', 'RCFT_Copy-Raw', 'RCFT_Copy-Z', 'RCFT-Copy-Scaled', 'LetFluency-Raw', 'LetFluency-Z', 'LetFluency-Scaled', 'CatFluency-Raw', 'CatFluency-Z', 'CatFluency-Scaled', 'Fluency-Raw', 'Fluency-Z', 'Fluency-Scaled', 'C/W_Inhib-Raw', 'C/W_Inhib-Z', 'C/W_Inhib-Scaled')
-colnames(neuropsych_matrixF4) <- c('ParticipantID', 'Age', 'EduLevel', 'Group', 'Neuropsych_TestDate', 'TOPF-Raw', 'TOPF-Z', 'TOPF-Scaled', 'DSF-Raw', 'DSF-Z', 'DSF-Scaled', 'DSB-Raw', 'DSB-Z', 'DSB-Scaled', 'TrailsA-Raw', 'TrailsA-Z', 'TrailsA-Scaled', 'TrailsB-Raw', 'TrailsB-Z', 'TrialsB-Scaled', 'Coding-Raw', 'Coding-Z', 'Coding-Scaled', 'ColorNaming-Raw', 'ColorNaming-Z', 'ColorNaming-Scaled', 'WordReading-Raw', 'WordReading-Z', 'WordReading-Scaled', 'Inhibition-Raw', 'Inhibition-Z', 'Inhibition-Scaled', 'SYDBATNaming-Raw', 'SYDBATNaming-Z', 'SYDBATNaming-Scaled', 'SYDBATComp-Raw', 'SYDBATComp-Z', 'SYDBATComp-Scaled', 'SYDBATSemAss-Raw', 'SYDBATSemAss-Z', 'SYDBATSemAss-Scaled', 'BNTManual-Raw', 'BNTManual-Z', 'BNTManual-Scaled', 'BNTIvnik-Raw', 'BNTIvnik-Z', 'BNTIvnik-Scaled', 'Similarities-Raw', 'Similarities-Z', 'Similarities-Scaled', 'LineO-Raw', 'LineO-Z', 'LineO-Scaled', 'BD-Raw', 'BD-Z', 'BD-Scaled', 'Matrix-Raw', 'Matrix-Z', 'Matrix-Scaled', 'LM_I-Raw', 'LM_I-Z', 'LM_I-Scaled', 'LM_II-Raw', 'LM_II-Z', 'LM_II-Scaled', 'StoryAI-Raw', 'StoryAI-Z', 'StoryAI-Scaled', 'StoryAII-Raw', 'StoryAII-Z', 'StoryAII-Scaled',  'CVLT-II_Total-Raw', 'CVLT-II_Total-Z', 'CVLT-II_Total-Scaled', 'CVLT-II_Short-Raw', 'CVLT-II_Short-Z', 'CVLT-II_Short-Scaled', 'CVLT-II_Long-Raw', 'CVLT-II_Long-Z', 'CVLT-II_Long-Scaled', 'CVLT-II_RecogD-Raw', 'CVLT-II_RecogD-Z', 'CVLT-II_RecogD-Scaled', 'RCFT_lmm-Raw', 'RCFT_lmm-Z', 'RCFT_lmm-Scaled', 'RCFT_Del-Raw', 'RCFT_Del-Z', 'RCFT_Del-Scaled', 'RCFT_Recog-Raw', 'RCFT_Recog-Z', 'RCFT_Recog-Scaled', 'BVMT-R_Total-Raw', 'BVMT-R_Total-Z', 'BVMT-R_Total-Scaled', 'BVMT-R_Total-zGale', 'BVMT-R_Del-Raw', 'BVMT-R_Del-Z', 'BVMT-R_Del-Scaled', 'BVMT-R_Del-zGale', 'BVMT-R_RecogDis-Raw', 'BVMT-R_RecogDis-Z', 'BVMT-R_RecogDis-Scaled', 'BVMT-R_RecogDis-zGale', 'RCFT_Copy-Raw', 'RCFT_Copy-Z', 'RCFT-Copy-Scaled', 'LetFluency-Raw', 'LetFluency-Z', 'LetFluency-Scaled', 'CatFluency-Raw', 'CatFluency-Z', 'CatFluency-Scaled', 'Fluency-Raw', 'Fluency-Z', 'Fluency-Scaled', 'C/W_Inhib-Raw', 'C/W_Inhib-Z', 'C/W_Inhib-Scaled')
+colnames(neuropsych_matrixF0) <- c('ParticipantID', 'Age', 'EduLevel', 'Group', 'Neuropsych_TestDate', 'TOPF-Raw', 'TOPF-Z', 'TOPF-Scaled', 'DSF-Raw', 'DSF-Z', 'DSF-Scaled', 'DSB-Raw', 'DSB-Z', 'DSB-Scaled', 'TrailsA-Raw', 'TrailsA-Z', 'TrailsA-Scaled', 'TrailsB-Raw', 'TrailsB-Z', 'TrialsB-Scaled', 'Coding-Raw', 'Coding-Z', 'Coding-Scaled', 'ColorNaming-Raw', 'ColorNaming-Z', 'ColorNaming-Scaled', 'WordReading-Raw', 'WordReading-Z', 'WordReading-Scaled', 'Inhibition-Raw', 'Inhibition-Z', 'Inhibition-Scaled', 'SYDBATNaming-Raw', 'SYDBATNaming-Z', 'SYDBATNaming-Scaled', 'SYDBATComp-Raw', 'SYDBATComp-Z', 'SYDBATComp-Scaled', 'SYDBATSemAss-Raw', 'SYDBATSemAss-Z', 'SYDBATSemAss-Scaled', 'BNTManual-Raw', 'BNTManual-Z', 'BNTManual-Scaled', 'BNTIvnik-Raw', 'BNTIvnik-Z', 'BNTIvnik-Scaled', 'Similarities-Raw', 'Similarities-Z', 'Similarities-Scaled', 'LineO-Raw', 'LineO-Z', 'LineO-Scaled', 'BD-Raw', 'BD-Z', 'BD-Scaled', 'Matrix-Raw', 'Matrix-Z', 'Matrix-Scaled', 'LM_I-Raw', 'LM_I-Z', 'LM_I-Scaled', 'LM_II-Raw', 'LM_II-Z', 'LM_II-Scaled', 'StoryAI-Raw', 'StoryAI-Z', 'StoryAI-Scaled', 'StoryAII-Raw', 'StoryAII-Z', 'StoryAII-Scaled',  'CVLT-II_Total-Raw', 'CVLT-II_Total-Z', 'CVLT-II_Total-Scaled', 'CVLT-II_Short-Raw', 'CVLT-II_Short-Z', 'CVLT-II_Short-Scaled', 'CVLT-II_Long-Raw', 'CVLT-II_Long-Z', 'CVLT-II_Long-Scaled', 'CVLT-II_RecogD-Raw', 'CVLT-II_RecogD-Z', 'CVLT-II_RecogD-Scaled', 'RCFT_lmm-Raw', 'RCFT_lmm-Z', 'RCFT_lmm-Scaled', 'RCFT_Del-Raw', 'RCFT_Del-Z', 'RCFT_Del-Scaled', 'RCFT_Recog-Raw', 'RCFT_Recog-Z', 'RCFT_Recog-Scaled', 'BVMT-R_Total-Raw', 'BVMT-R_Total-Z', 'BVMT-R_Total-Scaled', 'BVMT-R_Total-zGale', 'BVMT-R_Del-Raw', 'BVMT-R_Del-Z', 'BVMT-R_Del-Scaled', 'BVMT-R_Del-zGale', 'BVMT-R_RecogDis-Raw', 'BVMT-R_RecogDis-Z', 'BVMT-R_RecogDis-Scaled', 'BVMT-R_RecogDis-zGale', 'RCFT_Copy-Raw', 'RCFT_Copy-Z', 'RCFT-Copy-Scaled', 'LetFluency-Raw', 'LetFluency-Z', 'LetFluency-Scaled', 'CatFluency-Raw', 'CatFluency-Z', 'CatFluency-Scaled', 'Fluency-Raw', 'Fluency-Z', 'Fluency-Scaled', 'C/W_Inhib-Raw', 'C/W_Inhib-Z', 'C/W_Inhib-Scaled', 'HayBTime1-Raw', 'HayBTime1-z', 'HayBTime2-Raw', 'HayBTime2-z', 'HayBCatA-Raw', 'HayBCatA-z', 'HayBCatB-Raw', 'HayBCatB-z')
+colnames(neuropsych_matrixF1) <- c('ParticipantID', 'Age', 'EduLevel', 'Group', 'Neuropsych_TestDate', 'TOPF-Raw', 'TOPF-Z', 'TOPF-Scaled', 'DSF-Raw', 'DSF-Z', 'DSF-Scaled', 'DSB-Raw', 'DSB-Z', 'DSB-Scaled', 'TrailsA-Raw', 'TrailsA-Z', 'TrailsA-Scaled', 'TrailsB-Raw', 'TrailsB-Z', 'TrialsB-Scaled', 'Coding-Raw', 'Coding-Z', 'Coding-Scaled', 'ColorNaming-Raw', 'ColorNaming-Z', 'ColorNaming-Scaled', 'WordReading-Raw', 'WordReading-Z', 'WordReading-Scaled', 'Inhibition-Raw', 'Inhibition-Z', 'Inhibition-Scaled', 'SYDBATNaming-Raw', 'SYDBATNaming-Z', 'SYDBATNaming-Scaled', 'SYDBATComp-Raw', 'SYDBATComp-Z', 'SYDBATComp-Scaled', 'SYDBATSemAss-Raw', 'SYDBATSemAss-Z', 'SYDBATSemAss-Scaled', 'BNTManual-Raw', 'BNTManual-Z', 'BNTManual-Scaled', 'BNTIvnik-Raw', 'BNTIvnik-Z', 'BNTIvnik-Scaled', 'Similarities-Raw', 'Similarities-Z', 'Similarities-Scaled', 'LineO-Raw', 'LineO-Z', 'LineO-Scaled', 'BD-Raw', 'BD-Z', 'BD-Scaled', 'Matrix-Raw', 'Matrix-Z', 'Matrix-Scaled', 'LM_I-Raw', 'LM_I-Z', 'LM_I-Scaled', 'LM_II-Raw', 'LM_II-Z', 'LM_II-Scaled', 'StoryAI-Raw', 'StoryAI-Z', 'StoryAI-Scaled', 'StoryAII-Raw', 'StoryAII-Z', 'StoryAII-Scaled',  'CVLT-II_Total-Raw', 'CVLT-II_Total-Z', 'CVLT-II_Total-Scaled', 'CVLT-II_Short-Raw', 'CVLT-II_Short-Z', 'CVLT-II_Short-Scaled', 'CVLT-II_Long-Raw', 'CVLT-II_Long-Z', 'CVLT-II_Long-Scaled', 'CVLT-II_RecogD-Raw', 'CVLT-II_RecogD-Z', 'CVLT-II_RecogD-Scaled', 'RCFT_lmm-Raw', 'RCFT_lmm-Z', 'RCFT_lmm-Scaled', 'RCFT_Del-Raw', 'RCFT_Del-Z', 'RCFT_Del-Scaled', 'RCFT_Recog-Raw', 'RCFT_Recog-Z', 'RCFT_Recog-Scaled', 'BVMT-R_Total-Raw', 'BVMT-R_Total-Z', 'BVMT-R_Total-Scaled', 'BVMT-R_Total-zGale', 'BVMT-R_Del-Raw', 'BVMT-R_Del-Z', 'BVMT-R_Del-Scaled', 'BVMT-R_Del-zGale', 'BVMT-R_RecogDis-Raw', 'BVMT-R_RecogDis-Z', 'BVMT-R_RecogDis-Scaled', 'BVMT-R_RecogDis-zGale', 'RCFT_Copy-Raw', 'RCFT_Copy-Z', 'RCFT-Copy-Scaled', 'LetFluency-Raw', 'LetFluency-Z', 'LetFluency-Scaled', 'CatFluency-Raw', 'CatFluency-Z', 'CatFluency-Scaled', 'Fluency-Raw', 'Fluency-Z', 'Fluency-Scaled', 'C/W_Inhib-Raw', 'C/W_Inhib-Z', 'C/W_Inhib-Scaled', 'HayBTime1-Raw', 'HayBTime1-z', 'HayBTime2-Raw', 'HayBTime2-z', 'HayBCatA-Raw', 'HayBCatA-z', 'HayBCatB-Raw', 'HayBCatB-z')
+colnames(neuropsych_matrixF2) <- c('ParticipantID', 'Age', 'EduLevel', 'Group', 'Neuropsych_TestDate', 'TOPF-Raw', 'TOPF-Z', 'TOPF-Scaled', 'DSF-Raw', 'DSF-Z', 'DSF-Scaled', 'DSB-Raw', 'DSB-Z', 'DSB-Scaled', 'TrailsA-Raw', 'TrailsA-Z', 'TrailsA-Scaled', 'TrailsB-Raw', 'TrailsB-Z', 'TrialsB-Scaled', 'Coding-Raw', 'Coding-Z', 'Coding-Scaled', 'ColorNaming-Raw', 'ColorNaming-Z', 'ColorNaming-Scaled', 'WordReading-Raw', 'WordReading-Z', 'WordReading-Scaled', 'Inhibition-Raw', 'Inhibition-Z', 'Inhibition-Scaled', 'SYDBATNaming-Raw', 'SYDBATNaming-Z', 'SYDBATNaming-Scaled', 'SYDBATComp-Raw', 'SYDBATComp-Z', 'SYDBATComp-Scaled', 'SYDBATSemAss-Raw', 'SYDBATSemAss-Z', 'SYDBATSemAss-Scaled', 'BNTManual-Raw', 'BNTManual-Z', 'BNTManual-Scaled', 'BNTIvnik-Raw', 'BNTIvnik-Z', 'BNTIvnik-Scaled', 'Similarities-Raw', 'Similarities-Z', 'Similarities-Scaled', 'LineO-Raw', 'LineO-Z', 'LineO-Scaled', 'BD-Raw', 'BD-Z', 'BD-Scaled', 'Matrix-Raw', 'Matrix-Z', 'Matrix-Scaled', 'LM_I-Raw', 'LM_I-Z', 'LM_I-Scaled', 'LM_II-Raw', 'LM_II-Z', 'LM_II-Scaled', 'StoryAI-Raw', 'StoryAI-Z', 'StoryAI-Scaled', 'StoryAII-Raw', 'StoryAII-Z', 'StoryAII-Scaled',  'CVLT-II_Total-Raw', 'CVLT-II_Total-Z', 'CVLT-II_Total-Scaled', 'CVLT-II_Short-Raw', 'CVLT-II_Short-Z', 'CVLT-II_Short-Scaled', 'CVLT-II_Long-Raw', 'CVLT-II_Long-Z', 'CVLT-II_Long-Scaled', 'CVLT-II_RecogD-Raw', 'CVLT-II_RecogD-Z', 'CVLT-II_RecogD-Scaled', 'RCFT_lmm-Raw', 'RCFT_lmm-Z', 'RCFT_lmm-Scaled', 'RCFT_Del-Raw', 'RCFT_Del-Z', 'RCFT_Del-Scaled', 'RCFT_Recog-Raw', 'RCFT_Recog-Z', 'RCFT_Recog-Scaled', 'BVMT-R_Total-Raw', 'BVMT-R_Total-Z', 'BVMT-R_Total-Scaled', 'BVMT-R_Total-zGale', 'BVMT-R_Del-Raw', 'BVMT-R_Del-Z', 'BVMT-R_Del-Scaled', 'BVMT-R_Del-zGale', 'BVMT-R_RecogDis-Raw', 'BVMT-R_RecogDis-Z', 'BVMT-R_RecogDis-Scaled', 'BVMT-R_RecogDis-zGale', 'RCFT_Copy-Raw', 'RCFT_Copy-Z', 'RCFT-Copy-Scaled', 'LetFluency-Raw', 'LetFluency-Z', 'LetFluency-Scaled', 'CatFluency-Raw', 'CatFluency-Z', 'CatFluency-Scaled', 'Fluency-Raw', 'Fluency-Z', 'Fluency-Scaled', 'C/W_Inhib-Raw', 'C/W_Inhib-Z', 'C/W_Inhib-Scaled', 'HayBTime1-Raw', 'HayBTime1-z', 'HayBTime2-Raw', 'HayBTime2-z', 'HayBCatA-Raw', 'HayBCatA-z', 'HayBCatB-Raw', 'HayBCatB-z')
+colnames(neuropsych_matrixF3) <- c('ParticipantID', 'Age', 'EduLevel', 'Group', 'Neuropsych_TestDate', 'TOPF-Raw', 'TOPF-Z', 'TOPF-Scaled', 'DSF-Raw', 'DSF-Z', 'DSF-Scaled', 'DSB-Raw', 'DSB-Z', 'DSB-Scaled', 'TrailsA-Raw', 'TrailsA-Z', 'TrailsA-Scaled', 'TrailsB-Raw', 'TrailsB-Z', 'TrialsB-Scaled', 'Coding-Raw', 'Coding-Z', 'Coding-Scaled', 'ColorNaming-Raw', 'ColorNaming-Z', 'ColorNaming-Scaled', 'WordReading-Raw', 'WordReading-Z', 'WordReading-Scaled', 'Inhibition-Raw', 'Inhibition-Z', 'Inhibition-Scaled', 'SYDBATNaming-Raw', 'SYDBATNaming-Z', 'SYDBATNaming-Scaled', 'SYDBATComp-Raw', 'SYDBATComp-Z', 'SYDBATComp-Scaled', 'SYDBATSemAss-Raw', 'SYDBATSemAss-Z', 'SYDBATSemAss-Scaled', 'BNTManual-Raw', 'BNTManual-Z', 'BNTManual-Scaled', 'BNTIvnik-Raw', 'BNTIvnik-Z', 'BNTIvnik-Scaled', 'Similarities-Raw', 'Similarities-Z', 'Similarities-Scaled', 'LineO-Raw', 'LineO-Z', 'LineO-Scaled', 'BD-Raw', 'BD-Z', 'BD-Scaled', 'Matrix-Raw', 'Matrix-Z', 'Matrix-Scaled', 'LM_I-Raw', 'LM_I-Z', 'LM_I-Scaled', 'LM_II-Raw', 'LM_II-Z', 'LM_II-Scaled', 'StoryAI-Raw', 'StoryAI-Z', 'StoryAI-Scaled', 'StoryAII-Raw', 'StoryAII-Z', 'StoryAII-Scaled',  'CVLT-II_Total-Raw', 'CVLT-II_Total-Z', 'CVLT-II_Total-Scaled', 'CVLT-II_Short-Raw', 'CVLT-II_Short-Z', 'CVLT-II_Short-Scaled', 'CVLT-II_Long-Raw', 'CVLT-II_Long-Z', 'CVLT-II_Long-Scaled', 'CVLT-II_RecogD-Raw', 'CVLT-II_RecogD-Z', 'CVLT-II_RecogD-Scaled', 'RCFT_lmm-Raw', 'RCFT_lmm-Z', 'RCFT_lmm-Scaled', 'RCFT_Del-Raw', 'RCFT_Del-Z', 'RCFT_Del-Scaled', 'RCFT_Recog-Raw', 'RCFT_Recog-Z', 'RCFT_Recog-Scaled', 'BVMT-R_Total-Raw', 'BVMT-R_Total-Z', 'BVMT-R_Total-Scaled', 'BVMT-R_Total-zGale', 'BVMT-R_Del-Raw', 'BVMT-R_Del-Z', 'BVMT-R_Del-Scaled', 'BVMT-R_Del-zGale', 'BVMT-R_RecogDis-Raw', 'BVMT-R_RecogDis-Z', 'BVMT-R_RecogDis-Scaled', 'BVMT-R_RecogDis-zGale', 'RCFT_Copy-Raw', 'RCFT_Copy-Z', 'RCFT-Copy-Scaled', 'LetFluency-Raw', 'LetFluency-Z', 'LetFluency-Scaled', 'CatFluency-Raw', 'CatFluency-Z', 'CatFluency-Scaled', 'Fluency-Raw', 'Fluency-Z', 'Fluency-Scaled', 'C/W_Inhib-Raw', 'C/W_Inhib-Z', 'C/W_Inhib-Scaled', 'HayBTime1-Raw', 'HayBTime1-z', 'HayBTime2-Raw', 'HayBTime2-z', 'HayBCatA-Raw', 'HayBCatA-z', 'HayBCatB-Raw', 'HayBCatB-z')
+colnames(neuropsych_matrixF4) <- c('ParticipantID', 'Age', 'EduLevel', 'Group', 'Neuropsych_TestDate', 'TOPF-Raw', 'TOPF-Z', 'TOPF-Scaled', 'DSF-Raw', 'DSF-Z', 'DSF-Scaled', 'DSB-Raw', 'DSB-Z', 'DSB-Scaled', 'TrailsA-Raw', 'TrailsA-Z', 'TrailsA-Scaled', 'TrailsB-Raw', 'TrailsB-Z', 'TrialsB-Scaled', 'Coding-Raw', 'Coding-Z', 'Coding-Scaled', 'ColorNaming-Raw', 'ColorNaming-Z', 'ColorNaming-Scaled', 'WordReading-Raw', 'WordReading-Z', 'WordReading-Scaled', 'Inhibition-Raw', 'Inhibition-Z', 'Inhibition-Scaled', 'SYDBATNaming-Raw', 'SYDBATNaming-Z', 'SYDBATNaming-Scaled', 'SYDBATComp-Raw', 'SYDBATComp-Z', 'SYDBATComp-Scaled', 'SYDBATSemAss-Raw', 'SYDBATSemAss-Z', 'SYDBATSemAss-Scaled', 'BNTManual-Raw', 'BNTManual-Z', 'BNTManual-Scaled', 'BNTIvnik-Raw', 'BNTIvnik-Z', 'BNTIvnik-Scaled', 'Similarities-Raw', 'Similarities-Z', 'Similarities-Scaled', 'LineO-Raw', 'LineO-Z', 'LineO-Scaled', 'BD-Raw', 'BD-Z', 'BD-Scaled', 'Matrix-Raw', 'Matrix-Z', 'Matrix-Scaled', 'LM_I-Raw', 'LM_I-Z', 'LM_I-Scaled', 'LM_II-Raw', 'LM_II-Z', 'LM_II-Scaled', 'StoryAI-Raw', 'StoryAI-Z', 'StoryAI-Scaled', 'StoryAII-Raw', 'StoryAII-Z', 'StoryAII-Scaled',  'CVLT-II_Total-Raw', 'CVLT-II_Total-Z', 'CVLT-II_Total-Scaled', 'CVLT-II_Short-Raw', 'CVLT-II_Short-Z', 'CVLT-II_Short-Scaled', 'CVLT-II_Long-Raw', 'CVLT-II_Long-Z', 'CVLT-II_Long-Scaled', 'CVLT-II_RecogD-Raw', 'CVLT-II_RecogD-Z', 'CVLT-II_RecogD-Scaled', 'RCFT_lmm-Raw', 'RCFT_lmm-Z', 'RCFT_lmm-Scaled', 'RCFT_Del-Raw', 'RCFT_Del-Z', 'RCFT_Del-Scaled', 'RCFT_Recog-Raw', 'RCFT_Recog-Z', 'RCFT_Recog-Scaled', 'BVMT-R_Total-Raw', 'BVMT-R_Total-Z', 'BVMT-R_Total-Scaled', 'BVMT-R_Total-zGale', 'BVMT-R_Del-Raw', 'BVMT-R_Del-Z', 'BVMT-R_Del-Scaled', 'BVMT-R_Del-zGale', 'BVMT-R_RecogDis-Raw', 'BVMT-R_RecogDis-Z', 'BVMT-R_RecogDis-Scaled', 'BVMT-R_RecogDis-zGale', 'RCFT_Copy-Raw', 'RCFT_Copy-Z', 'RCFT-Copy-Scaled', 'LetFluency-Raw', 'LetFluency-Z', 'LetFluency-Scaled', 'CatFluency-Raw', 'CatFluency-Z', 'CatFluency-Scaled', 'Fluency-Raw', 'Fluency-Z', 'Fluency-Scaled', 'C/W_Inhib-Raw', 'C/W_Inhib-Z', 'C/W_Inhib-Scaled', 'HayBTime1-Raw', 'HayBTime1-z', 'HayBTime2-Raw', 'HayBTime2-z', 'HayBCatA-Raw', 'HayBCatA-z', 'HayBCatB-Raw', 'HayBCatB-z')
 
 for(i in sequence(length(files_all))){
   #Reset the task sheet triggers
@@ -82,7 +82,6 @@ for(i in sequence(length(files_all))){
     pt_IDF0 <- pt_dataF0$Raw.1[grep("F0", pt_dataF0$Raw.1) ]
     pt_IDF0 <- paste('ADPRC_', pt_IDF0, sep='') #add in 'ADPRC' ID tag at the beginning. 
     neuropsych_matrixF0[i,1] <- pt_IDF0 
-    #neuropsych_matrixAll[i,1] <- pt_IDF0 
     #Age
     pt_Age_locF0 <- which(pt_dataF0 == 'Age', arr.ind=TRUE) #find participant age location on the sheet
     pt_AgeF0 <- pt_dataF0[pt_Age_locF0[1], pt_Age_locF0[2]+1]
@@ -95,6 +94,9 @@ for(i in sequence(length(files_all))){
     pt_Group_locF0 <- which(pt_dataF0 == 'Dx', arr.ind=TRUE) #find participant group status location on the sheet
     pt_GroupF0 <- pt_dataF0[pt_Group_locF0[1], pt_Group_locF0[2]+1]
     neuropsych_matrixF0[i,4] <- pt_GroupF0
+    #Neuropsych test date
+    pt_testDateF0 <- as.Date(as.integer(substr(colnames(pt_dataF0[1]), 2, 6)), origin = "1899-12-30")
+    neuropsych_matrixF0[i,5] <- as.character(pt_testDateF0)
     #extract the neuropsych scores (114 total) and add into a matrix
     neuropsych_matrixF0[i,6] <- pt_dataF0[1,'Raw'] #TOPF raw
     neuropsych_matrixF0[i,7] <- pt_dataF0[1,'Z'] #TOPF Z
@@ -210,6 +212,55 @@ for(i in sequence(length(files_all))){
     neuropsych_matrixF0[i,117] <- pt_dataF0[21,'Raw'] #C/W Inhibition raw
     neuropsych_matrixF0[i,118] <- pt_dataF0[21,'Z'] #C/W Inhibition Z
     neuropsych_matrixF0[i,119] <- pt_dataF0[21,'Scaled'] #C/W Inhibition Scaled
+    Hay_locF0 <- which(pt_dataF0 == 'Hayling B', arr.ind=TRUE) #find participant Hayling scores location on the sheet
+    HayBTime1RawF0 <- pt_dataF0[Hay_locF0[1]+1, Hay_locF0[2]+1] #Hayling B Time 1 raw
+    HayBTime1zF0 <- pt_dataF0[Hay_locF0[1]+1, Hay_locF0[2]+2] #Hayling B Time 1 z
+    HayBTime2RawF0 <- pt_dataF0[Hay_locF0[1]+2, Hay_locF0[2]+1] #Hayling B Time 2 raw
+    HayBTime2zF0 <- pt_dataF0[Hay_locF0[1]+2, Hay_locF0[2]+2] #Hayling B Time 2 z
+    HayBCatARawF0 <- pt_dataF0[Hay_locF0[1]+3, Hay_locF0[2]+1] #Hayling B Cat A raw
+    HayBCatAzF0 <- pt_dataF0[Hay_locF0[1]+3, Hay_locF0[2]+2] #Hayling B Cat A z
+    HayBCatBRawF0 <- pt_dataF0[Hay_locF0[1]+4, Hay_locF0[2]+1] #Hayling B Cat B raw
+    HayBCatBzF0 <- pt_dataF0[Hay_locF0[1]+4, Hay_locF0[2]+2] #Hayling B Cat B z
+    if (class(HayBTime1RawF0) == 'NULL') {
+      neuropsych_matrixF0[i,120] <- 'N/A'
+    } else {
+      neuropsych_matrixF0[i,120] <- HayBTime1RawF0
+    }
+    if (class(HayBTime1zF0) == 'NULL') {
+      neuropsych_matrixF0[i,121] <- 'N/A'
+    } else {
+      neuropsych_matrixF0[i,121] <- HayBTime1zF0
+    }
+    if (class(HayBTime2RawF0) == 'NULL') {
+      neuropsych_matrixF0[i,122] <- 'N/A'
+    } else {
+      neuropsych_matrixF0[i,122] <- HayBTime2RawF0
+    }
+    if (class(HayBTime2zF0) == 'NULL') {
+      neuropsych_matrixF0[i,123] <- 'N/A'
+    } else {
+      neuropsych_matrixF0[i,123] <- HayBTime2zF0
+    }
+    if (class(HayBCatARawF0) == 'NULL') {
+      neuropsych_matrixF0[i,124] <- 'N/A'
+    } else {
+      neuropsych_matrixF0[i,124] <- HayBCatARawF0
+    }
+    if (class(HayBCatAzF0) == 'NULL') {
+      neuropsych_matrixF0[i,125] <- 'N/A'
+    } else {
+      neuropsych_matrixF0[i,125] <- HayBCatAzF0
+    }
+    if (class(HayBCatBRawF0) == 'NULL') {
+      neuropsych_matrixF0[i,126] <- 'N/A'
+    } else {
+      neuropsych_matrixF0[i,126] <- HayBCatBRawF0
+    }
+    if (class(HayBCatBzF0) == 'NULL') {
+      neuropsych_matrixF0[i,127] <- 'N/A'
+    } else {
+      neuropsych_matrixF0[i,127] <- HayBCatBzF0
+    }
   }
   
   #For F1: 
@@ -233,6 +284,9 @@ for(i in sequence(length(files_all))){
     pt_Group_locF1 <- which(pt_dataF1 == 'Dx', arr.ind=TRUE) #find participant group status location on the sheet
     pt_GroupF1 <- pt_dataF1[pt_Group_locF1[1], pt_Group_locF1[2]+1]
     neuropsych_matrixF1[i,4] <- pt_GroupF1
+    #Neuropsych test date
+    pt_testDateF1 <- as.Date(as.integer(substr(colnames(pt_dataF1[1]), 2, 6)), origin = "1899-12-30")
+    neuropsych_matrixF1[i,5] <- as.character(pt_testDateF1)
     #extract the neuropsych scores (114 total) and add into a matrix
     neuropsych_matrixF1[i,6] <- pt_dataF1[1,'Raw'] #TOPF raw
     neuropsych_matrixF1[i,7] <- pt_dataF1[1,'Z'] #TOPF Z
@@ -348,6 +402,55 @@ for(i in sequence(length(files_all))){
     neuropsych_matrixF1[i,117] <- pt_dataF1[21,'Raw'] #C/W Inhibition raw
     neuropsych_matrixF1[i,118] <- pt_dataF1[21,'Z'] #C/W Inhibition Z
     neuropsych_matrixF1[i,119] <- pt_dataF1[21,'Scaled'] #C/W Inhibition Scaled
+    Hay_locF1 <- which(pt_dataF1 == 'Hayling B', arr.ind=TRUE) #find participant Hayling scores location on the sheet
+    HayBTime1RawF1 <- pt_dataF1[Hay_locF1[1]+1, Hay_locF1[2]+1] #Hayling B Time 1 raw
+    HayBTime1zF1 <- pt_dataF1[Hay_locF1[1]+1, Hay_locF1[2]+2] #Hayling B Time 1 z
+    HayBTime2RawF1 <- pt_dataF1[Hay_locF1[1]+2, Hay_locF1[2]+1] #Hayling B Time 2 raw
+    HayBTime2zF1 <- pt_dataF1[Hay_locF1[1]+2, Hay_locF1[2]+2] #Hayling B Time 2 z
+    HayBCatARawF1 <- pt_dataF1[Hay_locF1[1]+3, Hay_locF1[2]+1] #Hayling B Cat A raw
+    HayBCatAzF1 <- pt_dataF1[Hay_locF1[1]+3, Hay_locF1[2]+2] #Hayling B Cat A z
+    HayBCatBRawF1 <- pt_dataF1[Hay_locF1[1]+4, Hay_locF1[2]+1] #Hayling B Cat B raw
+    HayBCatBzF1 <- pt_dataF1[Hay_locF1[1]+4, Hay_locF1[2]+2] #Hayling B Cat B z
+    if (class(HayBTime1RawF1) == 'NULL') {
+      neuropsych_matrixF1[i,120] <- 'N/A'
+    } else {
+      neuropsych_matrixF1[i,120] <- HayBTime1RawF1
+    }
+    if (class(HayBTime1zF1) == 'NULL') {
+      neuropsych_matrixF1[i,121] <- 'N/A'
+    } else {
+      neuropsych_matrixF1[i,121] <- HayBTime1zF1
+    }
+    if (class(HayBTime2RawF1) == 'NULL') {
+      neuropsych_matrixF1[i,122] <- 'N/A'
+    } else {
+      neuropsych_matrixF1[i,122] <- HayBTime2RawF1
+    }
+    if (class(HayBTime2zF1) == 'NULL') {
+      neuropsych_matrixF1[i,123] <- 'N/A'
+    } else {
+      neuropsych_matrixF1[i,123] <- HayBTime2zF1
+    }
+    if (class(HayBCatARawF1) == 'NULL') {
+      neuropsych_matrixF1[i,124] <- 'N/A'
+    } else {
+      neuropsych_matrixF1[i,124] <- HayBCatARawF1
+    }
+    if (class(HayBCatAzF1) == 'NULL') {
+      neuropsych_matrixF1[i,125] <- 'N/A'
+    } else {
+      neuropsych_matrixF1[i,125] <- HayBCatAzF1
+    }
+    if (class(HayBCatBRawF1) == 'NULL') {
+      neuropsych_matrixF1[i,126] <- 'N/A'
+    } else {
+      neuropsych_matrixF1[i,126] <- HayBCatBRawF1
+    }
+    if (class(HayBCatBzF1) == 'NULL') {
+      neuropsych_matrixF1[i,127] <- 'N/A'
+    } else {
+      neuropsych_matrixF1[i,127] <- HayBCatBzF1
+    }
   }
   
   #For F2: 
@@ -371,6 +474,9 @@ for(i in sequence(length(files_all))){
     pt_Group_locF2 <- which(pt_dataF2 == 'Dx', arr.ind=TRUE) #find participant group status location on the sheet
     pt_GroupF2 <- pt_dataF2[pt_Group_locF2[1], pt_Group_locF2[2]+1]
     neuropsych_matrixF2[i,4] <- pt_GroupF2
+    #Neuropsych test date
+    pt_testDateF2 <- as.Date(as.integer(substr(colnames(pt_dataF2[1]), 2, 6)), origin = "1899-12-30")
+    neuropsych_matrixF2[i,5] <- as.character(pt_testDateF2)
     #extract the neuropsych scores (114 total) and add into a matrix
     neuropsych_matrixF2[i,6] <- pt_dataF2[1,'Raw'] #TOPF raw
     neuropsych_matrixF2[i,7] <- pt_dataF2[1,'Z'] #TOPF Z
@@ -486,6 +592,55 @@ for(i in sequence(length(files_all))){
     neuropsych_matrixF2[i,117] <- pt_dataF2[21,'Raw'] #C/W Inhibition raw
     neuropsych_matrixF2[i,118] <- pt_dataF2[21,'Z'] #C/W Inhibition Z
     neuropsych_matrixF2[i,119] <- pt_dataF2[21,'Scaled'] #C/W Inhibition Scaled
+    Hay_locF2 <- which(pt_dataF2 == 'Hayling B', arr.ind=TRUE) #find participant Hayling scores location on the sheet
+    HayBTime1RawF2 <- pt_dataF2[Hay_locF2[1]+1, Hay_locF2[2]+1] #Hayling B Time 1 raw
+    HayBTime1zF2 <- pt_dataF2[Hay_locF2[1]+1, Hay_locF2[2]+2] #Hayling B Time 1 z
+    HayBTime2RawF2 <- pt_dataF2[Hay_locF2[1]+2, Hay_locF2[2]+1] #Hayling B Time 2 raw
+    HayBTime2zF2 <- pt_dataF2[Hay_locF2[1]+2, Hay_locF2[2]+2] #Hayling B Time 2 z
+    HayBCatARawF2 <- pt_dataF2[Hay_locF2[1]+3, Hay_locF2[2]+1] #Hayling B Cat A raw
+    HayBCatAzF2 <- pt_dataF2[Hay_locF2[1]+3, Hay_locF2[2]+2] #Hayling B Cat A z
+    HayBCatBRawF2 <- pt_dataF2[Hay_locF2[1]+4, Hay_locF2[2]+1] #Hayling B Cat B raw
+    HayBCatBzF2 <- pt_dataF2[Hay_locF2[1]+4, Hay_locF2[2]+2] #Hayling B Cat B z
+    if (class(HayBTime1RawF2) == 'NULL') {
+      neuropsych_matrixF2[i,120] <- 'N/A'
+    } else {
+      neuropsych_matrixF2[i,120] <- HayBTime1RawF2
+    }
+    if (class(HayBTime1zF2) == 'NULL') {
+      neuropsych_matrixF2[i,121] <- 'N/A'
+    } else {
+      neuropsych_matrixF2[i,121] <- HayBTime1zF2
+    }
+    if (class(HayBTime2RawF2) == 'NULL') {
+      neuropsych_matrixF2[i,122] <- 'N/A'
+    } else {
+      neuropsych_matrixF2[i,122] <- HayBTime2RawF2
+    }
+    if (class(HayBTime2zF2) == 'NULL') {
+      neuropsych_matrixF2[i,123] <- 'N/A'
+    } else {
+      neuropsych_matrixF2[i,123] <- HayBTime2zF2
+    }
+    if (class(HayBCatARawF2) == 'NULL') {
+      neuropsych_matrixF2[i,124] <- 'N/A'
+    } else {
+      neuropsych_matrixF2[i,124] <- HayBCatARawF2
+    }
+    if (class(HayBCatAzF2) == 'NULL') {
+      neuropsych_matrixF2[i,125] <- 'N/A'
+    } else {
+      neuropsych_matrixF2[i,125] <- HayBCatAzF2
+    }
+    if (class(HayBCatBRawF2) == 'NULL') {
+      neuropsych_matrixF2[i,126] <- 'N/A'
+    } else {
+      neuropsych_matrixF2[i,126] <- HayBCatBRawF2
+    }
+    if (class(HayBCatBzF2) == 'NULL') {
+      neuropsych_matrixF2[i,127] <- 'N/A'
+    } else {
+      neuropsych_matrixF2[i,127] <- HayBCatBzF2
+    }
   }
   
   #For F3: 
@@ -509,6 +664,9 @@ for(i in sequence(length(files_all))){
     pt_Group_locF3 <- which(pt_dataF3 == 'Dx', arr.ind=TRUE) #find participant group status location on the sheet
     pt_GroupF3 <- pt_dataF3[pt_Group_locF3[1], pt_Group_locF3[2]+1]
     neuropsych_matrixF3[i,4] <- pt_GroupF3
+    #Neuropsych test date
+    pt_testDateF3 <- as.Date(as.integer(substr(colnames(pt_dataF3[1]), 2, 6)), origin = "1899-12-30")
+    neuropsych_matrixF3[i,5] <- as.character(pt_testDateF3)
     #extract the neuropsych scores (114 total) and add into a matrix
     neuropsych_matrixF3[i,6] <- pt_dataF3[1,'Raw'] #TOPF raw
     neuropsych_matrixF3[i,7] <- pt_dataF3[1,'Z'] #TOPF Z
@@ -624,6 +782,55 @@ for(i in sequence(length(files_all))){
     neuropsych_matrixF3[i,117] <- pt_dataF3[21,'Raw'] #C/W Inhibition raw
     neuropsych_matrixF3[i,118] <- pt_dataF3[21,'Z'] #C/W Inhibition Z
     neuropsych_matrixF3[i,119] <- pt_dataF3[21,'Scaled'] #C/W Inhibition Scaled
+    Hay_locF3 <- which(pt_dataF3 == 'Hayling B', arr.ind=TRUE) #find participant Hayling scores location on the sheet
+    HayBTime1RawF3 <- pt_dataF3[Hay_locF3[1]+1, Hay_locF3[2]+1] #Hayling B Time 1 raw
+    HayBTime1zF3 <- pt_dataF3[Hay_locF3[1]+1, Hay_locF3[2]+2] #Hayling B Time 1 z
+    HayBTime2RawF3 <- pt_dataF3[Hay_locF3[1]+2, Hay_locF3[2]+1] #Hayling B Time 2 raw
+    HayBTime2zF3 <- pt_dataF3[Hay_locF3[1]+2, Hay_locF3[2]+2] #Hayling B Time 2 z
+    HayBCatARawF3 <- pt_dataF3[Hay_locF3[1]+3, Hay_locF3[2]+1] #Hayling B Cat A raw
+    HayBCatAzF3 <- pt_dataF3[Hay_locF3[1]+3, Hay_locF3[2]+2] #Hayling B Cat A z
+    HayBCatBRawF3 <- pt_dataF3[Hay_locF3[1]+4, Hay_locF3[2]+1] #Hayling B Cat B raw
+    HayBCatBzF3 <- pt_dataF3[Hay_locF3[1]+4, Hay_locF3[2]+2] #Hayling B Cat B z
+    if (class(HayBTime1RawF3) == 'NULL') {
+      neuropsych_matrixF3[i,120] <- 'N/A'
+    } else {
+      neuropsych_matrixF3[i,120] <- HayBTime1RawF3
+    }
+    if (class(HayBTime1zF3) == 'NULL') {
+      neuropsych_matrixF3[i,121] <- 'N/A'
+    } else {
+      neuropsych_matrixF3[i,121] <- HayBTime1zF3
+    }
+    if (class(HayBTime2RawF3) == 'NULL') {
+      neuropsych_matrixF3[i,122] <- 'N/A'
+    } else {
+      neuropsych_matrixF3[i,122] <- HayBTime2RawF3
+    }
+    if (class(HayBTime2zF3) == 'NULL') {
+      neuropsych_matrixF3[i,123] <- 'N/A'
+    } else {
+      neuropsych_matrixF3[i,123] <- HayBTime2zF3
+    }
+    if (class(HayBCatARawF3) == 'NULL') {
+      neuropsych_matrixF3[i,124] <- 'N/A'
+    } else {
+      neuropsych_matrixF3[i,124] <- HayBCatARawF3
+    }
+    if (class(HayBCatAzF3) == 'NULL') {
+      neuropsych_matrixF3[i,125] <- 'N/A'
+    } else {
+      neuropsych_matrixF3[i,125] <- HayBCatAzF3
+    }
+    if (class(HayBCatBRawF3) == 'NULL') {
+      neuropsych_matrixF3[i,126] <- 'N/A'
+    } else {
+      neuropsych_matrixF3[i,126] <- HayBCatBRawF3
+    }
+    if (class(HayBCatBzF3) == 'NULL') {
+      neuropsych_matrixF3[i,127] <- 'N/A'
+    } else {
+      neuropsych_matrixF3[i,127] <- HayBCatBzF3
+    }
   } 
   
   #For F4
@@ -647,6 +854,9 @@ for(i in sequence(length(files_all))){
     pt_Group_locF4 <- which(pt_dataF4 == 'Dx', arr.ind=TRUE) #find participant group status location on the sheet
     pt_GroupF4 <- pt_dataF4[pt_Group_locF4[1], pt_Group_locF4[2]+1]
     neuropsych_matrixF4[i,4] <- pt_GroupF4
+    #Neuropsych test date
+    pt_testDateF4 <- as.Date(as.integer(substr(colnames(pt_dataF4[1]), 2, 6)), origin = "1899-12-30")
+    neuropsych_matrixF4[i,5] <- as.character(pt_testDateF4)
     #extract the neuropsych scores (114 total) and add into a matrix
     neuropsych_matrixF4[i,6] <- pt_dataF4[1,'Raw'] #TOPF raw
     neuropsych_matrixF4[i,7] <- pt_dataF4[1,'Z'] #TOPF Z
@@ -762,6 +972,55 @@ for(i in sequence(length(files_all))){
     neuropsych_matrixF4[i,117] <- pt_dataF4[21,'Raw'] #C/W Inhibition raw
     neuropsych_matrixF4[i,118] <- pt_dataF4[21,'Z'] #C/W Inhibition Z
     neuropsych_matrixF4[i,119] <- pt_dataF4[21,'Scaled'] #C/W Inhibition Scaled
+    Hay_locF4 <- which(pt_dataF4 == 'Hayling B', arr.ind=TRUE) #find participant Hayling scores location on the sheet
+    HayBTime1RawF4 <- pt_dataF4[Hay_locF4[1]+1, Hay_locF4[2]+1] #Hayling B Time 1 raw
+    HayBTime1zF4 <- pt_dataF4[Hay_locF4[1]+1, Hay_locF4[2]+2] #Hayling B Time 1 z
+    HayBTime2RawF4 <- pt_dataF4[Hay_locF4[1]+2, Hay_locF4[2]+1] #Hayling B Time 2 raw
+    HayBTime2zF4 <- pt_dataF4[Hay_locF4[1]+2, Hay_locF4[2]+2] #Hayling B Time 2 z
+    HayBCatARawF4 <- pt_dataF4[Hay_locF4[1]+3, Hay_locF4[2]+1] #Hayling B Cat A raw
+    HayBCatAzF4 <- pt_dataF4[Hay_locF4[1]+3, Hay_locF4[2]+2] #Hayling B Cat A z
+    HayBCatBRawF4 <- pt_dataF4[Hay_locF4[1]+4, Hay_locF4[2]+1] #Hayling B Cat B raw
+    HayBCatBzF4 <- pt_dataF4[Hay_locF4[1]+4, Hay_locF4[2]+2] #Hayling B Cat B z
+    if (class(HayBTime1RawF4) == 'NULL') {
+      neuropsych_matrixF4[i,120] <- 'N/A'
+    } else {
+      neuropsych_matrixF4[i,120] <- HayBTime1RawF4
+    }
+    if (class(HayBTime1zF4) == 'NULL') {
+      neuropsych_matrixF4[i,121] <- 'N/A'
+    } else {
+      neuropsych_matrixF4[i,121] <- HayBTime1zF4
+    }
+    if (class(HayBTime2RawF4) == 'NULL') {
+      neuropsych_matrixF4[i,122] <- 'N/A'
+    } else {
+      neuropsych_matrixF4[i,122] <- HayBTime2RawF4
+    }
+    if (class(HayBTime2zF4) == 'NULL') {
+      neuropsych_matrixF4[i,123] <- 'N/A'
+    } else {
+      neuropsych_matrixF4[i,123] <- HayBTime2zF4
+    }
+    if (class(HayBCatARawF4) == 'NULL') {
+      neuropsych_matrixF4[i,124] <- 'N/A'
+    } else {
+      neuropsych_matrixF4[i,124] <- HayBCatARawF4
+    }
+    if (class(HayBCatAzF4) == 'NULL') {
+      neuropsych_matrixF4[i,125] <- 'N/A'
+    } else {
+      neuropsych_matrixF4[i,125] <- HayBCatAzF4
+    }
+    if (class(HayBCatBRawF4) == 'NULL') {
+      neuropsych_matrixF4[i,126] <- 'N/A'
+    } else {
+      neuropsych_matrixF4[i,126] <- HayBCatBRawF4
+    }
+    if (class(HayBCatBzF4) == 'NULL') {
+      neuropsych_matrixF4[i,127] <- 'N/A'
+    } else {
+      neuropsych_matrixF4[i,127] <- HayBCatBzF4
+    }
   }
   
   #Upon finishing with the participant file, move up one folder, to the main participant list folder
