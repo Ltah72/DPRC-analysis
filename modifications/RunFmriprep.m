@@ -16,7 +16,7 @@
 
 %Author: Lenore Tahara-Eckl
 %Email: Ltah262@aucklanduni.ac.nz
-%Date: 10/01/20
+%Date: 10/01/21
 
 %Define fmriprep directory, so that it used:
 %FmriprepDirectory = input('Please enter fmriprep directory:', 's');
