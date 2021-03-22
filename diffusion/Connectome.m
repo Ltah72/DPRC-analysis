@@ -138,12 +138,12 @@ for i = 1:length(participants)
     copyfile ([startdir '/derivatives/' period, '/diff_data/' groupname, '/IN/wmfod_norm_', PAR_NAME, '.mif'], [startdir,'/derivatives/', period, '/diff_data/', groupname, '/connectome/']);
 
     %copy preprocessed t1w + t2 FLAIR images from fmriprep, and the WMH lesion masks into connectome folder
-    copyfile ([stardir, '/fmriprep_test/derivatives/', PAR_NAME, '/anat/', PAR_NAME, '_desc-preproc_T1w.nii.gz'], [startdir,'/derivatives/', period, '/diff_data/', groupname, '/connectome']);
-    copyfile ([stardir, '/fmriprep_test/sourcedata/', PAR_NAME, '/anat/', PAR_NAME, '_FLAIR.nii'], [startdir,'/derivatives/', period, '/diff_data/', groupname, '/connectome']);
+    copyfile ([stardir, '/fmriprepped_data/derivatives/', PAR_NAME, '/anat/', PAR_NAME, '_desc-preproc_T1w.nii.gz'], [startdir,'/derivatives/', period, '/diff_data/', groupname, '/connectome']);
+    copyfile ([stardir, '/fmriprepped_data/sourcedata/', PAR_NAME, '/anat/', PAR_NAME, '_FLAIR.nii'], [startdir,'/derivatives/', period, '/diff_data/', groupname, '/connectome']);
     copyfile ([startdir, '/WMH_lesion_masks/ples_lpa_mr' PAR_NAME '_FLAIR', '.nii'], [startdir,'/derivatives/', period, '/diff_data/', groupname, '/connectome']);
     
     %copy FreeSurfer's recon-all output into FreeSurfer's $SUBJECTS directory
-    unix(['cp -r ' startdir, '/fmriprep_test/derivatives/freesurfer/', PAR_NAME, '/ $SUBJECTS_DIR']);
+    unix(['cp -r ' startdir, '/fmriprepped_data/derivatives/freesurfer/', PAR_NAME, '/ $SUBJECTS_DIR']);
 
     %convert T1 image to .nii format
     unix(['mrconvert ' PAR_NAME, '_desc-preproc_T1w.nii.gz ' PAR_NAME, '_T1w.nii']);
