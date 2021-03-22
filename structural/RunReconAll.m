@@ -24,5 +24,5 @@ for i = 1:length(participants)
     unix(['recon-all -i ' PAR_NAME '_T1w.nii -FLAIR ' PAR_NAME '_FLAIR.nii -s ' PAR_NAME ' -all -parallel -openmp 25']);
 
     %copy the recon-all output into the fmriprep derivatives directory
-    unix(['sudo cp -r $SUBJECTS_DIR/' PAR_NAME ' /data/USERS/LENORE/fmriprep_test/derivatives/freesurfer/']); 
+    unix(['sudo cp -r $SUBJECTS_DIR/' PAR_NAME ' /data/USERS/LENORE/fmriprepped_data/derivatives/freesurfer/']); 
 end 
