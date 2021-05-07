@@ -164,31 +164,37 @@ anova(SLF_FDC_clinsite_mod_R)
 #plot data
 #FD - mean
 ggplot(SLF_data, aes(x = Group, y = mn_FD_SLF)) + 
-    geom_boxplot(width = 0.5, fill = "white", outlier.size = 1, aes(colour = Group)) + 
+    geom_boxplot(width = 0.1, fill = "white", outlier.size = 1, aes(colour = Group)) + 
     stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Group)) + 
     xlab("Group") + 
     ylab("Fibre Density (FD)") +
     scale_x_discrete(labels = c("1" = "Control", "2" = "SCD", "3" = "aMCI", "4" = "mMCI", "5" = "AD")) + 
     theme_classic() +
-    theme(legend.position = "none")
+    theme(legend.position = "none") +
+    geom_violin(trim = FALSE, alpha = .5, aes(fill = Group, colour = Group), size = 1)
+
 
 ggplot(SLF_data, aes(x = Group, y = mn_FD_SLF_L)) + 
-    geom_boxplot(width = 0.5, fill = "white", outlier.size = 1, aes(colour = Group)) + 
+    geom_boxplot(width = 0.1, fill = "white", outlier.size = 1, aes(colour = Group)) + 
     stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Group)) + 
     xlab("Group") + 
     ylab("Fibre Density (FD)") +
     scale_x_discrete(labels = c("1" = "Control", "2" = "SCD", "3" = "aMCI", "4" = "mMCI", "5" = "AD")) + 
     theme_classic() +
-    theme(legend.position = "none")
+    theme(legend.position = "none") +
+    geom_violin(trim = FALSE, alpha = .5, aes(fill = Group, colour = Group), size = 1)
+
 
 ggplot(SLF_data, aes(x = Group, y = mn_FD_SLF_R)) + 
-    geom_boxplot(width = 0.5, fill = "white", outlier.size = 1, aes(colour = Group)) + 
+    geom_boxplot(width = 0.1, fill = "white", outlier.size = 1, aes(colour = Group)) + 
     stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Group)) + 
     xlab("Group") + 
     ylab("Fibre Density (FD)") +
     scale_x_discrete(labels = c("1" = "Control", "2" = "SCD", "3" = "aMCI", "4" = "mMCI", "5" = "AD")) + 
     theme_classic() +
-    theme(legend.position = "none")
+    theme(legend.position = "none") +
+    geom_violin(trim = FALSE, alpha = .5, aes(fill = Group, colour = Group), size = 1)
+
 #FD - median
 # ggplot(SLF_data, aes(x = Group, y = md_FD)) + 
 #     geom_boxplot(width = 0.5, fill = "white", outlier.size = 1, aes(colour = Group)) + 
@@ -201,31 +207,37 @@ ggplot(SLF_data, aes(x = Group, y = mn_FD_SLF_R)) +
 
 #FC - mean
 ggplot(SLF_data, aes(x = Group, y = mn_FC_SLF)) + 
-    geom_boxplot(width = 0.5, fill = "white", outlier.size = 1, aes(colour = Group)) + 
+    geom_boxplot(width = 0.1, fill = "white", outlier.size = 1, aes(colour = Group)) + 
     stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Group)) + 
     xlab("Group") + 
     ylab("Fibre Cross-section (FC)") +
     scale_x_discrete(labels = c("1" = "Control", "2" = "SCD", "3" = "aMCI", "4" = "mMCI", "5" = "AD")) + 
     theme_classic() +
-    theme(legend.position = "none")
+    theme(legend.position = "none") +
+    geom_violin(trim = FALSE, alpha = .5, aes(fill = Group, colour = Group), size = 1)
+
 
 ggplot(SLF_data, aes(x = Group, y = mn_FC_SLF_L)) + 
-    geom_boxplot(width = 0.5, fill = "white", outlier.size = 1, aes(colour = Group)) + 
+    geom_boxplot(width = 0.1, fill = "white", outlier.size = 1, aes(colour = Group)) + 
     stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Group)) + 
     xlab("Group") + 
     ylab("Fibre Cross-section (FC)") +
     scale_x_discrete(labels = c("1" = "Control", "2" = "SCD", "3" = "aMCI", "4" = "mMCI", "5" = "AD")) + 
     theme_classic() +
-    theme(legend.position = "none")
+    theme(legend.position = "none") +
+    geom_violin(trim = FALSE, alpha = .5, aes(fill = Group, colour = Group), size = 1)
+
 
 ggplot(SLF_data, aes(x = Group, y = mn_FC_SLF_R)) + 
-    geom_boxplot(width = 0.5, fill = "white", outlier.size = 1, aes(colour = Group)) + 
+    geom_boxplot(width = 0.1, fill = "white", outlier.size = 1, aes(colour = Group)) + 
     stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Group)) + 
     xlab("Group") + 
     ylab("Fibre Cross-section (FC)") +
     scale_x_discrete(labels = c("1" = "Control", "2" = "SCD", "3" = "aMCI", "4" = "mMCI", "5" = "AD")) + 
     theme_classic() +
-    theme(legend.position = "none")
+    theme(legend.position = "none") +
+    geom_violin(trim = FALSE, alpha = .5, aes(fill = Group, colour = Group), size = 1)
+
 #FC - median
 # ggplot(SLF_data, aes(x = Group, y = md_FC)) + 
 #     geom_boxplot(width = 0.5, fill = "white", outlier.size = 1, aes(colour = Group)) + 
@@ -238,31 +250,37 @@ ggplot(SLF_data, aes(x = Group, y = mn_FC_SLF_R)) +
 
 #FDC - mean
 ggplot(SLF_data, aes(x = Group, y = mn_FDC_SLF)) + 
-    geom_boxplot(width = 0.5, fill = "white", outlier.size = 1, aes(colour = Group)) + 
+    geom_boxplot(width = 0.1, fill = "white", outlier.size = 1, aes(colour = Group)) + 
     stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Group)) + 
     xlab("Group") + 
     ylab("Fibre Density Cross-section (FDC)") +
     scale_x_discrete(labels = c("1" = "Control", "2" = "SCD", "3" = "aMCI", "4" = "mMCI", "5" = "AD")) + 
     theme_classic() +
-    theme(legend.position = "none")
+    theme(legend.position = "none") +
+    geom_violin(trim = FALSE, alpha = .5, aes(fill = Group, colour = Group), size = 1)
+
 
 ggplot(SLF_data, aes(x = Group, y = mn_FDC_SLF_L)) + 
-    geom_boxplot(width = 0.5, fill = "white", outlier.size = 1, aes(colour = Group)) + 
+    geom_boxplot(width = 0.1, fill = "white", outlier.size = 1, aes(colour = Group)) + 
     stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Group)) + 
     xlab("Group") + 
     ylab("Fibre Density Cross-section (FDC)") +
     scale_x_discrete(labels = c("1" = "Control", "2" = "SCD", "3" = "aMCI", "4" = "mMCI", "5" = "AD")) + 
     theme_classic() +
-    theme(legend.position = "none")
+    theme(legend.position = "none") +
+    geom_violin(trim = FALSE, alpha = .5, aes(fill = Group, colour = Group), size = 1)
+
 
 ggplot(SLF_data, aes(x = Group, y = mn_FDC_SLF_R)) + 
-    geom_boxplot(width = 0.5, fill = "white", outlier.size = 1, aes(colour = Group)) + 
+    geom_boxplot(width = 0.1, fill = "white", outlier.size = 1, aes(colour = Group)) + 
     stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Group)) + 
     xlab("Group") + 
     ylab("Fibre Density Cross-section (FDC)") +
     scale_x_discrete(labels = c("1" = "Control", "2" = "SCD", "3" = "aMCI", "4" = "mMCI", "5" = "AD")) + 
     theme_classic() +
-    theme(legend.position = "none")
+    theme(legend.position = "none")+
+    geom_violin(trim = FALSE, alpha = .5, aes(fill = Group, colour = Group), size = 1)
+
 #FDC - median
 # ggplot(SLF_data, aes(x = Group, y = md_FDC)) + 
 #     geom_boxplot(width = 0.5, fill = "white", outlier.size = 1, aes(colour = Group)) + 
