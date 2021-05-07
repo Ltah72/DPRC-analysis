@@ -12,9 +12,12 @@
 #load libraries via pacman
 pacman::p_load(dplyr, ggplot2, psych, car)
 
+#set up pathway
+setwd('V:/PartInfo')
+
 #read in excel files (participant file)
-DPRC_demographics <- read.csv("DPRC_subject_list_(Lenore).csv")
-covariates_data <- read.csv("covariates-participants-lined-up.csv")
+DPRC_demographics <- read.csv("DPRC_subject_list.csv")
+covariates_data <- read.csv("covariates-participants-lined-up_update.csv")
 
 #rename some columns
 names(DPRC_demographics)[5] <- "Age"
@@ -50,14 +53,15 @@ ACE_descrip <- describeBy(DPRC_demographics$ACE_score, DPRC_demographics$Classif
 
 #plot age
 ggplot(subset(DPRC_demographics, Classification %in% c("1", "2", "3", "4", "5")), aes(x = Classification, y = Age)) + 
-    geom_boxplot(width = 0.5, fill = "white", outlier.size = 1, aes(colour = Classification)) + 
+    geom_boxplot(width = 0.1, fill = "white", outlier.size = 1, aes(colour = Classification)) + 
     stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Classification)) + 
     ylim(50, 95) +
-    xlab("Group_status") + 
+    xlab("Group") + 
     ylab("Age") +
     scale_x_discrete(labels = c("1" = "Control", "2" = "SCD", "3" = "aMCI", "4" = "mMCI", "5" = "AD")) + 
     theme_classic() +
-    theme(legend.position = "none")
+    theme(legend.position = "none") +
+    geom_violin(trim = FALSE, alpha = .5, aes(fill = Classification, colour = Classification), size = 1)
 
 #plot gender
 gender_data <- data.frame(table(covariates_data$Classification, covariates_data$Sex))
@@ -67,7 +71,9 @@ gender_data <- gender_data %>% arrange(factor(Group, levels=Group_order))
 gender_data$Group <- factor(gender_data$Group, levels=c("C", "SCD", "aMCI", "mMCI", "AD"))
 
 ggplot(data=gender_data, aes(x=Group, y=Count, fill=Sex)) +
-    geom_bar(stat="identity")
+    geom_bar(stat="identity") + 
+    theme_bw() + 
+    theme(panel.border = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
 
 
 #plot clinical site
@@ -77,18 +83,23 @@ location_data <- location_data %>% arrange(factor(Group, levels=Group_order))
 location_data$Group <- factor(location_data$Group, levels=c("C", "SCD", "aMCI", "mMCI", "AD"))
 
 ggplot(data=location_data, aes(x=Group, y=Count, fill=Clinical_site)) +
-    geom_bar(stat="identity")
+    geom_bar(stat="identity") +
+    scale_fill_discrete(name = "Clinical Site") + 
+    theme_bw() + 
+    theme(panel.border = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
+
 
 
 #plot ACE
 ggplot(subset(DPRC_demographics, Classification %in% c("1", "2", "3", "4", "5")), aes(x = Classification, y = ACE_score)) + 
-    geom_boxplot(width = 0.5, fill = "white", outlier.size = 1, aes(colour = Classification)) + 
+    geom_boxplot(width = 0.1, fill = "white", outlier.size = 1, aes(colour = Classification)) + 
     stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Classification)) + 
-    xlab("Group_status") + 
-    ylab("ACE_score") +
+    xlab("Group") + 
+    ylab("ACE Score") +
     scale_x_discrete(labels = c("1" = "Control", "2" = "SCD", "3" = "aMCI", "4" = "mMCI", "5" = "AD")) + 
     theme_classic() +
-    theme(legend.position = "none")
+    theme(legend.position = "none") +
+    geom_violin(trim = FALSE, alpha = .5, aes(fill = Classification, colour = Classification), size = 1)
 
 
 
@@ -97,8 +108,8 @@ ggplot(subset(DPRC_demographics, Classification %in% c("1", "2", "3", "4", "5"))
 ggplot(subset(covariates_data, Group %in% c("1", "2", "3", "4", "5")), aes(x = Group, y = Mean_FD)) + 
     geom_boxplot(width = 0.5, fill = "white", outlier.size = 1, aes(colour = Group)) + 
     stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Group)) + 
-    xlab("Group_status") + 
-    ylab("FD") +
+    xlab("Group") + 
+    ylab("Fibre Density (FD)") +
     scale_x_discrete(labels = c("1" = "Control", "2" = "SCD", "3" = "aMCI", "4" = "mMCI", "5" = "AD")) + 
     theme_classic() +
     theme(legend.position = "none")
@@ -106,8 +117,8 @@ ggplot(subset(covariates_data, Group %in% c("1", "2", "3", "4", "5")), aes(x = G
 ggplot(subset(covariates_data, Group %in% c("1", "2", "3", "4", "5")), aes(x = Group, y = Mean_FC)) + 
     geom_boxplot(width = 0.5, fill = "white", outlier.size = 1, aes(colour = Group)) + 
     stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Group)) + 
-    xlab("Group_status") + 
-    ylab("FC") +
+    xlab("Group") + 
+    ylab("Fibre Cross-section (FC)") +
     scale_x_discrete(labels = c("1" = "Control", "2" = "SCD", "3" = "aMCI", "4" = "mMCI", "5" = "AD")) + 
     theme_classic() +
     theme(legend.position = "none")
@@ -115,8 +126,8 @@ ggplot(subset(covariates_data, Group %in% c("1", "2", "3", "4", "5")), aes(x = G
 ggplot(subset(covariates_data, Group %in% c("1", "2", "3", "4", "5")), aes(x = Group, y = Mean_FDC)) + 
     geom_boxplot(width = 0.5, fill = "white", outlier.size = 1, aes(colour = Group)) + 
     stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Group)) + 
-    xlab("Group_status") + 
-    ylab("FDC") +
+    xlab("Group") + 
+    ylab("Fibre Density Cross-section (FDC)") +
     scale_x_discrete(labels = c("1" = "Control", "2" = "SCD", "3" = "aMCI", "4" = "mMCI", "5" = "AD")) + 
     theme_classic() +
     theme(legend.position = "none")
@@ -130,7 +141,7 @@ anova(age_mod)
 
 #check for significant difference in gender between groups 
 #reformat data for chi-square test
-gender_data_chisq <- rbind(c(20,30,14,17,5), c(4,23,22,12,10))
+gender_data_chisq <- rbind(c(25,38,22,25,7), c(6,23,29,25,14))
 colnames(gender_data_chisq) <- c("C", "SCD", "aMCI", "mMCI", "AD")
 rownames(gender_data_chisq) <- c("F", "M")
 #run chi-square test
@@ -139,7 +150,7 @@ gender_chi_test <- chisq.test(gender_data_chisq)
 
 #check for significant difference in clinical site between groups 
 #reformat data for chi-square test
-location_data_chisq <- rbind(c(22,39,25,24,13), c(2,5,6,4,1), c(0,9,5,1,1))
+location_data_chisq <- rbind(c(29,43,32,35,14), c(2,6,13,13,3), c(0,12,6,2,4))
 colnames(location_data_chisq) <- c("C", "SCD", "aMCI", "mMCI", "AD")
 rownames(location_data_chisq) <- c("Auckland", "Christchurch", "Dunedin")
 #run chi-square test
@@ -189,7 +200,7 @@ shapiro.test(age_mod$residuals)
 ggplot(subset(covariates_data, Group %in% c("1", "2", "3", "4", "5")), aes(x = Age, y = Mean_FD, shape = Group, color = Group)) +
     geom_point() +
     geom_smooth(method="lm", formula= y~x, se=FALSE) +
-    ggtitle("Age vs. fibre density (FD)") +
+    ggtitle("Age vs. Fibre Density (FD)") +
     theme(plot.title = element_text(hjust=0.5))
     #scale_x_discrete(labels = c("1"="Control", "2"="SCD", "3"="aMCI", "4"="mMCI", "5"="AD")) 
     
@@ -198,7 +209,7 @@ ggplot(subset(covariates_data, Group %in% c("1", "2", "3", "4", "5")), aes(x = A
 ggplot(subset(covariates_data, Group %in% c("1", "2", "3", "4", "5")), aes(x = Age, y = Mean_FC, shape = Group, color = Group)) +
     geom_point() +
     geom_smooth(method="lm", formula= y~x, se=FALSE) +
-    ggtitle("Age vs. fibre cross-section (FC)") +
+    ggtitle("Age vs. Fibre Cross-section (FC)") +
     theme(plot.title = element_text(hjust=0.5))
 
 
@@ -206,7 +217,7 @@ ggplot(subset(covariates_data, Group %in% c("1", "2", "3", "4", "5")), aes(x = A
 ggplot(subset(covariates_data, Group %in% c("1", "2", "3", "4", "5")), aes(x = Age, y = Mean_FDC, shape = Group, color = Group)) +
     geom_point() +
     geom_smooth(method="lm", formula= y~x, se=FALSE) +
-    ggtitle("Age vs. fibre density & cross-section (FDC)") +
+    ggtitle("Age vs. Fibre Density Cross-section (FDC)") +
     theme(plot.title = element_text(hjust=0.5))
 
 
@@ -220,7 +231,7 @@ ggplot(subset(covariates_data, Group %in% c("1", "2", "3", "4", "5")), aes(x = A
     geom_smooth(aes(y=Mean_FC, color="Mean_FC"), method="lm", formula= y~x, se=FALSE) +
     geom_point(aes(y=Mean_FDC, color="Mean_FDC")) + 
     geom_smooth(aes(y=Mean_FDC, color="Mean_FDC"), method="lm", formula= y~x, se=FALSE) +
-    ylab("FBA metrics") +
+    ylab("Fixel-Based Analysis (FBA) metrics") +
     ggtitle("Age vs. all 3 metrics (FD, FC, & FDC)") +
     theme(plot.title = element_text(hjust=0.5))
 
@@ -272,19 +283,19 @@ ggplot(covariates_data, aes(x = Sex, y = Mean_FD)) +
     geom_boxplot(width = 0.5, fill = "white", outlier.size = 1, aes(colour = Sex)) +
     stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Sex)) +
     xlab("Sex") + 
-    ylab("Mean_FD")
+    ylab("Mean Fibre Density (FD)")
 #for FC
 ggplot(covariates_data, aes(x = Sex, y = Mean_FC)) + 
     geom_boxplot(width = 0.5, fill = "white", outlier.size = 1, aes(colour = Sex)) +
     stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Sex)) +
     xlab("Sex") + 
-    ylab("Mean_FC")
+    ylab("Mean Fibre Cross-section (FC)")
 #for FDC
 ggplot(covariates_data, aes(x = Sex, y = Mean_FDC)) + 
     geom_boxplot(width = 0.5, fill = "white", outlier.size = 1, aes(colour = Sex)) +
     stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Sex)) +
     xlab("Sex") + 
-    ylab("Mean_FDC")
+    ylab("Mean Fibre Density Cross-section (FDC)")
      
     
 #check if there's a difference between the white matter integrity metrics (FBA) between gender
@@ -302,22 +313,22 @@ t.test(covariates_data$Mean_FDC ~ covariates_data$Sex, var.equal = TRUE)
 ggplot(covariates_data, aes(x = Group, y = Mean_FD, color = Sex)) + 
     geom_boxplot(width = 0.5, fill = "white", outlier.size = 1, aes(colour = Sex)) +
     stat_summary(fun = mean, geom = "point", position = position_dodge(.5), shape = 19, size = 2, aes(colour = Sex)) +
-    xlab("Group_status") + 
-    ylab("Mean_FD")+
+    xlab("Group") + 
+    ylab("Mean Fibre Density (FD)")+
     scale_x_discrete(labels = c("1" = "Control", "2" = "SCD", "3" = "aMCI", "4" = "mMCI", "5" = "AD")) 
 #for FC
 ggplot(covariates_data, aes(x = Group, y = Mean_FC, color = Sex)) + 
     geom_boxplot(width = 0.5, fill = "white", outlier.size = 1, aes(colour = Sex)) +
     stat_summary(fun = mean, geom = "point", position = position_dodge(.5), shape = 19, size = 2, aes(colour = Sex)) +
-    xlab("Group_status") + 
-    ylab("Mean_FC")+
+    xlab("Group") + 
+    ylab("Mean Fibre Cross-section (FC)")+
     scale_x_discrete(labels = c("1" = "Control", "2" = "SCD", "3" = "aMCI", "4" = "mMCI", "5" = "AD")) 
 #for FDC
 ggplot(covariates_data, aes(x = Group, y = Mean_FDC, color = Sex)) + 
     geom_boxplot(width = 0.5, fill = "white", outlier.size = 1, aes(colour = Sex)) +
     stat_summary(fun = mean, geom = "point", position = position_dodge(.5), shape = 19, size = 2, aes(colour = Sex)) +
-    xlab("Group_status") + 
-    ylab("Mean_FDC")+
+    xlab("Group") + 
+    ylab("Mean Fibre Density Cross-section (FDC)")+
     scale_x_discrete(labels = c("1" = "Control", "2" = "SCD", "3" = "aMCI", "4" = "mMCI", "5" = "AD")) 
 
 
@@ -343,20 +354,20 @@ anova(Sex_Group_FDC_mod)
 ggplot(covariates_data, aes(x = Clinical_site, y = Mean_FD)) + 
     geom_boxplot(width = 0.5, fill = "white", outlier.size = 1, aes(colour = Clinical_site)) +
     stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Clinical_site)) +
-    xlab("Clinical_site") + 
-    ylab("Mean_FD")
+    xlab("Clinical Site") + 
+    ylab("Mean Fibre Density (FD)")
 #for FC
 ggplot(covariates_data, aes(x = Clinical_site, y = Mean_FC)) + 
     geom_boxplot(width = 0.5, fill = "white", outlier.size = 1, aes(colour = Clinical_site)) +
     stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Clinical_site)) +
-    xlab("Clinical_site") + 
-    ylab("Mean_FC")
+    xlab("Clinical Site") + 
+    ylab("Mean Fibre Cross-section")
 #for FDC
 ggplot(covariates_data, aes(x = Clinical_site, y = Mean_FDC)) + 
     geom_boxplot(width = 0.5, fill = "white", outlier.size = 1, aes(colour = Clinical_site)) +
     stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Clinical_site)) +
-    xlab("Clinical_site") + 
-    ylab("Mean_FDC")
+    xlab("Clinical Site") + 
+    ylab("Mean Fibre Density Cross-section (FDC)")
 
 
 #check for significant difference in white matter integrity between clinical sites
