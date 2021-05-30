@@ -10,9 +10,14 @@
 
 
 #load libraries via pacman
-pacman::p_load(dplyr, ggplot2, psych, car)
+pacman::p_load(dplyr, ggplot2, psych, car, BayesFactor)
+
+#load in pathway for functions
+#source('path/tofile/here.R')
+source('H:/ltah262/PhD/Diffusion/script/dprc/neuropsych/insertRow.R')
 
 #set up pathway
+#setwd('/yourpathway/')
 setwd('V:/PartInfo')
 
 #read in excel files (participant file)
@@ -20,12 +25,29 @@ DPRC_demographics <- read.csv("DPRC_subject_list.csv")
 covariates_data <- read.csv("covariates-participants-lined-up_update.csv")
 
 #rename some columns
+names(DPRC_demographics)[1] <- "Subject_ID"
 names(DPRC_demographics)[5] <- "Age"
 names(DPRC_demographics)[6] <- "Sex"
 names(DPRC_demographics)[7] <- "Sex_binary"
 names(DPRC_demographics)[9] <- "Classification"
 names(DPRC_demographics)[10] <- "ACE_score"
 
+
+#make edits to include / exclude certain participants (MRI data exclusion) - this excel sheet updates, so you will need to update this code too. 
+ADPRC0004F2_info <- as.data.frame(cbind('ADRPC_0004_F2', 1, '25/05/2018', '1/05/1939', 79.00, 'M', 0, 'AD(mod)', 5, 52, 'Note this was first scan. F1 ACE=73; F0 ACE=87', '', '', '', '')) #ADPRC0004F2
+#use function below to insert new edited row into your existing dataframe
+#insertRow(existingDF, newrow, r)
+DPRC_demographics <- insertRow(DPRC_demographics, ADPRC0004F2_info, 4) #ADPRC0004F2 will be used as baseline (i.e. ADPRC0004F0)
+#exclude participants because of warped mask from subject space to template space error
+DPRC_demographics[198,'Classification'] <- 0 #CDPRC0002F0
+DPRC_demographics[201,'Classification'] <- 0 #CDPRC0005F0
+DPRC_demographics[211,'Classification'] <- 0 #CDPRC0019F0
+DPRC_demographics[224,'Classification'] <- 0 #CDPRC0035F0
+DPRC_demographics[225,'Classification'] <- 0 #CDPRC0036F0
+DPRC_demographics[233,'Classification'] <- 0 #CDPRC0045F0
+DPRC_demographics[239,'Classification'] <- 0 #CDPRC0051F0
+DPRC_demographics[268,'Classification'] <- 0 #DDPRC0036F0
+DPRC_demographics[269,'Classification'] <- 0 #DDPRC0037F0
 
 
 #remove 0s (excluded) and -1s (not yet classified) from the data (classifications of participants).
@@ -36,15 +58,27 @@ DPRC_demographics$Classification <- DPRC_demographics_classification
 #convert categorical variables to a factor
 DPRC_demographics$Classification <- as.factor(DPRC_demographics$Classification)
 covariates_data$Group <- as.factor(covariates_data$Group)
+DPRC_demographics$Sex_binary <- as.factor(DPRC_demographics$Sex_binary)
 
-#convert continuous variables to a numeric
-DPRC_demographics$Age <- as.numeric(as.character(DPRC_demographics$Age))
+#convert variables to numeric 
+DPRC_demographics$Age<- as.numeric(DPRC_demographics$Age)
+DPRC_demographics$ACE_score<- as.numeric(DPRC_demographics$ACE_score)
 
+
+#remove NAs from variables + put make a new dataset for these
+age_NAs_omitted<- na.omit(DPRC_demographics$Age)
+ACE_NAs_omitted<- na.omit(DPRC_demographics$ACE_score)
+classification_NAs_omitted<- na.omit(DPRC_demographics$Classification)
+
+#DPRC_demographic_NAs_omitted <- cbind(classification_NAs_omitted, age_NAs_omitted)
+
+#DPRC_demographic_NAs_omitted <- cbind(classification_NAs_omitted, age_NAs_omitted, ACE_NAs_omitted)
 
 #look at descriptive statistics
 age_descrip <- describeBy(DPRC_demographics$Age, DPRC_demographics$Classification)
 ACE_descrip <- describeBy(DPRC_demographics$ACE_score, DPRC_demographics$Classification)
-
+gender_descrip <- describeBy(DPRC_demographics ~ Sex_binary + Classification, skew=FALSE, ranges=FALSE)
+#clinsite_descrip <- describeBy(DPRC_demographics ~ Sex_binary + Classification, skew=FALSE, ranges=FALSE)
 
 
 #plot the data to visualise
@@ -135,13 +169,21 @@ ggplot(subset(covariates_data, Group %in% c("1", "2", "3", "4", "5")), aes(x = G
 
 
 #check for significant difference in age between groups 
+#need to exclude the naMCI group in the model
+DPRC_demographics_classification <- replace(DPRC_demographics$Classification, DPRC_demographics$Classification==6, NA)
+DPRC_demographics$Classification <- DPRC_demographics_classification
+
+#convert continuous variables to a numeric
+#DPRC_demographics$Age <- as.numeric(as.character(DPRC_demographics$Age))
 age_mod <- lm(Age ~ Classification, data = DPRC_demographics)
 anova(age_mod)
+#anovaBF(Age ~ Classification, data = DPRC_demographics) #Bayesian (put into a new dataset b/c can't have any NA values)
+
 
 
 #check for significant difference in gender between groups 
 #reformat data for chi-square test
-gender_data_chisq <- rbind(c(25,38,22,25,7), c(6,23,29,25,14))
+gender_data_chisq <- rbind(c(23,35,23,22,6), c(7,24,27,24,15))
 colnames(gender_data_chisq) <- c("C", "SCD", "aMCI", "mMCI", "AD")
 rownames(gender_data_chisq) <- c("F", "M")
 #run chi-square test
@@ -150,7 +192,7 @@ gender_chi_test <- chisq.test(gender_data_chisq)
 
 #check for significant difference in clinical site between groups 
 #reformat data for chi-square test
-location_data_chisq <- rbind(c(29,43,32,35,14), c(2,6,13,13,3), c(0,12,6,2,4))
+location_data_chisq <- rbind(c(29,43,32,35,15), c(1,6,12,9,2), c(0,10,6,2,4))
 colnames(location_data_chisq) <- c("C", "SCD", "aMCI", "mMCI", "AD")
 rownames(location_data_chisq) <- c("Auckland", "Christchurch", "Dunedin")
 #run chi-square test
