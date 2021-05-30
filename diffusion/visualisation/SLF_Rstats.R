@@ -16,17 +16,17 @@ pacman::p_load(dplyr, ggplot2, psych, car, multcomp, lsr)
 
 #first read in the covariates group data file: 
 setwd("V:/PartInfo")
-covariates_data <- read.csv("covariates-participants-lined-up.csv")
+covariates_data <- read.csv("covariates-participants-lined-up_update.csv")
 #convert the group data to a factor variable
 covariates_data$Group <- as.factor(covariates_data$Group)
 
 
 #navigate to the correct pathway: 
-setwd("V:/NECTAR_data/LENORE/derivatives/F0/diff_data/test/metric_results")
+setwd("H:/ltah262/NECTAR_data/LENORE/derivatives/F0/diff_data/test/metric_results")
 
 
 #read in text file of data
-SLF_data <- cbind.data.frame(read.table("FD_SLF_TOI.txt", header = T), read.table("FC_log_SLF_TOI.txt", header = T), read.table("FDC_SLF_TOI.txt", header = T), read.table("FD_SLF_L_TOI.txt", header = T), read.table("FC_log_SLF_L_TOI.txt", header = T), read.table("FDC_SLF_L_TOI.txt", header = T), read.table("FD_SLF_R_TOI.txt", header = T), read.table("FC_log_SLF_R_TOI.txt", header = T), read.table("FDC_SLF_R_TOI.txt", header = T))
+SLF_data <- cbind.data.frame(read.table("FD_SLF_whole_TOI.txt", header = T), read.table("FC_log_SLF_whole_TOI.txt", header = T), read.table("FDC_SLF_whole_TOI.txt", header = T), read.table("FD_SLF_track_L_TOI.txt", header = T), read.table("FC_log_SLF_track_L_TOI.txt", header = T), read.table("FDC_SLF_track_L_TOI.txt", header = T), read.table("FD_SLF_track_R_TOI.txt", header = T), read.table("FC_log_SLF_track_R_TOI.txt", header = T), read.table("FDC_SLF_track_R_TOI.txt", header = T))
 #rename columns with each FBA metric
 colnames(SLF_data) <- c("mn_FD_SLF", "md_FD_SLF", "std_FD_SLF", "std_rv_FD_SLF", "min_FD_SLF", "max_FD_SLF", "count_FD_SLF", "mn_FC_SLF", "md_FC_SLF", "std_FC_SLF", "std_rv_FC_SLF", "min_FC_SLF", "max_FC_SLF", "count_FC_SLF", "mn_FDC_SLF", "md_FDC_SLF", "std_FDC_SLF", "std_rv_FDC_SLF", "min_FDC_SLF", "max_FDC_SLF", "count_FDC_SLF", "mn_FD_SLF_L", "md_FD_SLF_L", "std_FD_SLF_L", "std_rv_FD_SLF_L", "min_FD_SLF_L", "max_FD_SLF_L", "count_FD_SLF_L", "mn_FC_SLF_L", "md_FC_SLF_L", "std_FC_SLF_L", "std_rv_FC_SLF_L", "min_FC_SLF_L", "max_FC_SLF_L", "count_FC_SLF_L", "mn_FDC_SLF_L", "md_FDC_SLF_L", "std_FDC_SLF_L", "std_rv_FDC_SLF_L", "min_FDC_SLF_L", "max_FDC_SLF_L", "count_FDC_SLF_L", "mn_FD_SLF_R", "md_FD_SLF_R", "std_FD_SLF_R", "std_rv_FD_SLF_R", "min_FD_SLF_R", "max_FD_SLF_R", "count_FD_SLF_R", "mn_FC_SLF_R", "md_FC_SLF_R", "std_FC_SLF_R", "std_rv_FC_SLF_R", "min_FC_SLF_R", "max_FC_SLF_R", "count_FC_SLF_R", "mn_FDC_SLF_R", "md_FDC_SLF_R", "std_FDC_SLF_R", "std_rv_FDC_SLF_R", "min_FDC_SLF_R", "max_FDC_SLF_R", "count_FDC_SLF_R")
 #add in Group classification column for each participant - data from another worksheet
@@ -122,8 +122,8 @@ etaSquared(SLF_FD_clinsite_mod_R)
 #for FC
 #mean
 SLF_FC_mod <- lm(mn_FC_SLF ~ Group, data = SLF_data)
-SLF_FC_mod_L <- lm(mn_FC_L ~ Group, data = SLF_data)
-SLF_FC_mod_R <- lm(mn_FC_R ~ Group, data = SLF_data)
+SLF_FC_mod_L <- lm(mn_FC_SLF_L ~ Group, data = SLF_data)
+SLF_FC_mod_R <- lm(mn_FC_SLF_R ~ Group, data = SLF_data)
 #include the covariate of clinical site (run an ANCOVA) in model
 SLF_FC_clinsite_mod <- lm(mn_FC_SLF ~ Group + ClinSite_covar, data = SLF_data)
 SLF_FC_clinsite_mod_L <- lm(mn_FC_SLF_L ~ Group + ClinSite_covar, data = SLF_data)
