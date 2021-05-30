@@ -51,7 +51,7 @@ fid4 = fopen('eddyqc_outliers.txt', 'w');
 if (fid4 == -1)
     disp('Error in creating the text file.')
 else
-    fprintf(fid4, '%s     %s %s', 'Participant', 'num_outliers', 'outlier_%');
+    fprintf(fid4, '%s     %s %s', 'Participant', 'num_outliers', 'outlier_percentage');
     fclose(fid4);
 end
 
