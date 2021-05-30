@@ -46,11 +46,13 @@ sumAge = 0;
 sumSex = 0;
 sumClinicSite = 0;
 sumACE = 0;
+sumGroup = 0;
 NumParticipants = 0;
 for i = 2:length(txt)
-    if raw{i,9} ~= 0 && raw{i,9} ~= -1
+    if raw{i,9} ~= 0 && raw{i,9} ~= -1 && raw{i,9} ~= 6
         sumAge = raw{i,5} + sumAge;
         sumSex = raw{i,7} + sumSex;
+        sumGroup = raw{i,9} + sumGroup;
         if contains(raw{i,1},Auckland)
             sumClinicSite = 0 + sumClinicSite;
         elseif contains(raw{i,1},Christchurch)
@@ -66,18 +68,19 @@ MeanAge = sumAge / NumParticipants;
 MeanSex = sumSex / NumParticipants;
 MeanClinicSite = sumClinicSite / NumParticipants;
 MeanACE = sumACE / NumParticipants;
+MeanGroup = sumGroup / NumParticipants;
 %MeanACE = 88.6039
 
 %create your matrices for the study
 
 %Create design matrix with the covariates. Added covariates currently are:
 %age, sex, clinical site, and overall ACE-III score.
-fid = fopen('design_matrix.txt', 'w');
+fid = fopen('design_matrix_all_groups_covar-age_sex_clinsite.txt', 'w');
 if (fid == -1)
     disp('Error in creating the text file')
 else
     for i = 2:length(txt)
-        if raw{i,9} ~= 0 && raw{i,9} ~= -1
+        if raw{i,9} ~= 0 && raw{i,9} ~= -1 && raw{i,9} ~= 6
             classification = raw{i,9};
             if (classification == 1)
                 matrix_line = '1 0 0 0 0';
@@ -92,6 +95,7 @@ else
             end
             Norm_Age = raw{i,5} - MeanAge;
             Norm_Sex = raw{i,7} - MeanSex;
+            Norm_Group = raw{i,9} - MeanGroup;
             if contains(raw{i,1},Auckland)
                 Norm_ClinicSite = 0 - MeanClinicSite;
             elseif contains(raw{i,1},Christchurch)
@@ -99,8 +103,10 @@ else
             elseif contains(raw{i,1},Dunedin)
                 Norm_ClinicSite = 2 - MeanClinicSite;
             end
-            Norm_ACE = raw{i,10} - MeanACE;
-            fprintf(fid, '%s %.2f %.2f %.2f %.2f', matrix_line, Norm_Age, Norm_Sex, Norm_ClinicSite, Norm_ACE);
+            %Norm_ACE = raw{i,10} - MeanACE;
+            %fprintf(fid, '%s %.2f', matrix_line, Norm_Age);
+            %fprintf(fid, '%.2f %.2f %.2f', Norm_Group, Norm_Age, Norm_Sex);
+            fprintf(fid, '%s %.2f %.2f %.2f', matrix_line, Norm_Age, Norm_Sex, Norm_ClinicSite);
             fprintf(fid, '\n');
         end
     end
@@ -112,19 +118,19 @@ fid2 = fopen('contrast_matrix.txt', 'w');
 if (fid2 == -1)
     disp('Error in creating the text file')
 else
-    Comparison1 = '1 -1 0 0 0 0 0 0 0';
-    Comparison2 = '1 0 -1 0 0 0 0 0 0';
-    Comparison3 = '1 0 0 -1 0 0 0 0 0';
-    Comparison4 = '1 0 0 0 -1 0 0 0 0';
-    Comparison5 = '0 1 -1 0 0 0 0 0 0';
-    Comparison6 = '0 1 0 -1 0 0 0 0 0';
-    Comparison7 = '0 1 0 0 -1 0 0 0 0';
-    Comparison8 = '0 0 1 -1 0 0 0 0 0';
-    Comparison9 = '0 0 1 0 -1 0 0 0 0';
-    Comparison10 = '0 0 0 1 -1 0 0 0 0';
+    Comparison1 = '1 -1 0 0 0 0 0 0';
+    Comparison2 = '1 0 -1 0 0 0 0 0';
+    Comparison3 = '1 0 0 -1 0 0 0 0';
+    Comparison4 = '1 0 0 0 -1 0 0 0';
+    Comparison5 = '0 1 -1 0 0 0 0 0';
+    Comparison6 = '0 1 0 -1 0 0 0 0';
+    Comparison7 = '0 1 0 0 -1 0 0 0';
+    Comparison8 = '0 0 1 -1 0 0 0 0';
+    Comparison9 = '0 0 1 0 -1 0 0 0';
+    Comparison10 = '0 0 0 1 -1 0 0 0';
     
-    Cov1Pos = '0 0 0 0 0 0 0 0 1';
-    Cov1Neg = '0 0 0 0 0 0 0 0 -1';
+    %Cov1Pos = '0 0 0 0 0 0 0 0 1';
+    %Cov1Neg = '0 0 0 0 0 0 0 0 -1';
     
     fprintf(fid2, '%s', Comparison1);
     fprintf(fid2, '\n');
@@ -145,10 +151,10 @@ else
     fprintf(fid2, '%s', Comparison9);
     fprintf(fid2, '\n');
     fprintf(fid2, '%s', Comparison10);
-    fprintf(fid2, '\n');
-    fprintf(fid2, '%s', Cov1Pos);
-    fprintf(fid2, '\n');
-    fprintf(fid2, '%s', Cov1Neg);
+    %fprintf(fid2, '\n');
+    %fprintf(fid2, '%s', Cov1Pos);
+    %fprintf(fid2, '\n');
+    %fprintf(fid2, '%s', Cov1Neg);
     
     fclose(fid2);
 end
@@ -156,6 +162,80 @@ end
 %move both your matrices files into the stats_matrices folder.
 movefile('design_matrix.txt', [startdir, '/derivatives/' period, '/diff_data/' groupname, '/stats_matrices']);
 movefile('contrast_matrix.txt', [startdir, '/derivatives/' period, '/diff_data/' groupname, '/stats_matrices']);
+
+
+
+
+
+
+
+
+
+
+
+%Create design matrix with 3 groups (non-MCI, MCI, AD). Added covariates currently are:
+%age, sex, clinical site, and overall ACE-III score.
+fid = fopen('design_matrix_test_clinsite_diff_with-covars.txt', 'w');
+if (fid == -1)
+    disp('Error in creating the text file')
+else
+    for i = 2:length(txt)
+        if raw{i,9} ~= 0 && raw{i,9} ~= -1 && raw{i,9} ~= 6
+            classification = raw{i,9};
+            if (classification == 1) || (classification == 2)
+                matrix_line = '1 0 0';
+            elseif (classification == 3) || (classification == 4)
+                matrix_line = '0 1 0';
+            elseif (classification == 5)
+                matrix_line = '0 0 1';
+            end
+            Norm_Age = raw{i,5} - MeanAge;
+            Norm_Sex = raw{i,7} - MeanSex;
+            Norm_Group = raw{i,9} - MeanGroup;
+            if contains(raw{i,1},Auckland)
+                Norm_ClinicSite = 0 - MeanClinicSite;
+            elseif contains(raw{i,1},Christchurch)
+                Norm_ClinicSite = 1 - MeanClinicSite;
+            elseif contains(raw{i,1},Dunedin)
+                Norm_ClinicSite = 2 - MeanClinicSite;
+            end
+            %Norm_ACE = raw{i,10} - MeanACE;
+            %fprintf(fid, '%s', matrix_line);
+            %fprintf(fid, '%s %.2f', matrix_line, Norm_Age);
+            fprintf(fid, '%.2f %.2f %.2f', Norm_Group, Norm_Age, Norm_Sex);
+            %fprintf(fid, '%s %.2f %.2f %.2f', matrix_line, Norm_Age, Norm_Sex, Norm_ClinicSite);
+            fprintf(fid, '\n');
+        end
+    end
+    fclose(fid);
+end
+
+%create your associated contrast matrix file (3 groups)
+fid2 = fopen('contrast_matrix_3-groups.txt', 'w');
+if (fid2 == -1)
+    disp('Error in creating the text file')
+else
+    Comparison1 = '1 -1 0';
+    Comparison2 = '1 0 -1';
+    Comparison3 = '0 1 -1';
+    
+    fprintf(fid2, '%s', Comparison1);
+    fprintf(fid2, '\n');
+    fprintf(fid2, '%s', Comparison2);
+    fprintf(fid2, '\n');
+    fprintf(fid2, '%s', Comparison3);
+    
+    
+    fclose(fid2);
+end
+
+
+
+
+
+
+
+
 
 
 
