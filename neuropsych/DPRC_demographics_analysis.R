@@ -12,6 +12,9 @@
 #load libraries via pacman
 pacman::p_load(dplyr, ggplot2, psych, car, BayesFactor)
 
+#add any necessary sources: 
+source("https://raw.githubusercontent.com/datavizpyr/data/master/half_flat_violinplot.R") #for raincloud graph
+
 #load in pathway for functions
 #source('path/tofile/here.R')
 source('H:/ltah262/PhD/Diffusion/script/dprc/neuropsych/insertRow.R')
@@ -64,16 +67,6 @@ DPRC_demographics$Sex_binary <- as.factor(DPRC_demographics$Sex_binary)
 DPRC_demographics$Age<- as.numeric(DPRC_demographics$Age)
 DPRC_demographics$ACE_score<- as.numeric(DPRC_demographics$ACE_score)
 
-
-#remove NAs from variables + put make a new dataset for these
-age_NAs_omitted<- na.omit(DPRC_demographics$Age)
-ACE_NAs_omitted<- na.omit(DPRC_demographics$ACE_score)
-classification_NAs_omitted<- na.omit(DPRC_demographics$Classification)
-
-#DPRC_demographic_NAs_omitted <- cbind(classification_NAs_omitted, age_NAs_omitted)
-
-#DPRC_demographic_NAs_omitted <- cbind(classification_NAs_omitted, age_NAs_omitted, ACE_NAs_omitted)
-
 #look at descriptive statistics
 age_descrip <- describeBy(DPRC_demographics$Age, DPRC_demographics$Classification)
 ACE_descrip <- describeBy(DPRC_demographics$ACE_score, DPRC_demographics$Classification)
@@ -81,11 +74,10 @@ gender_descrip <- describeBy(DPRC_demographics ~ Sex_binary + Classification, sk
 #clinsite_descrip <- describeBy(DPRC_demographics ~ Sex_binary + Classification, skew=FALSE, ranges=FALSE)
 
 
-#plot the data to visualise
+#---------------------plot the data to visualise-------------------------------#
 
 
-
-#plot age
+#plot age (violin plot)
 ggplot(subset(DPRC_demographics, Classification %in% c("1", "2", "3", "4", "5")), aes(x = Classification, y = Age)) + 
     geom_boxplot(width = 0.1, fill = "white", outlier.size = 1, aes(colour = Classification)) + 
     stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Classification)) + 
@@ -96,6 +88,20 @@ ggplot(subset(DPRC_demographics, Classification %in% c("1", "2", "3", "4", "5"))
     theme_classic() +
     theme(legend.position = "none") +
     geom_violin(trim = FALSE, alpha = .5, aes(fill = Classification, colour = Classification), size = 1)
+
+#plot age (raincloud plot)
+ggplot(subset(DPRC_demographics, Classification %in% c("1", "2", "3", "4", "5")), aes(x = Classification, y = Age, fill = Classification)) + 
+    geom_flat_violin(position = position_nudge(x = .2, y = 0), alpha = .8) +
+    geom_point(aes(y = Age, color = Classification), position = position_jitter(width = .15), size = .5, alpha = 0.8) +
+    geom_boxplot(width = 0.1, fill = "white", outlier.size = 1, aes(colour = Classification)) + 
+    stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Classification)) + 
+    ylim(50, 95) +
+    xlab("Group") + 
+    ylab("Age") +
+    scale_x_discrete(labels = c("1" = "Control", "2" = "SCD", "3" = "aMCI", "4" = "mMCI", "5" = "AD")) + 
+    theme_classic() +
+    theme(legend.position = "none") +
+    coord_flip()
 
 #plot gender
 gender_data <- data.frame(table(covariates_data$Classification, covariates_data$Sex))
@@ -124,7 +130,7 @@ ggplot(data=location_data, aes(x=Group, y=Count, fill=Clinical_site)) +
 
 
 
-#plot ACE
+#plot ACE (violin plot)
 ggplot(subset(DPRC_demographics, Classification %in% c("1", "2", "3", "4", "5")), aes(x = Classification, y = ACE_score)) + 
     geom_boxplot(width = 0.1, fill = "white", outlier.size = 1, aes(colour = Classification)) + 
     stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Classification)) + 
@@ -135,6 +141,19 @@ ggplot(subset(DPRC_demographics, Classification %in% c("1", "2", "3", "4", "5"))
     theme(legend.position = "none") +
     geom_violin(trim = FALSE, alpha = .5, aes(fill = Classification, colour = Classification), size = 1)
 
+
+#plot ACE (raincloud plot)
+ggplot(subset(DPRC_demographics, Classification %in% c("1", "2", "3", "4", "5")), aes(x = Classification, y = ACE_score, fill = Classification)) + 
+    geom_flat_violin(position = position_nudge(x = .2, y = 0), alpha = .8) +
+    geom_point(aes(y = ACE_score, color = Classification), position = position_jitter(width = .15), size = .5, alpha = 0.8) +
+    geom_boxplot(width = 0.1, fill = "white", outlier.size = 1, aes(colour = Classification)) + 
+    stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Classification)) + 
+    xlab("Group") + 
+    ylab("ACE Score") +
+    scale_x_discrete(labels = c("1" = "Control", "2" = "SCD", "3" = "aMCI", "4" = "mMCI", "5" = "AD")) + 
+    theme_classic() +
+    theme(legend.position = "none") +
+    coord_flip()
 
 
 #plot FBA metrics--
@@ -174,11 +193,12 @@ DPRC_demographics_classification <- replace(DPRC_demographics$Classification, DP
 DPRC_demographics$Classification <- DPRC_demographics_classification
 
 #convert continuous variables to a numeric
-#DPRC_demographics$Age <- as.numeric(as.character(DPRC_demographics$Age))
 age_mod <- lm(Age ~ Classification, data = DPRC_demographics)
 anova(age_mod)
-#anovaBF(Age ~ Classification, data = DPRC_demographics) #Bayesian (put into a new dataset b/c can't have any NA values)
-
+#Bayesian (put into a new dataset b/c can't have any NA values)
+For_Bay_data <- select(DPRC_demographics, Subject_ID, Classification, Age, ACE_score)
+For_Bay_data_noNas <- na.omit(For_Bay_data)
+anovaBF(Age ~ Classification, data = For_Bay_data_noNas) 
 
 
 #check for significant difference in gender between groups 
@@ -204,6 +224,7 @@ location_chi_test <- chisq.test(location_data_chisq)
 #check for significant difference in ACE between groups 
 ACE_mod <- lm(ACE_score ~ Classification, data = DPRC_demographics)
 anova(ACE_mod)
+anovaBF(ACE_score ~ Classification, data = For_Bay_data_noNas) 
 
 
 
