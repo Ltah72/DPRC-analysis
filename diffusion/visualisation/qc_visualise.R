@@ -191,7 +191,7 @@ ggplot(data = SNR_CNR_long, aes(y = signal, x = signal_type, fill = signal_type,
     guides(color = FALSE) +
     xlab("Signal Type") +
     ylab("Signal (SNR or CNR)") +
-    scale_x_discrete(labels = c("b2000", "b1000", "b0")) +
+    scale_x_discrete(labels = c("b1000", "b2000", "b0")) +
     coord_flip() +
     theme(panel.border = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
 
