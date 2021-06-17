@@ -10,7 +10,7 @@
 
 
 #load libraries via pacman
-pacman::p_load(dplyr, ggplot2, psych, car, BayesFactor)
+pacman::p_load(dplyr, ggplot2, psych, car, lsr, BayesFactor)
 
 #add any necessary sources: 
 source("https://raw.githubusercontent.com/datavizpyr/data/master/half_flat_violinplot.R") #for raincloud graph
@@ -194,11 +194,22 @@ DPRC_demographics$Classification <- DPRC_demographics_classification
 
 #convert continuous variables to a numeric
 age_mod <- lm(Age ~ Classification, data = DPRC_demographics)
+#age_mod <- lm(Age ~ 0 + Classification, data = DPRC_demographics) #test against y-intercept
 anova(age_mod)
 #Bayesian (put into a new dataset b/c can't have any NA values)
 For_Bay_data <- select(DPRC_demographics, Subject_ID, Classification, Age, ACE_score)
+summary(For_Bay_data)
 For_Bay_data_noNas <- na.omit(For_Bay_data)
 anovaBF(Age ~ Classification, data = For_Bay_data_noNas) 
+lmBF(Age ~ Classification, data = For_Bay_data_noNas)
+#calculate the effect size (eta-squared)
+etaSquared(age_mod)
+#conduct power analysis for age
+age_group_means <- c(age_descrip$`1`$mean, age_descrip$`2`$mean, age_descrip$`3`$mean, age_descrip$`4`$mean, age_descrip$`5`$mean)
+power_age_n <- power.anova.test(groups = length(age_group_means), between.var = anova(age_mod)$`Sum Sq`[1], within.var = anova(age_mod)$`Sum Sq`[2], power = .8, sig.level = 0.05)
+power_age_power<- power.anova.test(groups = length(ACE_group_means), between.var = anova(age_mod)$`Sum Sq`[1], within.var = anova(age_mod)$`Sum Sq`[2], n = 41, sig.level = 0.05)
+
+
 
 
 #check for significant difference in gender between groups 
@@ -208,6 +219,9 @@ colnames(gender_data_chisq) <- c("C", "SCD", "aMCI", "mMCI", "AD")
 rownames(gender_data_chisq) <- c("F", "M")
 #run chi-square test
 gender_chi_test <- chisq.test(gender_data_chisq)
+contingencyTableBF(gender_data_chisq, sampleType = "jointMulti")
+#a good resource on running Bayesian chi-squared tests: https://stats.libretexts.org/Bookshelves/Applied_Statistics/Book%3A_Learning_Statistics_with_R_-_A_tutorial_for_Psychology_Students_and_other_Beginners_(Navarro)/17%3A_Bayesian_Statistics/17.06%3A_Bayesian_Analysis_of_Contingency_Tables
+cramersV(gender_data_chisq)
 
 
 #check for significant difference in clinical site between groups 
@@ -217,6 +231,8 @@ colnames(location_data_chisq) <- c("C", "SCD", "aMCI", "mMCI", "AD")
 rownames(location_data_chisq) <- c("Auckland", "Christchurch", "Dunedin")
 #run chi-square test
 location_chi_test <- chisq.test(location_data_chisq)
+contingencyTableBF(location_data_chisq, sampleType = "jointMulti")
+cramersV(location_data_chisq)
 #if expected values in cells are too small, simulate more p-values:
 #location_chi_test <- chisq.test(location_data_chisq, simulate.p.value = TRUE)
 
@@ -225,6 +241,13 @@ location_chi_test <- chisq.test(location_data_chisq)
 ACE_mod <- lm(ACE_score ~ Classification, data = DPRC_demographics)
 anova(ACE_mod)
 anovaBF(ACE_score ~ Classification, data = For_Bay_data_noNas) 
+etaSquared(ACE_mod)
+
+#conduct power analysis for ACE
+ACE_group_means <- c(ACE_descrip$`1`$mean, ACE_descrip$`2`$mean, ACE_descrip$`3`$mean, ACE_descrip$`4`$mean, ACE_descrip$`5`$mean)
+#power_ACE <- power.anova.test(groups = length(ACE_group_means), between.var = var(ACE_group_means), within.var = 7850.6, power = .8, sig.level = 0.05)
+power_ACE_n <- power.anova.test(groups = length(ACE_group_means), between.var = anova(ACE_mod)$`Sum Sq`[1], within.var = anova(ACE_mod)$`Sum Sq`[2], power = .8, sig.level = 0.05)
+power_ACE_power<- power.anova.test(groups = length(ACE_group_means), between.var = anova(ACE_mod)$`Sum Sq`[1], within.var = anova(ACE_mod)$`Sum Sq`[2], n = 41, sig.level = 0.05)
 
 
 
@@ -249,8 +272,6 @@ leveneTest(Age ~ Classification, data = DPRC_demographics)
 
 leveneTest(Mean_FD ~ Group, data = covariates_data)
 leveneTest(Mean_FD ~ Sex, data = covariates_data)
-
-
 
 
 
