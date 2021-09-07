@@ -9,19 +9,19 @@ function CreateParticipantFixelList
 
 %for fd list
 fid1 = fopen('files_fd.txt', 'w');
-files1 = dir('template/fd_smooth/*sub*');
+files1 = dir('template/fd_smooth/*DPRC*');
 fprintf(fid1, '%s\n', files1.name);
 fclose(fid1);
 
 %for log_fc list
 fid2 = fopen('files_log_fc.txt', 'w');
-files2 = dir('template/log_fc_smooth/*sub*');
+files2 = dir('template/log_fc_smooth/*DPRC*');
 fprintf(fid2, '%s\n', files2.name);
 fclose(fid2);
 
 %for fdc list
 fid3 = fopen('files_fdc.txt', 'w');
-files3 = dir('template/fdc_smooth/*sub*');
+files3 = dir('template/fdc_smooth/*DPRC*');
 fprintf(fid3, '%s\n', files3.name);
 fclose(fid3);
 

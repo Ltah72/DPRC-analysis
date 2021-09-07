@@ -1,4 +1,4 @@
-function RunEddyQuad(startdir, ScriptDirectory, PAR_NAME, datafile, period)
+function RunEddyQuad(derivdir, ScriptDirectory, PAR_NAME, datafile, period)
 %Run eddy_quad on all participants. This will generate a report of the
 %quality control of eddy for all participants. It will create an 
 %eddy_quad.qc folder, which will be used later to input into a group eddy 
@@ -40,7 +40,7 @@ for i = 1:length(files)
 end
 
 %go back into main participant folder
-cd([startdir '/derivatives/' period, '/diff_data/' PAR_NAME, '/dwi/']);
+cd([derivdir '/groups/' period, '/diff_data/' PAR_NAME, '/dwi/']);
 
 %make a copy and rename the eddy corrected datafile, and place into the
 %eddyqc folder
@@ -50,10 +50,10 @@ copyfile(['ebbcgd', PAR_NAME, datafile,'.nii'], 'eddyqc/eddy_quad.nii');
 cd eddyqc;
 
 %perform eddy quad on the participant
-unix(['eddy_quad eddy_quad -idx ' ScriptDirectory '/files/index.txt -par ' ScriptDirectory '/files/acqparams.txt -m ' startdir '/derivatives/' period, '/diff_data/' PAR_NAME '/dwi/brain_mask_' PAR_NAME, datafile, '.nii -b ' startdir '/derivatives/' period, '/diff_data/' PAR_NAME '/dwi/' PAR_NAME, datafile, '.bval']);
+unix(['eddy_quad eddy_quad -idx ' ScriptDirectory '/files/index.txt -par ' ScriptDirectory '/files/acqparams.txt -m ' derivdir '/groups/' period, '/diff_data/' PAR_NAME '/dwi/brain_mask_' PAR_NAME, datafile, '.nii -b ' derivdir '/groups/' period, '/diff_data/' PAR_NAME '/dwi/' PAR_NAME, datafile, '.bval']);
 
 %go back into main participant folder
-cd([startdir '/derivatives/' period, '/diff_data/' PAR_NAME, '/dwi/']);
+cd([derivdir '/groups/' period, '/diff_data/' PAR_NAME, '/dwi/']);
 
 end
 

@@ -58,8 +58,8 @@ clear all;
 close all;
 
 %define/add pathways
-%startdir = input('Please enter data directory:', 's');
-startdir = '/data/USERS/LENORE';
+%startdir = input('Please enter derivatives directory:', 's');
+derivdir = '/data/USERS/LENORE/derivatives';
 
 %Script directory is defined, so that it can be added to path below:
 %ScriptDirectory = input('Please enter script directory:', 's');
@@ -72,22 +72,22 @@ groupname = input('Which pre-processed group / study do you want to continue to 
 period = input('Which time period do you want to analyse, e.g. F0, F2, all, etc?: ', 's');
 
 %create a connectome folder to place all of the data and analysis in
-mkdir([startdir,'/derivatives/' period, '/diff_data/', groupname, '/connectome/']);
+mkdir([derivdir,'/groups/' period, '/diff_data/', groupname, '/connectome/']);
 
 %make directory to hold your matrices (e.g. design and contrast)for statistical tests - for connectome analysis. 
 %You need to manually create and store the files in here.
-mkdir([startdir,'/derivatives/' period, '/diff_data/', groupname, '/connectome/stats_matrices/']);
+mkdir([derivdir,'/groups/' period, '/diff_data/', groupname, '/connectome/stats_matrices/']);
 
 %make directories to hold the statistical tests for the whole and interested connectome networks
-mkdir([startdir,'/derivatives/' period, '/diff_data/', groupname, '/connectome/outputWhole_connectome_stats/']);
-mkdir([startdir,'/derivatives/' period, '/diff_data/', groupname, '/connectome/outputFPN_stats/']);
+mkdir([derivdir,'/groups/' period, '/diff_data/', groupname, '/connectome/outputWhole_connectome_stats/']);
+mkdir([derivdir,'/groups/' period, '/diff_data/', groupname, '/connectome/outputFPN_stats/']);
 
 %Add your script and all necessary files (e.g. data, functions) to path
-addpath(genpath(startdir));
+addpath(genpath(derivdir));
 addpath(genpath(ScriptDirectory));
 
 %go into the participant analysed folder + choose participants
-cd([startdir '/derivatives/' period, '/diff_data/', groupname, '/IN']);
+cd([derivdir '/groups/' period, '/diff_data/', groupname, '/IN']);
 
 %define variables
 msgfig = 'Choose participants for analysis (all should be included from this directory.)';
@@ -103,7 +103,7 @@ UserAutomate = input('Do you want to automate your matrice creation? y or n: ', 
 if UserAutomate == 'y'
     excelFile = input('Please name the excel file you wish to use: ', 's');
     fileLocation = input(['Where is this file, ' excelFile  ', located? Name the directory: '], 's');
-    CreateStudyMatrices(excelFile, fileLocation, startdir, groupname);
+    CreateStudyMatrices(excelFile, fileLocation, derivdir, groupname);
 elseif UserAutomate == 'n'
     UserMatrices = input('Have you created your own matrices? y or n: ', 's');
     if UserMatrices == 'y'
@@ -114,7 +114,7 @@ elseif UserAutomate == 'n'
 end
 
 %create 5ttImageCheck text file w/ header line and put into quality control (qc)
-cd([startdir '/derivatives/' period, '/diff_data/', groupname, '/qc/']);
+cd([derivdir '/groups/' period, '/diff_data/', groupname, '/qc/']);
 fid4 = fopen('5ttImageCheck.txt', 'w');
 if (fid4 == -1)
     disp('Error in creating the text file.')
@@ -124,7 +124,7 @@ else
 end
 
 %go into the connectome folder
-cd([startdir '/derivatives/' period, '/diff_data/', groupname, '/connectome/']);
+cd([derivdir '/groups/' period, '/diff_data/', groupname, '/connectome/']);
 
 
 for i = 1:length(participants)
@@ -132,18 +132,17 @@ for i = 1:length(participants)
     [upper_path, PAR_NAME, ~] = fileparts(participants{1,i}); 
  
     %copy preprocessed dwi, brain mask, + wmfod_norm file into connectome folder
-    copyfile ([startdir '/derivatives/' period, '/diff_data/' groupname, '/IN/brain_mask/' PAR_NAME, datafile, '.mif'], [startdir,'/derivatives/', period, '/diff_data/', groupname, '/connectome/']);
+    copyfile ([derivdir '/groups/' period, '/diff_data/' groupname, '/IN/brain_mask/' PAR_NAME, datafile, '.mif'], [derivdir,'/groups/', period, '/diff_data/', groupname, '/connectome/']);
     movefile([PAR_NAME, datafile,'.mif'], ['brain_mask_', PAR_NAME, datafile,'.mif']);
-    copyfile ([startdir '/derivatives/' period, '/diff_data/' groupname, '/IN/preprocessed_dwi/' PAR_NAME, datafile, '.mif'], [startdir,'/derivatives/', period, '/diff_data/', groupname, '/connectome/']);
-    copyfile ([startdir '/derivatives/' period, '/diff_data/' groupname, '/IN/wmfod_norm_', PAR_NAME, '.mif'], [startdir,'/derivatives/', period, '/diff_data/', groupname, '/connectome/']);
+    copyfile ([derivdir '/groups/' period, '/diff_data/' groupname, '/IN/preprocessed_dwi/' PAR_NAME, datafile, '.mif'], [derivdir,'/groups/', period, '/diff_data/', groupname, '/connectome/']);
+    copyfile ([derivdir '/groups/' period, '/diff_data/' groupname, '/IN/wmfod_norm_', PAR_NAME, '.mif'], [derivdir,'/groups/', period, '/diff_data/', groupname, '/connectome/']);
 
     %copy preprocessed t1w + t2 FLAIR images from fmriprep, and the WMH lesion masks into connectome folder
-    copyfile ([stardir, '/fmriprepped_data/derivatives/', PAR_NAME, '/anat/', PAR_NAME, '_desc-preproc_T1w.nii.gz'], [startdir,'/derivatives/', period, '/diff_data/', groupname, '/connectome']);
-    copyfile ([stardir, '/fmriprepped_data/sourcedata/', PAR_NAME, '/anat/', PAR_NAME, '_FLAIR.nii'], [startdir,'/derivatives/', period, '/diff_data/', groupname, '/connectome']);
-    copyfile ([startdir, '/WMH_lesion_masks/ples_lpa_mr' PAR_NAME '_FLAIR', '.nii'], [startdir,'/derivatives/', period, '/diff_data/', groupname, '/connectome']);
+    copyfile ([derivdir, '/fmriprepped_data/derivatives/fmriprep/', PAR_NAME, '/anat/', PAR_NAME, '_desc-preproc_T1w.nii.gz'], [derivdir,'/groups/', period, '/diff_data/', groupname, '/connectome']);
+    copyfile ([derivdir, '/fmriprepped_data/sourcedata/', PAR_NAME, '/anat/', PAR_NAME, '_FLAIR.nii'], [derivdir,'/groups/', period, '/diff_data/', groupname, '/connectome']);
     
     %copy FreeSurfer's recon-all output into FreeSurfer's $SUBJECTS directory
-    unix(['cp -r ' startdir, '/fmriprepped_data/derivatives/freesurfer/', PAR_NAME, '/ $SUBJECTS_DIR']);
+    %unix(['cp -r ' derivdir, '/fmriprepped_data/derivatives/freesurfer/', PAR_NAME, '/ $SUBJECTS_DIR']);
 
     %convert T1 image to .nii format
     unix(['mrconvert ' PAR_NAME, '_desc-preproc_T1w.nii.gz ' PAR_NAME, '_T1w.nii']);
@@ -180,7 +179,7 @@ for i = 1:length(participants)
 
     %c) edit in the pathological tissue (WMH) to the 5tt image:
     %convert WMH lesion mask to .mif file
-    unix(['mrconvert ples_lpa_mr', PAR_NAME, '_FLAIR.nii ples_lpa_mr', PAR_NAME, '_FLAIR.mif']);
+    unix(['mrconvert ' derivdir '/WMH_lesions_masks/ples_lpa_mr', PAR_NAME, '_FLAIR.nii ples_lpa_mr', PAR_NAME, '_FLAIR.mif']);
     
     %reslice the WMH lesion mask to match the 4tt image
     unix(['mrtransform ples_lpa_mr' PAR_NAME, '_FLAIR.mif -template 4ttimage_' PAR_NAME, '.mif ' PAR_NAME, '_WMH_mask_transformed.mif']);
@@ -189,7 +188,7 @@ for i = 1:length(participants)
     unix(['5ttedit -path ', PAR_NAME, '_WMH_mask_transformed.mif 4ttimage_' PAR_NAME, '.mif 5ttimage_' PAR_NAME '.mif']);
     
     %check that your 5ttimage conforms to MRtrix's expected format
-    FiveTTImageCheck(PAR_NAME, startdir, period, groupname);
+    FiveTTImageCheck(PAR_NAME, derivdir, period, groupname);
 
     %d) Create a 'seed' boundary between the white and gray matter for
     %streamline generation

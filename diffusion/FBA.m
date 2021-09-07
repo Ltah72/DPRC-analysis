@@ -39,35 +39,35 @@ clear all;
 close all;
 
 %define/add pathways
-%startdir = input('Please enter data directory:', 's');
-startdir = '/data/USERS/LENORE';
+%startdir = input('Please enter derivatives directory:', 's');
+derivder = '/data/USERS/LENORE/derivatives';
 
 %Script directory is defined, so that it can be added to path below:
 %ScriptDirectory = input('Please enter script directory:', 's');
 ScriptDirectory = '/data/USERS/LENORE/scripts/dprc/diffusion';
 
 %should be the same groupname from what the user analysed in the CSD script.
-groupname = input('Which pre-processed group / study do you want to continue to analyse?: ', 's');
+groupname = input('Which pre-processed group / study do you want to continue to analyse (e.g cross-sectional, longitudinal)?: ', 's');
 
 %choose time period
-period = input('Which time period do you want to analyse, e.g. F0, F2, all, etc?: ', 's');
+period = input('Which time period do you want to analyse (e.g. F0, F2, TH, all, etc)?: ', 's');
 
 %make directories for FBA data
-mkdir([startdir,'/derivatives/' period, '/diff_data/', groupname, '/template/log_fc_data/']);
-mkdir([startdir,'/derivatives/' period, '/diff_data/', groupname, '/template/fd_data/']);
-mkdir([startdir,'/derivatives/' period, '/diff_data/', groupname, '/template/fdc_data/']);
+mkdir([derivder,'/groups/' period, '/diff_data/', groupname, '/template/log_fc_data/']);
+mkdir([derivder,'/groups/' period, '/diff_data/', groupname, '/template/fd_data/']);
+mkdir([derivder,'/groups/' period, '/diff_data/', groupname, '/template/fdc_data/']);
 
 %make directory to hold your matrices (e.g. design and contrast)for
 %statistical tests - for FBA analysis. You need to manually create and
 %store the files in here.
-mkdir([startdir,'/derivatives/' period, '/diff_data/', groupname, '/stats_matrices/']);
+mkdir([derivder,'/groups/' period, '/diff_data/', groupname, '/stats_matrices/']);
 
 %Add your script and all necessary files (e.g. data, functions) to path
-addpath(genpath(startdir));
+addpath(genpath(derivder));
 addpath(genpath(ScriptDirectory));
 
 %go into participant derivatives folder
-cd([startdir '/derivatives/' period, '/diff_data/']);
+cd([derivder '/groups/' period, '/diff_data/' groupname, '/IN/preprocessed_dwi']);
 
 %choose participants for analysis (do not include excluded participants).
 msgfig = 'Choose participants for analysis (do not include excluded participants)';
@@ -81,7 +81,7 @@ UserAutomate = input('Do you want to automate your matrice creation? y or n: ', 
 if UserAutomate == 'y'
     excelFile = input('Please name the excel file you wish to use: ', 's');
     fileLocation = input(['Where is this file, ' excelFile  ', located? Name the directory: '], 's');
-    CreateStudyMatrices(excelFile, fileLocation, startdir, groupname);
+    CreateStudyMatrices(excelFile, fileLocation, derivder, groupname);
 elseif UserAutomate == 'n'
     UserMatrices = input('Have you created your own matrices? y or n: ', 's');
     if UserMatrices == 'y'
@@ -91,7 +91,7 @@ elseif UserAutomate == 'n'
     end
 end
 %go back into group folder
-cd([startdir '/derivatives/' period, '/diff_data/', groupname]);
+cd([derivder '/groups/' period, '/diff_data/', groupname]);
 
 
 %FBA steps begin below:
@@ -104,10 +104,10 @@ unix(['fod2fixel -mask template/template_mask.mif -fmls_peak_value 0.06 template
 for i = 1:length(participants)
     
     [upper_path, PAR_NAME, ~] = fileparts(participants{1,i});
-    PAR_NAME = PAR_NAME(1:15);
+    PAR_NAME = PAR_NAME(1:14);
     
     %a) Warp each participant's FOD images to template space.
-    unix(['mrtransform IN/wmfod_norm_' PAR_NAME '.mif -warp IN/' PAR_NAME '_subject2template_warp.mif -reorient_fod no IN/' PAR_NAME '_fod_in_template_space_NOT_REORIENTED.mif']);
+    unix(['mrtransform IN/wmfod_norm_' PAR_NAME '.mif -warp IN/' PAR_NAME '_subject2template_warp.mif -reorient_fod no IN/' PAR_NAME '_fod_in_template_space_NOT_REORIENTED.mif -force']);
     
     %b) segment FOD images to estimate fixels and their fibre density (FD)
     mkdir(['IN/' PAR_NAME]);
@@ -157,7 +157,6 @@ copyfile (['template/' PAR_NAME '/fdc/directions.mif'], ['template/fdc_data/']);
 %step is computationally expensive and takes a long time to process
 cd template;
 unix(['tckgen -angle 22.5 -maxlen 250 -minlen 10 -power 1.0 wmfod_template.mif -seed_image template_mask.mif -mask template_mask.mif -select 20000000 -cutoff 0.06 tracks_20_million.tck']);
-
 %-------------------------------------------------------------------------%
 %Step 4:Reduce biases in tractogram densities (using SIFT)
 unix(['tcksift tracks_20_million.tck wmfod_template.mif tracks_2_million_sift.tck -term_number 2000000']);
@@ -191,6 +190,16 @@ CreateParticipantFixelList;
 unix(['fixelcfestats template/fd_smooth/ files_fd.txt stats_matrices/design_matrix.txt stats_matrices/contrast_matrix.txt template/matrix/ stats_fd/']);
 unix(['fixelcfestats template/log_fc_smooth/ files_log_fc.txt stats_matrices/design_matrix.txt stats_matrices/contrast_matrix.txt template/matrix/ stats_log_fc/']);
 unix(['fixelcfestats template/fdc_smooth/ files_fdc.txt stats_matrices/design_matrix.txt stats_matrices/contrast_matrix.txt template/matrix/ stats_fdc/']);
+
+%for correlations (last one - test out ACE with no NANs)
+unix(['fixelcfestats template/fd_smooth/ files_fd.txt stats_matrices/correlation/overall_correlation/design_matrix_overall_correlation_test_ACE.txt stats_matrices/correlation/overall_correlation/contrast_matrix_overall_correlation.txt template/matrix/ stats_fd/']);
+unix(['fixelcfestats template/log_fc_smooth/ files_log_fc.txt stats_matrices/correlation/overall_correlation/design_matrix_overall_correlation_test_ACE.txt stats_matrices/correlation/overall_correlation/contrast_matrix_overall_correlation.txt template/matrix/ stats_log_fc/']);
+unix(['fixelcfestats template/fdc_smooth/ files_fdc.txt stats_matrices/correlation/overall_correlation/design_matrix_overall_correlation_test_ACE.txt stats_matrices/correlation/overall_correlation/contrast_matrix_overall_correlation.txt template/matrix/ stats_fdc/']);
+
+unix(['fixelcfestats template/fd_smooth/ files_fd.txt stats_matrices/correlation/overall_correlation/design_matrix_overall_correlation_TrailsAZ.txt stats_matrices/correlation/overall_correlation/contrast_matrix_overall_correlation.txt template/matrix/ stats_fd_TrailsAZ/']);
+unix(['fixelcfestats template/log_fc_smooth/ files_log_fc.txt stats_matrices/correlation/overall_correlation/design_matrix_overall_correlation_TrailsAZ.txt stats_matrices/correlation/overall_correlation/contrast_matrix_overall_correlation.txt template/matrix/ stats_log_fc_TrailsAZ/']);
+unix(['fixelcfestats template/fdc_smooth/ files_fdc.txt stats_matrices/correlation/overall_correlation/design_matrix_overall_correlation_TrailsAZ.txt stats_matrices/correlation/overall_correlation/contrast_matrix_overall_correlation.txt template/matrix/ stats_fdc_TrailsAZ/']);
+
 
 
 %%%%% Below, you will need to manually edit these commands specific to your data. 
@@ -239,7 +248,7 @@ unix(['fixelcfestats template/fdc_smooth/ files_fdc.txt stats_matrices/design_ma
 
 %b) Expressing the effect size relative to controls
 %for fd
-%unix(['mrcalc stats_fd/abs_effect.mif stats_fd/beta0.mif  -div 100 -mult stats_fd/percentage_effect.mif -force']);
+%unix(['mrcalc stats_fd/abs_effect.mif stats_fd/beta0.mif  -div 100 -mult stats_fd/percentage_effect.mif']);
 %for fdc
 %unix(['mrcalc stats_fdc/abs_effect.mif stats_fdc/beta0.mif  -div 100 -mult stats_fdc/percentage_effect.mif']);
 %for fc

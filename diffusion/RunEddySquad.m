@@ -1,4 +1,4 @@
-function RunEddySquad(participants, startdir, period)
+function RunEddySquad(participants, derivdir, period)
 %This function will conduct 'eddy_squad', which will combine all
 %participants' eddy qc data as a group study. Here, we will be able to view
 %which participants seem like outliers. This will create a directory called
@@ -26,7 +26,7 @@ function RunEddySquad(participants, startdir, period)
 
 
 %go into the main dwiqc folder
-cd ([startdir '/derivatives/' period '/diff_data/dwiqc']);
+cd ([derivdir '/groups/' period '/diff_data/dwiqc']);
 
 fid = fopen('EddySQUADList.txt', 'a+');
 for i = 1:length(participants)
@@ -35,7 +35,7 @@ for i = 1:length(participants)
         disp('Error in opening the file.')
     else
         %print the file pathway to a textfile for each participant. 
-         fprintf(fid, '%s%s%s%s', startdir, '/derivatives/', period, '/diff_data/', PAR_NAME, '/dwi/eddyqc/eddy_quad.qc');
+         fprintf(fid, '%s%s%s%s', derivdir, '/groups/', period, '/diff_data/', PAR_NAME, '/dwi/eddyqc/eddy_quad.qc');
          fprintf(fid, '\n');
     end
     
