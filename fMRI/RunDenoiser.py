@@ -22,11 +22,11 @@ import subprocess
 
 
 #define location of the denoiser script
-denoiserLocation = '/SOFTWARE/denoiser-master/run_denoise.py'
+denoiserLocation = 'C:/Users/ltah262/Programs/denoiser-master/run_denoise.py'
 #define fmriprepped data directory
-fmriprepDir = '/data/USERS/LENORE/fmriprepped_data/derivatives/fmriprep/'
+fmriprepDir = 'H:/ltah262/NECTAR_data/LENORE/derivatives/fmriprepped_data/derivatives/fmriprep/'
 #define output path
-out_path = '/data/USERS/LENORE/derivatives/fMRI_denoised/'
+out_path = 'H:/ltah262/NECTAR_data/LENORE/derivatives/fMRI_denoised/'
 
 #go into fmriprepped derivatives directory
 os.chdir(fmriprepDir)
@@ -49,7 +49,7 @@ for i in participants:
    
     #run denoiser 
     # usage: run_denoise.py [-h] [--col_names COL_NAMES [COL_NAMES ...]] [--hp_filter HP_FILTER] [--lp_filter LP_FILTER] [--out_figure_path OUT_FIGURE_PATH] img_file tsv_file out_path
-    subprocess.call(["python", denoiserLocation, img_file, tsv_file, out_path, "--col_names", "global_signal", "csf", "white_matter", "std_dvars", "dvars", "framewise_displacement", "rmsd", "trans_x", "trans_y", "trans_z", "rot_x", "rot_y", "rot_z", "--hp_filter", "0.1", "--lp_filter", "0.01"])
+    subprocess.call(["python", denoiserLocation, img_file, tsv_file, out_path, "--col_names", "std_dvars", "dvars", "framewise_displacement", "rmsd", "a_comp_cor_00", "a_comp_cor_01", "a_comp_cor_02", "a_comp_cor_03", "a_comp_cor_04", "cosine00", "cosine01", "cosine02", "cosine03", "trans_x", "trans_y", "trans_z", "rot_x", "rot_y", "rot_z"])
    
  
     print('Finished:', i)
