@@ -12,7 +12,7 @@
 
 %Define fmriprep directory, so that it used:
 %FmriprepDirectory = input('Please enter fmriprep directory:', 's');
-FmriprepDir = '/data/USERS/LENORE/fmriprep_test/';
+FmriprepDir = '/data/USERS/LENORE/derivatives/fmriprepped_data/';
 
 %go into fmriprep sourcedata directory
 cd([FmriprepDir 'sourcedata/']);
