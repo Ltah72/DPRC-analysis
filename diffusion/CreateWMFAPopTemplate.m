@@ -1,8 +1,10 @@
-
 %Create a fractional anisotropy (FA) template equivalent of the white 
 %matter fibre orientation density (FOD) population template. Guidelines 
 %from: https://community.mrtrix.org/t/fa-template-from-fod-template/4991/4
 
+%Author: Lenore Tahara-Eckl
+%Email: Ltah262@aucklanduni.ac.nz
+%Date: 11/10/21
 
 %define/add pathways
 %startdir = input('Please enter derivatives directory:', 's');
@@ -64,11 +66,14 @@ for i = 1:length(participants)
     [upper_path, PAR_NAME, ~] = fileparts(participants{1,i});
     PAR_NAME = PAR_NAME(1:15);
    
-    unix(['mrtransform -warp_full template/FA/warps/ ' PAR_NAME '.mif template/FA/FA_warped_' PAR_NAME '.mif']);
+    unix(['mrtransform template/FA/fa_' PAR_NAME '.mif -template template/FA/wmfod_template.mif -warp_full template/FA/warps/fod_norm_' PAR_NAME '.mif template/FA/FA_warped_' PAR_NAME '.mif']);
 end
 
 %-------------------------------------------------------------------------%
 %Step 4: compute the average of the transformed images
-unix(['mrmath template/FA/*FA_warped* mean FA_template.mif']);
+unix(['mrmath template/FA/*FA_warped* mean template/FA/FA_template.mif']);
 
+%-------------------------------------------------------------------------%
+%Step 5: convert to nifti format
+unix(['mrconvert template/FA/FA_template.mif template/FA/FA_template.nii']);
 
