@@ -65,11 +65,27 @@ derivdir = '/data/USERS/LENORE/derivatives';
 %ScriptDirectory = input('Please enter script directory:', 's');
 ScriptDirectory = '/data/USERS/LENORE/scripts/dprc/diffusion';
 
+%Define fmriprep directory, so that it may be used:
+%FmriprepDirectory = input('Please enter fmriprep directory:', 's');
+FmriprepDir = '/data/USERS/LENORE/derivatives/fmriprepped_data/';
+
 %should be the same groupname from what the user analysed in the previous scripts (e.g. CSD.m).  
 groupname = input('Which pre-processed group / study do you want to continue to analyse?: ', 's');
 
 %choose time period
 period = input('Which time period do you want to analyse, e.g. F0, F2, all, etc?: ', 's');
+
+%Define your sourcedata directory:
+%sourcedataDir = input('Please enter sourcedata directory:', 's');
+sourcedataDir = (['/data/sourcedata/' period]);
+
+%Define preprocessed dwi directory (e.g. CSD, FBA) for preprocessed dwi
+%files:
+DWIPreprocDir = ([derivdir, '/groups/' period, '/diff_data/' groupname, '/IN/']); 
+
+%Define connectome directory, where your output files will go to.
+%ConnectomeDir = input('Please enter connectome directory:', 's');
+ConnectomeDir = ([derivdir, '/groups/' period '/diff_data/' groupname '/connectome/']);
 
 %create a connectome folder to place all of the data and analysis in
 mkdir([derivdir,'/groups/' period, '/diff_data/', groupname, '/connectome/']);
@@ -86,14 +102,13 @@ mkdir([derivdir,'/groups/' period, '/diff_data/', groupname, '/connectome/output
 addpath(genpath(derivdir));
 addpath(genpath(ScriptDirectory));
 
-%go into the participant analysed folder + choose participants
-cd([derivdir '/groups/' period, '/diff_data/', groupname, '/IN']);
+%go into the dwi participant analysed folder + choose participants
+cd(DWIPreprocDir);
 
 %define variables
 msgfig = 'Choose participants for analysis (all should be included from this directory.)';
 uiwait(msgbox(msgfig));
 participants = uipickfiles;
-%participants = dir(fullfile('preprocessed_dwi', '*.mif'));
 datafile = '_acq_data_dwi';
 
 %create stat matrices for analysis - can automate this or can be manual
@@ -124,7 +139,7 @@ else
 end
 
 %go into the connectome folder
-cd([derivdir '/groups/' period, '/diff_data/', groupname, '/connectome/']);
+cd(ConnectomeDir);
 
 
 for i = 1:length(participants)
@@ -132,33 +147,36 @@ for i = 1:length(participants)
     [upper_path, PAR_NAME, ~] = fileparts(participants{1,i}); 
  
     %copy preprocessed dwi, brain mask, + wmfod_norm file into connectome folder
-    copyfile ([derivdir '/groups/' period, '/diff_data/' groupname, '/IN/brain_mask/' PAR_NAME, datafile, '.mif'], [derivdir,'/groups/', period, '/diff_data/', groupname, '/connectome/']);
-    movefile([PAR_NAME, datafile,'.mif'], ['brain_mask_', PAR_NAME, datafile,'.mif']);
-    copyfile ([derivdir '/groups/' period, '/diff_data/' groupname, '/IN/preprocessed_dwi/' PAR_NAME, datafile, '.mif'], [derivdir,'/groups/', period, '/diff_data/', groupname, '/connectome/']);
-    copyfile ([derivdir '/groups/' period, '/diff_data/' groupname, '/IN/wmfod_norm_', PAR_NAME, '.mif'], [derivdir,'/groups/', period, '/diff_data/', groupname, '/connectome/']);
+    %copyfile ([derivdir '/groups/' period, '/diff_data/' groupname, '/IN/brain_mask/' PAR_NAME, datafile, '.mif'], [derivdir,'/groups/', period, '/diff_data/', groupname, '/connectome/']);
+    %movefile([PAR_NAME, datafile,'.mif'], ['brain_mask_', PAR_NAME, datafile,'.mif']);
+    %copyfile ([derivdir '/groups/' period, '/diff_data/' groupname, '/IN/preprocessed_dwi/' PAR_NAME, datafile, '.mif'], [derivdir,'/groups/', period, '/diff_data/', groupname, '/connectome/']);
+    %copyfile ([derivdir '/groups/' period, '/diff_data/' groupname, '/IN/wmfod_norm_', PAR_NAME, '.mif'], [derivdir,'/groups/', period, '/diff_data/', groupname, '/connectome/']);
 
     %copy preprocessed t1w + t2 FLAIR images from fmriprep, and the WMH lesion masks into connectome folder
-    copyfile ([derivdir, '/fmriprepped_data/derivatives/fmriprep/', PAR_NAME, '/anat/', PAR_NAME, '_desc-preproc_T1w.nii.gz'], [derivdir,'/groups/', period, '/diff_data/', groupname, '/connectome']);
-    copyfile ([derivdir, '/fmriprepped_data/sourcedata/', PAR_NAME, '/anat/', PAR_NAME, '_FLAIR.nii'], [derivdir,'/groups/', period, '/diff_data/', groupname, '/connectome']);
+    %copyfile ([derivdir, '/fmriprepped_data/derivatives/fmriprep/', PAR_NAME, '/anat/', PAR_NAME, '_desc-preproc_T1w.nii.gz'], [derivdir,'/groups/', period, '/diff_data/', groupname, '/connectome']);
+    %copyfile ([derivdir, '/fmriprepped_data/sourcedata/', PAR_NAME, '/anat/', PAR_NAME, '_FLAIR.nii'], [derivdir,'/groups/', period, '/diff_data/', groupname, '/connectome']);
     
-    %copy FreeSurfer's recon-all output into FreeSurfer's $SUBJECTS directory
+    %copy fmriprep FreeSurfer's recon-all output into FreeSurfer's $SUBJECTS directory
     %unix(['cp -r ' derivdir, '/fmriprepped_data/derivatives/freesurfer/', PAR_NAME, '/ $SUBJECTS_DIR']);
 
-    %convert T1 image to .nii format
-    unix(['mrconvert ' PAR_NAME, '_desc-preproc_T1w.nii.gz ' PAR_NAME, '_T1w.nii']);
+    %---------------------------------------------------------------------%
+    %Step 1: Apply Gibbs ringing and Bias field correction on anat images
     
-    %Have to apply bias field correction on T2 FLAIR using BET and ANTs - N4 algorithm
+    %Acquire fmriprepped, Gibbs-corrected T1w anat image from fmriprep directory
+    unix(['mrconvert ' FmriprepDir, 'derivatives/fmriprep/' PAR_NAME, '/anat/' PAR_NAME, '_desc-preproc_T1w.nii.gz ' PAR_NAME, '_T1w.nii']);
+    
+    %Have to apply bias field correction on Gibbs-corrected T2 FLAIR using BET and ANTs - N4 algorithm
     %get brain mask from FLAIR
-    unix(['bet ' PAR_NAME, '_FLAIR.nii bet_' PAR_NAME, '_FLAIR.nii -m -f 0.2']);
+    unix(['bet ' FmriprepDir, 'sourcedata/' PAR_NAME, '/anat/' PAR_NAME, '_FLAIR.nii bet_' PAR_NAME, '_FLAIR.nii -m -f 0.2']);
     %bias field correct directly with ANTs programme
-    unix(['N4BiasFieldCorrection -d 3 -x bet_' PAR_NAME '_FLAIR_mask.nii.gz -i ' PAR_NAME, '_FLAIR.nii -o ' PAR_NAME '_bfc_FLAIR.nii']);
+    unix(['N4BiasFieldCorrection -d 3 -x bet_' PAR_NAME, '_FLAIR_mask.nii.gz -i ' FmriprepDir, 'sourcedata/' PAR_NAME, '/anat/' PAR_NAME, '_FLAIR.nii -o ' PAR_NAME '_bfc_FLAIR.nii']);
     
     %---------------------------------------------------------------------%
     %Step 2: Create a 5tt image for ACT
     %a) co-registration of t1w and t2 FLAIR to dwi image through fsl FLIRT
     %convert to nii format to run fsl's FLIRT - use the best B0 volume,
     %which will be the first vol in the dwi sequence (vol 0).
-    unix(['mrconvert -coord 3 0 ', PAR_NAME, datafile,'.mif ref_b0_', PAR_NAME, '.nii']);
+    unix(['mrconvert -coord 3 0 ', DWIPreprocDir, 'preprocessed_dwi/' PAR_NAME, datafile,'.mif ref_b0_', PAR_NAME, '.nii']);
     
     %linear registration with 6 dof and the transformation matrix output
     unix(['flirt -in ', PAR_NAME, '_T1w.nii -ref ref_b0_', PAR_NAME, '.nii -dof 6 -out t1_flirt_' PAR_NAME, '.nii -omat transform_flirt_t12dwi_' PAR_NAME '.mat']);
@@ -175,11 +193,11 @@ for i = 1:length(participants)
     unix(['mrconvert ' PAR_NAME, '_T2coreg.nii ' PAR_NAME '_T2coreg.mif']);
     
     %b) generate 5tt image with brain mask, t1, and t2 FLAIR
-    unix(['5ttgen fsl -mask brain_mask_', PAR_NAME, datafile, '.mif -t2 ' PAR_NAME, '_T2coreg.mif ' PAR_NAME '_T1coreg.mif 4ttimage_' PAR_NAME '.mif']);
+    unix(['5ttgen fsl -mask ' DWIPreprocDir '/brain_mask/' PAR_NAME, datafile, '.mif -t2 ' PAR_NAME, '_T2coreg.mif ' PAR_NAME '_T1coreg.mif 4ttimage_' PAR_NAME '.mif']);
 
     %c) edit in the pathological tissue (WMH) to the 5tt image:
     %convert WMH lesion mask to .mif file
-    unix(['mrconvert ' derivdir '/WMH_lesions_masks/ples_lpa_mr', PAR_NAME, '_FLAIR.nii ples_lpa_mr', PAR_NAME, '_FLAIR.mif']);
+    unix(['mrconvert ' derivdir '/WMH_lesion_masks/ples_lpa_mr', PAR_NAME, '_FLAIR.nii ples_lpa_mr', PAR_NAME, '_FLAIR.mif']);
     
     %reslice the WMH lesion mask to match the 4tt image
     unix(['mrtransform ples_lpa_mr' PAR_NAME, '_FLAIR.mif -template 4ttimage_' PAR_NAME, '.mif ' PAR_NAME, '_WMH_mask_transformed.mif']);
@@ -196,17 +214,17 @@ for i = 1:length(participants)
    
     %---------------------------------------------------------------------%
     %Step 3: Generate streamline tracks with -act
-    unix(['tckgen -act 5ttimage_' PAR_NAME '.mif -backtrack -seed_gmwmi gmwmSeed_mask_' PAR_NAME '.mif -maxlength 250 -cutoff 0.06 -select 10000000 wmfod_norm_' PAR_NAME '.mif tracks_10M_' PAR_NAME '.tck']);
+    unix(['tckgen -act 5ttimage_' PAR_NAME '.mif -backtrack -seed_gmwmi gmwmSeed_mask_' PAR_NAME '.mif -maxlength 250 -cutoff 0.06 -select 10000000 ' DWIPreprocDir, 'wmfod_norm_' PAR_NAME '.mif tracks_10M_' PAR_NAME '.tck']);
     
     %if you want to view the tracks, make a smaller version of them:
     %unix(['tckedit tracks_10M_' PAR_NAME '.tck -number 200k smallerTracks_200k_' PAR_NAME '.tck']);
     
     %---------------------------------------------------------------------%
     %Step 4: Refine streamlines with tcksift2
-    unix(['tcksift2 -act 5ttimage_' PAR_NAME '.mif -out_mu sift_mu_' PAR_NAME '.txt -out_coeffs sift_coeffs_' PAR_NAME '.txt tracks_10M_' PAR_NAME '.tck wmfod_norm_' PAR_NAME '.mif sift_1M_' PAR_NAME '.txt']);
+    unix(['tcksift2 -act 5ttimage_' PAR_NAME '.mif -out_mu sift_mu_' PAR_NAME '.txt -out_coeffs sift_coeffs_' PAR_NAME '.txt tracks_10M_' PAR_NAME '.tck ' DWIPreprocDir, 'wmfod_norm_' PAR_NAME '.mif sift_1M_' PAR_NAME '.txt']);
     
     %Also, generate the .tck 1M SIFT file, used for connectome visualisation later on 
-    unix(['tcksift -act 5ttimage_' PAR_NAME '.mif -term_number 1000000 tracks_10M_' PAR_NAME '.tck wmfod_norm_' PAR_NAME '.mif sift_1M_' PAR_NAME '.tck']);
+    unix(['tcksift -act 5ttimage_' PAR_NAME '.mif -term_number 1000000 tracks_10M_' PAR_NAME '.tck ' DWIPreprocDir 'wmfod_norm_' PAR_NAME '.mif sift_1M_' PAR_NAME '.tck']);
     
 
 %     %Compare the tracks with and without SIFT with 10k tracks (for
