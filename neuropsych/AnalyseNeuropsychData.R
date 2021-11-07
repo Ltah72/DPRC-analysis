@@ -451,9 +451,7 @@ ggplot(exec_func_zscores_data_long, aes(x = Group, y = Z_scores, fill = Group)) 
 #for raw data - processing speeds variables
 manova_proc_speed_raw_mod <- manova(cbind(TrailsA.Raw, 
                                          ColorNaming.Raw, 
-                                         WordReading.Raw, 
-                                         LetFluency.Raw, 
-                                         CatFluency.Raw, 
+                                         WordReading.Raw,
                                          HayBTime1.Raw) ~ Group, data = DPRC_neuropsych_data) 
 
 #overall model
@@ -465,8 +463,6 @@ summary.aov(manova_proc_speed_raw_mod)
 manova_proc_speed_z_mod <- manova(cbind(TrailsA.Z, 
                                        ColorNaming.Z, 
                                        WordReading.Z, 
-                                       LetFluency.Z, 
-                                       CatFluency.Z, 
                                        HayBTime1.z) ~ Group, data = DPRC_neuropsych_data) 
 
 
@@ -486,8 +482,6 @@ proc_speed_zscores_data <- dplyr::select(DPRC_neuropsych_data,
                                         TrailsA.Z, 
                                         ColorNaming.Z, 
                                         WordReading.Z, 
-                                        LetFluency.Z, 
-                                        CatFluency.Z,
                                         HayBTime1.z)
 #put into long format
 proc_speed_zscores_data_long <- gather(exec_func_zscores_data, 
@@ -496,8 +490,6 @@ proc_speed_zscores_data_long <- gather(exec_func_zscores_data,
                                       TrailsA.Z, 
                                       ColorNaming.Z, 
                                       WordReading.Z, 
-                                      LetFluency.Z, 
-                                      CatFluency.Z, 
                                       HayBTime1.z)
 
 
@@ -518,11 +510,10 @@ ggplot(proc_speed_zscores_data_long, aes(x = Group, y = Z_scores, fill = Group))
 proc_speed_z_descrip <- describeBy((proc_speed_zscores_data$TrailsA.Z + 
                                       proc_speed_zscores_data$ColorNaming.Z +
                                       proc_speed_zscores_data$WordReading.Z +
-                                      proc_speed_zscores_data$LetFluency.Z +
-                                      proc_speed_zscores_data$CatFluency.Z +
                                       proc_speed_zscores_data$HayBTime1.z) / (length(proc_speed_zscores_data) - 2), proc_speed_zscores_data$Group)
+
 #find mean & SD from total sample: 
-all_proc_speed_zscores_data <- proc_speed_zscores_data[,3:8]
+all_proc_speed_zscores_data <- proc_speed_zscores_data[,3:6]
 noNAsproc_speed_zscores_data <- na.omit(all_proc_speed_zscores_data)
 mean(as.matrix(noNAsproc_speed_zscores_data))
 sd(as.matrix(noNAsproc_speed_zscores_data))
@@ -1103,6 +1094,105 @@ For_Bay_data_noNas_neuropsych_Inhibition.Z <- dplyr::select(DPRC_neuropsych_data
 For_Bay_data_noNas_neuropsych_Inhibition.Z<- na.omit(For_Bay_data_noNas_neuropsych_Inhibition.Z)
 anovaBF(Inhibition.Z ~ Group, data = For_Bay_data_noNas_neuropsych_Inhibition.Z) 
 
+#plot Inhibition.Colour.Naming (Inhibition / Colour Naming) (raincloud plot)
+ggplot(DPRC_neuropsych_data, aes(x = Group, y = Inhibition.Colour.Naming, fill = Group)) + 
+  geom_flat_violin(position = position_nudge(x = .2, y = 0), alpha = .8) +
+  geom_point(aes(y = Inhibition.Colour.Naming, color = Group), position = position_jitter(width = .15), size = .5, alpha = 0.8) +
+  geom_boxplot(width = 0.1, fill = "white", outlier.size = 1, aes(colour = Group)) + 
+  stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Group)) + 
+  xlab("Group") + 
+  ylab("Stroop - Inhibition / Colour Naming") +
+  scale_x_discrete(labels = c("1" = "Control", "2" = "SCD", "3" = "aMCI", "4" = "mMCI", "5" = "AD")) + 
+  theme_classic() +
+  theme(legend.position = "none") +
+  coord_flip()
+#run ANOVA for Inhibition.Colour.Naming (Inhibition / Colour Naming)
+Inhibition.Colour.Naming_mod <- lm(Inhibition.Colour.Naming ~ Group, data = DPRC_neuropsych_data)
+anova(Inhibition.Colour.Naming_mod)
+#effect size omnibus ANOVA
+etaSquared(Inhibition.Colour.Naming_mod)
+#run pairwise comparisons (post-hoc Tukey), given that the F-test was significant. 
+post_hoc_Inhibition.Colour.Naming_mod <- glht(Inhibition.Colour.Naming_mod, linfct = mcp(Group = "Tukey"))
+summary(post_hoc_Inhibition.Colour.Naming_mod)
+confint(post_hoc_Inhibition.Colour.Naming_mod)
+#check descriptive statistics per each group
+Inhibition.Colour.Naming_descrip <- describeBy(DPRC_neuropsych_data$Inhibition.Colour.Naming, DPRC_neuropsych_data$Group)
+#find mean & SD from total sample:
+all_InhibitionColourNaming <- DPRC_neuropsych_data$Inhibition.Colour.Naming
+noNAsInhibitionColourNaming <- na.omit(all_InhibitionColourNaming)
+mean(noNAsInhibitionColourNaming)
+sd(noNAsInhibitionColourNaming)
+#effect size for sig. post hoc tests
+  #for C vs. AD 
+  DPRC_neuropsych_data_CvAD_Inhibition.Colour.Naming <- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 1 | DPRC_neuropsych_data$Group == 5)
+  DPRC_neuropsych_data_CvAD_Inhibition.Colour.Naming$Group <- droplevels(DPRC_neuropsych_data_CvAD_Inhibition.Colour.Naming$Group)
+  cohensD(Inhibition.Colour.Naming ~ Group, data = DPRC_neuropsych_data_CvAD_Inhibition.Colour.Naming) #this looks like Hedges' g? 
+  #for SCD vs. AD 
+  DPRC_neuropsych_data_SCDvAD_Inhibition.Colour.Naming  <- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 2 | DPRC_neuropsych_data$Group == 5)
+  DPRC_neuropsych_data_SCDvAD_Inhibition.Colour.Naming$Group <- droplevels(DPRC_neuropsych_data_SCDvAD_Inhibition.Colour.Naming$Group)
+  cohensD(Inhibition.Colour.Naming ~ Group, data = DPRC_neuropsych_data_SCDvAD_Inhibition.Colour.Naming) #this looks like Hedges' g? 
+  #for aMCI vs. AD 
+  DPRC_neuropsych_data_aMCIvAD_Inhibition.Colour.Naming<- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 3 | DPRC_neuropsych_data$Group == 5)
+  DPRC_neuropsych_data_aMCIvAD_Inhibition.Colour.Naming$Group <- droplevels(DPRC_neuropsych_data_aMCIvAD_Inhibition.Colour.Naming$Group)
+  cohensD(Inhibition.Colour.Naming ~ Group, data = DPRC_neuropsych_data_aMCIvAD_Inhibition.Colour.Naming) #this looks like Hedges' g? 
+#run Bayesian ANOVA
+For_Bay_data_noNas_neuropsych_Inhibition.Colour.Naming <- dplyr::select(DPRC_neuropsych_data, ParticipantID, Group, Inhibition.Colour.Naming)
+For_Bay_data_noNas_neuropsych_Inhibition.Colour.Naming<- na.omit(For_Bay_data_noNas_neuropsych_Inhibition.Colour.Naming)
+anovaBF(Inhibition.Colour.Naming ~ Group, data = For_Bay_data_noNas_neuropsych_Inhibition.Colour.Naming) 
+
+#plot Inhibition.Word.Reading (Inhibition / Word Reading) (raincloud plot)
+ggplot(DPRC_neuropsych_data, aes(x = Group, y = Inhibition.Word.Reading, fill = Group)) + 
+  geom_flat_violin(position = position_nudge(x = .2, y = 0), alpha = .8) +
+  geom_point(aes(y = Inhibition.Word.Reading, color = Group), position = position_jitter(width = .15), size = .5, alpha = 0.8) +
+  geom_boxplot(width = 0.1, fill = "white", outlier.size = 1, aes(colour = Group)) + 
+  stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Group)) + 
+  xlab("Group") + 
+  ylab("Stroop - Inhibition / Word Reading") +
+  scale_x_discrete(labels = c("1" = "Control", "2" = "SCD", "3" = "aMCI", "4" = "mMCI", "5" = "AD")) + 
+  theme_classic() +
+  theme(legend.position = "none") +
+  coord_flip()
+#run ANOVA for Inhibition.Word.Reading (Inhibition / Word Reading)
+Inhibition.Word.Reading_mod <- lm(Inhibition.Word.Reading ~ Group, data = DPRC_neuropsych_data)
+anova(Inhibition.Word.Reading_mod)
+#effect size omnibus ANOVA
+etaSquared(Inhibition.Word.Reading_mod)
+#run pairwise comparisons (post-hoc Tukey), given that the F-test was significant. 
+post_hoc_Inhibition.Word.Reading_mod <- glht(Inhibition.Word.Reading_mod, linfct = mcp(Group = "Tukey"))
+summary(post_hoc_Inhibition.Word.Reading_mod)
+confint(post_hoc_Inhibition.Word.Reading_mod)
+#check descriptive statistics per each group
+Inhibition.Word.Reading_descrip <- describeBy(DPRC_neuropsych_data$Inhibition.Word.Reading, DPRC_neuropsych_data$Group)
+#find mean & SD from total sample:
+all_InhibitionWordReading <- DPRC_neuropsych_data$Inhibition.Word.Reading
+noNAsInhibitionWordReading <- na.omit(all_InhibitionWordReading)
+mean(noNAsInhibitionWordReading)
+sd(noNAsInhibitionWordReading)
+#effect size for sig. post hoc tests
+  #for C vs. AD 
+  DPRC_neuropsych_data_CvAD_Inhibition.Word.Reading <- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 1 | DPRC_neuropsych_data$Group == 5)
+  DPRC_neuropsych_data_CvAD_Inhibition.Word.Reading$Group <- droplevels(DPRC_neuropsych_data_CvAD_Inhibition.Word.Reading$Group)
+  cohensD(Inhibition.Word.Reading ~ Group, data = DPRC_neuropsych_data_CvAD_Inhibition.Word.Reading) #this looks like Hedges' g? 
+  #for C vs. mMCI
+  DPRC_neuropsych_data_CvmMCI_Inhibition.Word.Reading <- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 1 | DPRC_neuropsych_data$Group == 4)
+  DPRC_neuropsych_data_CvmMCI_Inhibition.Word.Reading$Group <- droplevels(DPRC_neuropsych_data_CvmMCI_Inhibition.Word.Reading$Group)
+  cohensD(Inhibition.Word.Reading ~ Group, data = DPRC_neuropsych_data_CvmMCI_Inhibition.Word.Reading) #this looks like Hedges' g? 
+  #for SCD vs. AD 
+  DPRC_neuropsych_data_SCDvAD_Inhibition.Word.Reading  <- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 2 | DPRC_neuropsych_data$Group == 5)
+  DPRC_neuropsych_data_SCDvAD_Inhibition.Word.Reading$Group <- droplevels(DPRC_neuropsych_data_SCDvAD_Inhibition.Word.Reading$Group)
+  cohensD(Inhibition.Word.Reading ~ Group, data = DPRC_neuropsych_data_SCDvAD_Inhibition.Word.Reading) #this looks like Hedges' g? 
+  #for SCD vs. mMCI 
+  DPRC_neuropsych_data_SCDvmMCI_Inhibition.Word.Reading<- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 2 | DPRC_neuropsych_data$Group == 4)
+  DPRC_neuropsych_data_SCDvmMCI_Inhibition.Word.Reading$Group <- droplevels(DPRC_neuropsych_data_SCDvmMCI_Inhibition.Word.Reading$Group)
+  cohensD(Inhibition.Word.Reading ~ Group, data = DPRC_neuropsych_data_SCDvmMCI_Inhibition.Word.Reading) #this looks like Hedges' g?
+  #for aMCI vs. AD 
+  DPRC_neuropsych_data_aMCIvAD_Inhibition.Word.Reading<- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 3 | DPRC_neuropsych_data$Group == 5)
+  DPRC_neuropsych_data_aMCIvAD_Inhibition.Word.Reading$Group <- droplevels(DPRC_neuropsych_data_aMCIvAD_Inhibition.Word.Reading$Group)
+  cohensD(Inhibition.Word.Reading ~ Group, data = DPRC_neuropsych_data_aMCIvAD_Inhibition.Word.Reading) #this looks like Hedges' g? 
+#run Bayesian ANOVA
+For_Bay_data_noNas_neuropsych_Inhibition.Word.Reading <- dplyr::select(DPRC_neuropsych_data, ParticipantID, Group, Inhibition.Word.Reading)
+For_Bay_data_noNas_neuropsych_Inhibition.Word.Reading <- na.omit(For_Bay_data_noNas_neuropsych_Inhibition.Word.Reading)
+anovaBF(Inhibition.Word.Reading ~ Group, data = For_Bay_data_noNas_neuropsych_Inhibition.Word.Reading) 
 
 #4.D-KEFS Verbal Fluency + Category Fluency Task ------------------------------#
 #plot LetFluency.Raw (raincloud plot)
@@ -1617,10 +1707,55 @@ For_Bay_data_noNas_neuropsych_TrailsB.Z <- dplyr::select(DPRC_neuropsych_data, P
 For_Bay_data_noNas_neuropsych_TrailsB.Z <- na.omit(For_Bay_data_noNas_neuropsych_TrailsB.Z)
 anovaBF(TrailsB.Z ~ Group, data = For_Bay_data_noNas_neuropsych_TrailsB.Z) 
 
-
-
-
-
+#plot TMT.B.TMT.A (TMT-B / TMT-A) (raincloud plot)
+ggplot(DPRC_neuropsych_data, aes(x = Group, y = TMT.B.TMT.A, fill = Group)) + 
+  geom_flat_violin(position = position_nudge(x = .2, y = 0), alpha = .8) +
+  geom_point(aes(y = TMT.B.TMT.A, color = Group), position = position_jitter(width = .15), size = .5, alpha = 0.8) +
+  geom_boxplot(width = 0.1, fill = "white", outlier.size = 1, aes(colour = Group)) + 
+  stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Group)) + 
+  xlab("Group") + 
+  ylab("Trail Making Test B / Trail Making Test A") +
+  scale_x_discrete(labels = c("1" = "Control", "2" = "SCD", "3" = "aMCI", "4" = "mMCI", "5" = "AD")) + 
+  theme_classic() +
+  theme(legend.position = "none") +
+  coord_flip()
+#run ANOVA for TMT.B.TMT.A
+TMT.B.TMT.A_mod <- lm(TMT.B.TMT.A ~ Group, data = DPRC_neuropsych_data)
+anova(TMT.B.TMT.A_mod)
+#effect size omnibus ANOVA
+etaSquared(TMT.B.TMT.A_mod)
+#run pairwise comparisons (post-hoc Tukey), given that the F-test was significant. 
+post_hoc_TMT.B.TMT.A_mod <- glht(TMT.B.TMT.A_mod, linfct = mcp(Group = "Tukey"))
+summary(post_hoc_TMT.B.TMT.A_mod)
+confint(post_hoc_TMT.B.TMT.A_mod)
+#check descriptive statistics per each group
+TMT.B.TMT.A_descrip <- describeBy(DPRC_neuropsych_data$TMT.B.TMT.A, DPRC_neuropsych_data$Group)
+#find mean & SD from total sample:
+all_TMTBTMTA <- DPRC_neuropsych_data$TMT.B.TMT.A
+noNAsTMTBTMTA <- na.omit(all_TMTBTMTA)
+mean(noNAsTMTBTMTA)
+sd(noNAsTMTBTMTA)
+#effect size for sig. post hoc tests
+  #for C vs. mMCI 
+  DPRC_neuropsych_data_CvmMCI_TMT.B.TMT.A<- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 1 | DPRC_neuropsych_data$Group == 4)
+  DPRC_neuropsych_data_CvmMCI_TMT.B.TMT.A$Group <- droplevels(DPRC_neuropsych_data_CvmMCI_TMT.B.TMT.A$Group)
+  cohensD(TMT.B.TMT.A ~ Group, data = DPRC_neuropsych_data_CvmMCI_TMT.B.TMT.A) #this looks like Hedges' g?
+  #for C vs. AD 
+  DPRC_neuropsych_data_CvAD_TMT.B.TMT.A <- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 1 | DPRC_neuropsych_data$Group == 5)
+  DPRC_neuropsych_data_CvAD_TMT.B.TMT.A$Group <- droplevels(DPRC_neuropsych_data_CvAD_TMT.B.TMT.A$Group)
+  cohensD(TMT.B.TMT.A ~ Group, data = DPRC_neuropsych_data_CvAD_TMT.B.TMT.A) #this looks like Hedges' g?
+  #for SCD vs. mMCI 
+  DPRC_neuropsych_data_SCDvmMCI_TMT.B.TMT.A <- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 2 | DPRC_neuropsych_data$Group == 4)
+  DPRC_neuropsych_data_SCDvmMCI_TMT.B.TMT.A$Group <- droplevels(DPRC_neuropsych_data_SCDvmMCI_TMT.B.TMT.A$Group)
+  cohensD(TMT.B.TMT.A ~ Group, data = DPRC_neuropsych_data_SCDvmMCI_TMT.B.TMT.A) #this looks like Hedges' g?
+  #for SCD vs. AD 
+  DPRC_neuropsych_data_SCDvAD_TMT.B.TMT.A <- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 2 | DPRC_neuropsych_data$Group == 5)
+  DPRC_neuropsych_data_SCDvAD_TMT.B.TMT.A$Group <- droplevels(DPRC_neuropsych_data_SCDvAD_TMT.B.TMT.A$Group)
+  cohensD(TMT.B.TMT.A ~ Group, data = DPRC_neuropsych_data_SCDvAD_TMT.B.TMT.A) #this looks like Hedges' g? 
+#run Bayesian ANOVA
+For_Bay_data_noNas_neuropsych_TMT.B.TMT.A <- dplyr::select(DPRC_neuropsych_data, ParticipantID, Group, TMT.B.TMT.A)
+For_Bay_data_noNas_neuropsych_TMT.B.TMT.A <- na.omit(For_Bay_data_noNas_neuropsych_TMT.B.TMT.A)
+anovaBF(TMT.B.TMT.A ~ Group, data = For_Bay_data_noNas_neuropsych_TMT.B.TMT.A) 
 
 
 
@@ -1637,6 +1772,8 @@ colnames(DPRC_neuropsych_data)[1] <-'ParticipantID'
 #convert variables
 DPRC_neuropsych_data$Group <- as.factor(DPRC_neuropsych_data$Group)
 DPRC_neuropsych_data$Sex_binary <- as.factor(DPRC_neuropsych_data$Sex_binary)
+DPRC_neuropsych_data$Timepoint <- as.factor(DPRC_neuropsych_data$Timepoint)
+
 
 
 #----------------plot data to visualise & run stat tests ----------------------#
@@ -1746,8 +1883,6 @@ ggplot(exec_func_zscores_data_long, aes(x = Group, y = Z_scores, fill = Group)) 
 manova_proc_speed_raw_mod <- manova(cbind(TrailsA.Raw, 
                                           ColorNaming.Raw, 
                                           WordReading.Raw, 
-                                          LetFluency.Raw, 
-                                          CatFluency.Raw, 
                                           HayBTime1.Raw) ~ Group, data = baseline_DPRC_neuropsych) 
 
 #overall model
@@ -1759,8 +1894,6 @@ summary.aov(manova_proc_speed_raw_mod)
 manova_proc_speed_z_mod <- manova(cbind(TrailsA.Z, 
                                         ColorNaming.Z, 
                                         WordReading.Z, 
-                                        LetFluency.Z, 
-                                        CatFluency.Z, 
                                         HayBTime1.z) ~ Group, data = baseline_DPRC_neuropsych) 
 
 
@@ -1780,8 +1913,6 @@ proc_speed_zscores_data <- dplyr::select(baseline_DPRC_neuropsych,
                                          TrailsA.Z, 
                                          ColorNaming.Z, 
                                          WordReading.Z, 
-                                         LetFluency.Z, 
-                                         CatFluency.Z,
                                          HayBTime1.z)
 #put into long format
 proc_speed_zscores_data_long <- gather(exec_func_zscores_data, 
@@ -1790,8 +1921,6 @@ proc_speed_zscores_data_long <- gather(exec_func_zscores_data,
                                        TrailsA.Z, 
                                        ColorNaming.Z, 
                                        WordReading.Z, 
-                                       LetFluency.Z, 
-                                       CatFluency.Z, 
                                        HayBTime1.z)
 
 
@@ -1812,11 +1941,9 @@ ggplot(proc_speed_zscores_data_long, aes(x = Group, y = Z_scores, fill = Group))
 proc_speed_z_descrip <- describeBy((proc_speed_zscores_data$TrailsA.Z + 
                                       proc_speed_zscores_data$ColorNaming.Z +
                                       proc_speed_zscores_data$WordReading.Z +
-                                      proc_speed_zscores_data$LetFluency.Z +
-                                      proc_speed_zscores_data$CatFluency.Z +
                                       proc_speed_zscores_data$HayBTime1.z) / (length(proc_speed_zscores_data) - 2), proc_speed_zscores_data$Group)
 #find mean & SD from total sample: 
-all_proc_speed_zscores_data <- proc_speed_zscores_data[,3:8]
+all_proc_speed_zscores_data <- proc_speed_zscores_data[,3:6]
 noNAsproc_speed_zscores_data <- na.omit(all_proc_speed_zscores_data)
 mean(as.matrix(noNAsproc_speed_zscores_data))
 sd(as.matrix(noNAsproc_speed_zscores_data))
@@ -2142,6 +2269,59 @@ noNAsF2_InhibitionRaw <- na.omit(F2_InhibitionRaw)
 mean(noNAsF2_InhibitionRaw$Inhibition.Raw)
 sd(noNAsF2_InhibitionRaw$Inhibition.Raw)
 
+#plot Inhibition.Colour.Naming (Inhibition / Colour Naming) (raincloud plot)
+ggplot(DPRC_neuropsych_data, aes(x = Group, y = Inhibition.Colour.Naming, fill = Timepoint)) + 
+  geom_flat_violin(position = position_nudge(x = .2, y = 0), alpha = .8) +
+  geom_point(aes(y = Inhibition.Colour.Naming, color = Timepoint), position = position_jitter(width = .15), size = .5, alpha = 0.8) +
+  geom_boxplot(width = 0.1, fill = "white", outlier.size = 1, aes(colour = Timepoint)) + 
+  stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Timepoint)) + 
+  xlab("Group") + 
+  ylab("Stroop - Inhibition / Colour Naming") +
+  scale_x_discrete(labels = c("1" = "Control", "2" = "SCD", "3" = "aMCI", "4" = "mMCI", "5" = "AD")) + 
+  theme_classic() +
+  coord_flip()
+#run mixed design, 2 x 5 ANOVA for Inhibition.Colour.Naming
+aov_InhibitionColourNaming <- aov(Inhibition.Colour.Naming ~ Group*Timepoint + Error(ParticipantID/Timepoint), data = DPRC_neuropsych_data)
+summary(aov_InhibitionColourNaming) #not significant in any factors
+#check descriptive statistics per each group, per each timepoint
+Inhibition.Colour.Naming_descrip <- describeBy(DPRC_neuropsych_data$Inhibition.Colour.Naming, list(DPRC_neuropsych_data$Group, DPRC_neuropsych_data$Timepoint))
+#find mean & SD from total sample in F0 and F2 timepoints:
+F0_InhibitionColourNaming <- DPRC_neuropsych_data[DPRC_neuropsych_data[, "Timepoint"] == "F0",]
+noNAsF0_InhibitionColourNaming <- na.omit(F0_InhibitionColourNaming)
+mean(noNAsF0_InhibitionColourNaming$Inhibition.Colour.Naming)
+sd(noNAsF0_InhibitionColourNaming$Inhibition.Colour.Naming)
+#F2
+F2_InhibitionColourNaming <- DPRC_neuropsych_data[DPRC_neuropsych_data[, "Timepoint"] == "F2",]
+noNAsF2_InhibitionColourNaming <- na.omit(F2_InhibitionColourNaming)
+mean(noNAsF2_InhibitionColourNaming$Inhibition.Colour.Naming)
+sd(noNAsF2_InhibitionColourNaming$Inhibition.Colour.Naming)
+
+#plot Inhibition.Word.Reading (Inhibition / Word Reading) (raincloud plot)
+ggplot(DPRC_neuropsych_data, aes(x = Group, y = Inhibition.Word.Reading, fill = Timepoint)) + 
+  geom_flat_violin(position = position_nudge(x = .2, y = 0), alpha = .8) +
+  geom_point(aes(y = Inhibition.Word.Reading, color = Timepoint), position = position_jitter(width = .15), size = .5, alpha = 0.8) +
+  geom_boxplot(width = 0.1, fill = "white", outlier.size = 1, aes(colour = Timepoint)) + 
+  stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Timepoint)) + 
+  xlab("Group") + 
+  ylab("Stroop - Inhibition / Word Reading") +
+  scale_x_discrete(labels = c("1" = "Control", "2" = "SCD", "3" = "aMCI", "4" = "mMCI", "5" = "AD")) + 
+  theme_classic() +
+  coord_flip()
+#run mixed design, 2 x 5 ANOVA for Inhibition.Word.Reading
+aov_InhibitionWordReading <- aov(Inhibition.Word.Reading ~ Group*Timepoint + Error(ParticipantID/Timepoint), data = DPRC_neuropsych_data)
+summary(aov_InhibitionWordReading)
+#check descriptive statistics per each group, per each timepoint
+Inhibition.Word.Reading_descrip <- describeBy(DPRC_neuropsych_data$Inhibition.Word.Reading, list(DPRC_neuropsych_data$Group, DPRC_neuropsych_data$Timepoint))
+#find mean & SD from total sample in F0 and F2 timepoints:
+F0_InhibitionWordReading <- DPRC_neuropsych_data[DPRC_neuropsych_data[, "Timepoint"] == "F0",]
+noNAsF0_InhibitionWordReading <- na.omit(F0_InhibitionWordReading)
+mean(noNAsF0_InhibitionWordReading$Inhibition.Word.Reading)
+sd(noNAsF0_InhibitionWordReading$Inhibition.Word.Reading)
+#F2
+F2_InhibitionWordReading <- DPRC_neuropsych_data[DPRC_neuropsych_data[, "Timepoint"] == "F2",]
+noNAsF2_InhibitionWordReading <- na.omit(F2_InhibitionWordReading)
+mean(noNAsF2_InhibitionWordReading$Inhibition.Word.Reading)
+sd(noNAsF2_InhibitionWordReading$Inhibition.Word.Reading)
 
 #4.D-KEFS Verbal Fluency + Category Fluency Task ------------------------------#
 #plot LetFluency.Raw (raincloud plot)
@@ -2225,7 +2405,6 @@ noNAsF2_SwitchingRaw <- na.omit(F2_SwitchingRaw)
 mean(noNAsF2_SwitchingRaw$Switching.Raw)
 sd(noNAsF2_SwitchingRaw$Switching.Raw)
 
-
 #5.Trail Making Test (TMT) A & B ----------------------------------------------#
 #plot TrailsA.Raw (raincloud plot)
 ggplot(DPRC_neuropsych_data, aes(x = Group, y = TrailsA.Raw, fill = Timepoint)) + 
@@ -2280,5 +2459,102 @@ F2_TrailsBRaw <- DPRC_neuropsych_data[DPRC_neuropsych_data[, "Timepoint"] == "F2
 noNAsF2_TrailsBRaw <- na.omit(F2_TrailsBRaw)
 mean(noNAsF2_TrailsBRaw$TrailsB.Raw)
 sd(noNAsF2_TrailsBRaw$TrailsB.Raw)
+
+#plot TMT.B.TMT.A (TMT-B / TMT-A) (raincloud plot)
+ggplot(DPRC_neuropsych_data, aes(x = Group, y = TMT.B.TMT.A, fill = Timepoint)) + 
+  geom_flat_violin(position = position_nudge(x = .2, y = 0), alpha = .8) +
+  geom_point(aes(y = TMT.B.TMT.A, color = Timepoint), position = position_jitter(width = .15), size = .5, alpha = 0.8) +
+  geom_boxplot(width = 0.1, fill = "white", outlier.size = 1, aes(colour = Timepoint)) + 
+  stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Timepoint)) + 
+  xlab("Group") + 
+  ylab("TMT-B / TMT-A") +
+  scale_x_discrete(labels = c("1" = "Control", "2" = "SCD", "3" = "aMCI", "4" = "mMCI", "5" = "AD")) + 
+  theme_classic() +
+  coord_flip()
+#run mixed design, 2 x 5 ANOVA for TrailsB.Raw
+aov_TMTBTMTA <- aov(TMT.B.TMT.A ~ Group*Timepoint + Error(ParticipantID/Timepoint), data = DPRC_neuropsych_data)
+summary(aov_TMTBTMTA)
+#check descriptive statistics per each group, per each timepoint
+TMT.B.TMT.A_descrip <- describeBy(DPRC_neuropsych_data$TMT.B.TMT.A, list(DPRC_neuropsych_data$Group, DPRC_neuropsych_data$Timepoint))
+#find mean & SD from total sample in F0 and F2 timepoints:
+F0_TMTBTMTA <- DPRC_neuropsych_data[DPRC_neuropsych_data[, "Timepoint"] == "F0",]
+noNAsF0_TMTBTMTA <- na.omit(F0_TMTBTMTA)
+mean(noNAsF0_TMTBTMTA$TMT.B.TMT.A)
+sd(noNAsF0_TMTBTMTA$TMT.B.TMT.A)
+#F2
+F2_TMTBTMTA <- DPRC_neuropsych_data[DPRC_neuropsych_data[, "Timepoint"] == "F2",]
+noNAsF2_TMTBTMTA <- na.omit(F2_TMTBTMTA)
+mean(noNAsF2_TMTBTMTA$TMT.B.TMT.A)
+sd(noNAsF2_TMTBTMTA$TMT.B.TMT.A)
+
+
+#Percentage changes ((F2 - F0) / F0)
+#put into long format
+percent_change_data <- DPRC_neuropsych_data %>% 
+  filter(Timepoint == "F2") %>%
+  select(ParticipantID, 
+         Age,
+         Classification,
+         Group, 
+         Sex,
+         Sex_binary,
+         Timepoint,
+         PercentChange_TMTA,
+         PercentChange_TMTB,
+         PercentChange_ColorNaming,
+         PercentChange_WordReading,
+         PercentChange_Inhibition,
+         PercentChange_LetFluency,
+         PercentChange_CatFluency,
+         PercentChange_Switching,
+         PercentChange_HayBTime1z,
+         PercentChange_HayBTime2z,
+         PercentChange_HayBCatAz,
+         PercentChange_HayBCatBz)
+
+#rename variables 
+percent_change_data <- rename(percent_change_data, TMTA = PercentChange_TMTA)
+percent_change_data <- rename(percent_change_data, TMTB = PercentChange_TMTB)
+percent_change_data <- rename(percent_change_data, ColorNaming = PercentChange_ColorNaming)
+percent_change_data <- rename(percent_change_data, WordReading = PercentChange_WordReading)
+percent_change_data <- rename(percent_change_data, Inhibition = PercentChange_Inhibition)
+percent_change_data <- rename(percent_change_data, LetFluency = PercentChange_LetFluency)
+percent_change_data <- rename(percent_change_data, CatFluency = PercentChange_CatFluency)
+percent_change_data <- rename(percent_change_data, Switching = PercentChange_Switching)
+percent_change_data <- rename(percent_change_data, HayBTime1z = PercentChange_HayBTime1z)
+percent_change_data <- rename(percent_change_data, HayBTime2z = PercentChange_HayBTime2z)
+percent_change_data <- rename(percent_change_data, HayBCatAz = PercentChange_HayBCatAz)
+percent_change_data <- rename(percent_change_data, HayBCatBz = PercentChange_HayBCatBz)
+
+#put into long format
+percent_change_data_long <- gather(percent_change_data, 
+                                       "Test",
+                                       "Percent_change", 
+                                        TMTA,
+                                        TMTB,
+                                        ColorNaming,
+                                        WordReading,
+                                        Inhibition,
+                                        LetFluency,
+                                        CatFluency,
+                                        Switching,
+                                        HayBTime1z,
+                                        HayBTime2z,
+                                        HayBCatAz,
+                                        HayBCatBz)
+
+#plot percent changes (whole)
+ggplot(percent_change_data_long, aes(x = Test, y = Percent_change)) + 
+  #geom_flat_violin(position = position_nudge(x = .2, y = 0), alpha = .8) +
+  geom_point(aes(y = Percent_change, color = Percent_change), position = position_jitter(width = .15), size = .5, alpha = 0.8) +
+  geom_boxplot(width = 0.1, fill = "white", outlier.size = 1, aes(colour = Timepoint)) + 
+  stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Timepoint)) + 
+  xlab("Group") + 
+  ylab("TMT-B / TMT-A") +
+  scale_x_discrete(labels = c("1" = "Control", "2" = "SCD", "3" = "aMCI", "4" = "mMCI", "5" = "AD")) + 
+  theme_classic() +
+  coord_flip()
+
+
 
 
