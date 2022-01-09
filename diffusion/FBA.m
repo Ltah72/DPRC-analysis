@@ -40,11 +40,11 @@ close all;
 
 %define/add pathways
 %startdir = input('Please enter derivatives directory:', 's');
-derivder = '/data/USERS/LENORE/derivatives';
+derivdir = '/data/USERS/LENORE/derivatives';
 
 %Script directory is defined, so that it can be added to path below:
 %ScriptDirectory = input('Please enter script directory:', 's');
-ScriptDirectory = '/data/USERS/LENORE/scripts/dprc/diffusion';
+ScriptDirectory = '/data/USERS/LENORE/scripts/dprc/';
 
 %should be the same groupname from what the user analysed in the CSD script.
 groupname = input('Which pre-processed group / study do you want to continue to analyse (e.g cross-sectional, longitudinal)?: ', 's');
@@ -53,21 +53,21 @@ groupname = input('Which pre-processed group / study do you want to continue to 
 period = input('Which time period do you want to analyse (e.g. F0, F2, TH, all, etc)?: ', 's');
 
 %make directories for FBA data
-mkdir([derivder,'/groups/' period, '/diff_data/', groupname, '/template/log_fc_data/']);
-mkdir([derivder,'/groups/' period, '/diff_data/', groupname, '/template/fd_data/']);
-mkdir([derivder,'/groups/' period, '/diff_data/', groupname, '/template/fdc_data/']);
+mkdir([derivdir,'/groups/' period, '/diff_data/', groupname, '/template/log_fc_data/']);
+mkdir([derivdir,'/groups/' period, '/diff_data/', groupname, '/template/fd_data/']);
+mkdir([derivdir,'/groups/' period, '/diff_data/', groupname, '/template/fdc_data/']);
 
 %make directory to hold your matrices (e.g. design and contrast)for
 %statistical tests - for FBA analysis. You need to manually create and
 %store the files in here.
-mkdir([derivder,'/groups/' period, '/diff_data/', groupname, '/stats_matrices/']);
+mkdir([derivdir,'/groups/' period, '/diff_data/', groupname, '/stats_matrices/']);
 
 %Add your script and all necessary files (e.g. data, functions) to path
-addpath(genpath(derivder));
+addpath(genpath(derivdir));
 addpath(genpath(ScriptDirectory));
 
 %go into participant derivatives folder
-cd([derivder '/groups/' period, '/diff_data/' groupname, '/IN/preprocessed_dwi']);
+cd([derivdir '/groups/' period, '/diff_data/' groupname, '/IN/preprocessed_dwi']);
 
 %choose participants for analysis (do not include excluded participants).
 msgfig = 'Choose participants for analysis (do not include excluded participants)';
@@ -81,7 +81,7 @@ UserAutomate = input('Do you want to automate your matrice creation? y or n: ', 
 if UserAutomate == 'y'
     excelFile = input('Please name the excel file you wish to use: ', 's');
     fileLocation = input(['Where is this file, ' excelFile  ', located? Name the directory: '], 's');
-    CreateStudyMatrices(excelFile, fileLocation, derivder, groupname);
+    CreateStudyMatrices(excelFile, fileLocation, derivdir, groupname);
 elseif UserAutomate == 'n'
     UserMatrices = input('Have you created your own matrices? y or n: ', 's');
     if UserMatrices == 'y'
@@ -91,7 +91,7 @@ elseif UserAutomate == 'n'
     end
 end
 %go back into group folder
-cd([derivder '/groups/' period, '/diff_data/', groupname]);
+cd([derivdir '/groups/' period, '/diff_data/', groupname]);
 
 
 %FBA steps begin below:
@@ -104,7 +104,7 @@ unix(['fod2fixel -mask template/template_mask.mif -fmls_peak_value 0.06 template
 for i = 1:length(participants)
     
     [upper_path, PAR_NAME, ~] = fileparts(participants{1,i});
-    PAR_NAME = PAR_NAME(1:14);
+    PAR_NAME = PAR_NAME(1:15);
     
     %a) Warp each participant's FOD images to template space.
     unix(['mrtransform IN/wmfod_norm_' PAR_NAME '.mif -warp IN/' PAR_NAME '_subject2template_warp.mif -reorient_fod no IN/' PAR_NAME '_fod_in_template_space_NOT_REORIENTED.mif -force']);
@@ -162,7 +162,7 @@ unix(['tckgen -angle 22.5 -maxlen 250 -minlen 10 -power 1.0 wmfod_template.mif -
 unix(['tcksift tracks_20_million.tck wmfod_template.mif tracks_2_million_sift.tck -term_number 2000000']);
 
 %-------------------------------------------------------------------------%
-%Step 5: Generate fixel-fixel connectivity matrix
+%Step 5: Generate fixel-fixel connectivity matrix - redo
 unix(['fixelconnectivity fixel_mask/ tracks_2_million_sift.tck matrix/']);
 
 %-------------------------------------------------------------------------%
@@ -187,9 +187,36 @@ CreateParticipantFixelList;
 %will include in your analysis (e.g. contrast_matrix.txt)
 
 %Run statistical tests for each AFD metric
-unix(['fixelcfestats template/fd_smooth/ files_fd.txt stats_matrices/design_matrix.txt stats_matrices/contrast_matrix.txt template/matrix/ stats_fd/']);
-unix(['fixelcfestats template/log_fc_smooth/ files_log_fc.txt stats_matrices/design_matrix.txt stats_matrices/contrast_matrix.txt template/matrix/ stats_log_fc/']);
-unix(['fixelcfestats template/fdc_smooth/ files_fdc.txt stats_matrices/design_matrix.txt stats_matrices/contrast_matrix.txt template/matrix/ stats_fdc/']);
+k = 0;
+while true
+unix(['fixelcfestats -strong template/fd_smooth/ files_fd.txt stats_matrices/design_matrix_cov-age_sex.txt stats_matrices/contrast_matrix_cov-age_sex.txt template/matrix/ stats_fd_cov-age_sex/']);
+unix(['fixelcfestats -strong template/log_fc_smooth/ files_log_fc.txt stats_matrices/design_matrix_cov-age_sex.txt stats_matrices/contrast_matrix_cov-age_sex.txt template/matrix/ stats_log_fc_cov-age_sex/']);
+unix(['fixelcfestats -strong template/fdc_smooth/ files_fdc.txt stats_matrices/design_matrix_cov-age_sex.txt stats_matrices/contrast_matrix_cov-age_sex.txt template/matrix/ stats_fdc_cov-age_sex/']);
+k = k+1;
+disp(k)
+times_run = k;
+end 
+
+%unix(['fixelcfestats group_FBA_files/fd_smooth_aMCI/ group_FBA_files/files_fd_aMCI.txt stats_matrices/design_matrix_whole_aMCI.txt stats_matrices/contrast_matrix_whole.txt template/matrix/ stats_fd_whole_aMCI/']);
+unix(['fixelcfestats group_FBA_files/log_fc_smooth_aMCI/ group_FBA_files/files_log_fc_aMCI.txt stats_matrices/design_matrix_whole_aMCI.txt stats_matrices/contrast_matrix_whole.txt template/matrix/ stats_log_fc_whole_aMCI/']);
+unix(['fixelcfestats group_FBA_files/fdc_smooth_aMCI/ group_FBA_files/files_fdc_aMCI.txt stats_matrices/design_matrix_whole_aMCI.txt stats_matrices/contrast_matrix_whole.txt template/matrix/ stats_fdc_whole_aMCI/']);
+
+unix(['fixelcfestats group_FBA_files/fd_smooth_mMCI/ group_FBA_files/files_fd_mMCI.txt stats_matrices/design_matrix_whole_mMCI.txt stats_matrices/contrast_matrix_whole.txt template/matrix/ stats_fd_whole_mMCI/']);
+unix(['fixelcfestats group_FBA_files/log_fc_smooth_mMCI/ group_FBA_files/files_log_fc_mMCI.txt stats_matrices/design_matrix_whole_mMCI.txt stats_matrices/contrast_matrix_whole.txt template/matrix/ stats_log_fc_whole_mMCI/']);
+unix(['fixelcfestats group_FBA_files/fdc_smooth_mMCI/ group_FBA_files/files_fdc_mMCI.txt stats_matrices/design_matrix_whole_mMCI.txt stats_matrices/contrast_matrix_whole.txt template/matrix/ stats_fdc_whole_mMCI/']);
+
+unix(['fixelcfestats group_FBA_files/fd_smooth_AD/ group_FBA_files/files_fd_AD.txt stats_matrices/design_matrix_whole_AD.txt stats_matrices/contrast_matrix_whole.txt template/matrix/ stats_fd_whole_AD/']);
+unix(['fixelcfestats group_FBA_files/log_fc_smooth_AD/ group_FBA_files/files_log_fc_AD.txt stats_matrices/design_matrix_whole_AD.txt stats_matrices/contrast_matrix_whole.txt template/matrix/ stats_log_fc_whole_AD/']);
+unix(['fixelcfestats group_FBA_files/fdc_smooth_AD/ group_FBA_files/files_fdc_AD.txt stats_matrices/design_matrix_whole_AD.txt stats_matrices/contrast_matrix_whole.txt template/matrix/ stats_fdc_whole_AD/']);
+
+unix(['fixelcfestats group_FBA_files/fd_smooth_C/ group_FBA_files/files_fd_C.txt stats_matrices/design_matrix_whole_C.txt stats_matrices/contrast_matrix_whole.txt template/matrix/ stats_fd_whole_C/']);
+unix(['fixelcfestats group_FBA_files/log_fc_smooth_C/ group_FBA_files/files_log_fc_C.txt stats_matrices/design_matrix_whole_C.txt stats_matrices/contrast_matrix_whole.txt template/matrix/ stats_log_fc_whole_C/']);
+unix(['fixelcfestats group_FBA_files/fdc_smooth_C/ group_FBA_files/files_fdc_C.txt stats_matrices/design_matrix_whole_C.txt stats_matrices/contrast_matrix_whole.txt template/matrix/ stats_fdc_whole_C/']);
+
+unix(['fixelcfestats group_FBA_files/fd_smooth_SCD/ group_FBA_files/files_fd_SCD.txt stats_matrices/design_matrix_whole_SCD.txt stats_matrices/contrast_matrix_whole.txt template/matrix/ stats_fd_whole_SCD/']);
+unix(['fixelcfestats group_FBA_files/log_fc_smooth_SCD/ group_FBA_files/files_log_fc_SCD.txt stats_matrices/design_matrix_whole_SCD.txt stats_matrices/contrast_matrix_whole.txt template/matrix/ stats_log_fc_whole_SCD/']);
+unix(['fixelcfestats group_FBA_files/fdc_smooth_SCD/ group_FBA_files/files_fdc_SCD.txt stats_matrices/design_matrix_whole_SCD.txt stats_matrices/contrast_matrix_whole.txt template/matrix/ stats_fdc_whole_SCD/']);
+
 
 %for correlations (last one - test out ACE with no NANs)
 unix(['fixelcfestats template/fd_smooth/ files_fd.txt stats_matrices/correlation/overall_correlation/design_matrix_overall_correlation_test_ACE.txt stats_matrices/correlation/overall_correlation/contrast_matrix_overall_correlation.txt template/matrix/ stats_fd/']);

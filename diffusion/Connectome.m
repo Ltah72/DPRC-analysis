@@ -146,16 +146,6 @@ for i = 1:length(participants)
     
     [upper_path, PAR_NAME, ~] = fileparts(participants{1,i}); 
  
-    %copy preprocessed dwi, brain mask, + wmfod_norm file into connectome folder
-    %copyfile ([derivdir '/groups/' period, '/diff_data/' groupname, '/IN/brain_mask/' PAR_NAME, datafile, '.mif'], [derivdir,'/groups/', period, '/diff_data/', groupname, '/connectome/']);
-    %movefile([PAR_NAME, datafile,'.mif'], ['brain_mask_', PAR_NAME, datafile,'.mif']);
-    %copyfile ([derivdir '/groups/' period, '/diff_data/' groupname, '/IN/preprocessed_dwi/' PAR_NAME, datafile, '.mif'], [derivdir,'/groups/', period, '/diff_data/', groupname, '/connectome/']);
-    %copyfile ([derivdir '/groups/' period, '/diff_data/' groupname, '/IN/wmfod_norm_', PAR_NAME, '.mif'], [derivdir,'/groups/', period, '/diff_data/', groupname, '/connectome/']);
-
-    %copy preprocessed t1w + t2 FLAIR images from fmriprep, and the WMH lesion masks into connectome folder
-    %copyfile ([derivdir, '/fmriprepped_data/derivatives/fmriprep/', PAR_NAME, '/anat/', PAR_NAME, '_desc-preproc_T1w.nii.gz'], [derivdir,'/groups/', period, '/diff_data/', groupname, '/connectome']);
-    %copyfile ([derivdir, '/fmriprepped_data/sourcedata/', PAR_NAME, '/anat/', PAR_NAME, '_FLAIR.nii'], [derivdir,'/groups/', period, '/diff_data/', groupname, '/connectome']);
-    
     %copy fmriprep FreeSurfer's recon-all output into FreeSurfer's $SUBJECTS directory
     %unix(['cp -r ' derivdir, '/fmriprepped_data/derivatives/freesurfer/', PAR_NAME, '/ $SUBJECTS_DIR']);
 
@@ -163,7 +153,7 @@ for i = 1:length(participants)
     %Step 1: Apply Gibbs ringing and Bias field correction on anat images
     
     %Acquire fmriprepped, Gibbs-corrected T1w anat image from fmriprep directory
-    unix(['mrconvert ' FmriprepDir, 'derivatives/fmriprep/' PAR_NAME, '/anat/' PAR_NAME, '_desc-preproc_T1w.nii.gz ' PAR_NAME, '_T1w.nii']);
+    unix(['mrconvert ' FmriprepDir, 'derivatives/fmriprep/' PAR_NAME, '/anat/' PAR_NAME, '_desc-preproc_T1w.nii.gz ' PAR_NAME, '_T1w.nii -force']);
     
     %Have to apply bias field correction on Gibbs-corrected T2 FLAIR using BET and ANTs - N4 algorithm
     %get brain mask from FLAIR
@@ -176,55 +166,55 @@ for i = 1:length(participants)
     %a) co-registration of t1w and t2 FLAIR to dwi image through fsl FLIRT
     %convert to nii format to run fsl's FLIRT - use the best B0 volume,
     %which will be the first vol in the dwi sequence (vol 0).
-    unix(['mrconvert -coord 3 0 ', DWIPreprocDir, 'preprocessed_dwi/' PAR_NAME, datafile,'.mif ref_b0_', PAR_NAME, '.nii']);
+    unix(['mrconvert -coord 3 0 ', DWIPreprocDir, 'preprocessed_dwi/' PAR_NAME, datafile,'.mif ref_b0_', PAR_NAME, '.nii -force']);
     
     %linear registration with 6 dof and the transformation matrix output
     unix(['flirt -in ', PAR_NAME, '_T1w.nii -ref ref_b0_', PAR_NAME, '.nii -dof 6 -out t1_flirt_' PAR_NAME, '.nii -omat transform_flirt_t12dwi_' PAR_NAME '.mat']);
     unix(['flirt -in ', PAR_NAME, '_bfc_FLAIR.nii -ref ref_b0_', PAR_NAME, '.nii -dof 6 -out t2_flirt_' PAR_NAME, '.nii -omat transform_flirt_t22dwi_' PAR_NAME '.mat']);
     
     %apply the linear transformation to the t1 and t2 image
-    unix(['transformconvert transform_flirt_t12dwi_' PAR_NAME '.mat ' PAR_NAME, '_T1w.nii ref_b0_', PAR_NAME, '.nii flirt_import transform_mrtrix_t12dwi_' PAR_NAME '.txt']);
-    unix(['transformconvert transform_flirt_t22dwi_' PAR_NAME '.mat ' PAR_NAME, '_bfc_FLAIR.nii ref_b0_', PAR_NAME, '.nii flirt_import transform_mrtrix_t22dwi_' PAR_NAME '.txt']);
-    unix(['mrtransform ' PAR_NAME, '_T1w.nii -linear transform_mrtrix_t12dwi_' PAR_NAME '.txt ' PAR_NAME, '_T1coreg.nii']);
-    unix(['mrtransform ' PAR_NAME, '_bfc_FLAIR.nii -linear transform_mrtrix_t12dwi_' PAR_NAME '.txt -template ' PAR_NAME, '_T1coreg.nii ' PAR_NAME, '_T2coreg.nii']);
+    unix(['transformconvert transform_flirt_t12dwi_' PAR_NAME '.mat ' PAR_NAME, '_T1w.nii ref_b0_', PAR_NAME, '.nii flirt_import transform_mrtrix_t12dwi_' PAR_NAME '.txt -force']);
+    unix(['transformconvert transform_flirt_t22dwi_' PAR_NAME '.mat ' PAR_NAME, '_bfc_FLAIR.nii ref_b0_', PAR_NAME, '.nii flirt_import transform_mrtrix_t22dwi_' PAR_NAME '.txt -force']);
+    unix(['mrtransform ' PAR_NAME, '_T1w.nii -linear transform_mrtrix_t12dwi_' PAR_NAME '.txt ' PAR_NAME, '_T1coreg.nii -force']);
+    unix(['mrtransform ' PAR_NAME, '_bfc_FLAIR.nii -linear transform_mrtrix_t12dwi_' PAR_NAME '.txt -template ' PAR_NAME, '_T1coreg.nii ' PAR_NAME, '_T2coreg.nii -force']);
     
     %convert to .mif (mrtrix) format
     unix(['mrconvert ' PAR_NAME, '_T1coreg.nii ' PAR_NAME '_T1coreg.mif']);
     unix(['mrconvert ' PAR_NAME, '_T2coreg.nii ' PAR_NAME '_T2coreg.mif']);
     
-    %b) generate 5tt image with brain mask, t1, and t2 FLAIR
-    unix(['5ttgen fsl -mask ' DWIPreprocDir '/brain_mask/' PAR_NAME, datafile, '.mif -t2 ' PAR_NAME, '_T2coreg.mif ' PAR_NAME '_T1coreg.mif 4ttimage_' PAR_NAME '.mif']);
+    %b) generate 5tt image with upsampled brain mask, t1, and t2 FLAIR
+    unix(['5ttgen fsl -mask ' DWIPreprocDir '/brain_mask/' PAR_NAME, datafile, '.mif -t2 ' PAR_NAME, '_T2coreg.mif ' PAR_NAME '_T1coreg.mif 4ttimage_' PAR_NAME '.mif -force']);
 
     %c) edit in the pathological tissue (WMH) to the 5tt image:
     %convert WMH lesion mask to .mif file
-    unix(['mrconvert ' derivdir '/WMH_lesion_masks/ples_lpa_mr', PAR_NAME, '_FLAIR.nii ples_lpa_mr', PAR_NAME, '_FLAIR.mif']);
+    unix(['mrconvert ' derivdir '/WMH_lesion_masks/ples_lpa_mr', PAR_NAME, '_FLAIR.nii ples_lpa_mr', PAR_NAME, '_FLAIR.mif -force']);
     
     %reslice the WMH lesion mask to match the 4tt image
-    unix(['mrtransform ples_lpa_mr' PAR_NAME, '_FLAIR.mif -template 4ttimage_' PAR_NAME, '.mif ' PAR_NAME, '_WMH_mask_transformed.mif']);
+    unix(['mrtransform ples_lpa_mr' PAR_NAME, '_FLAIR.mif -template 4ttimage_' PAR_NAME, '.mif ' PAR_NAME, '_WMH_mask_transformed.mif -force']);
     
     %add the image into the 5tt image
-    unix(['5ttedit -path ', PAR_NAME, '_WMH_mask_transformed.mif 4ttimage_' PAR_NAME, '.mif 5ttimage_' PAR_NAME '.mif']);
+    unix(['5ttedit -path ', PAR_NAME, '_WMH_mask_transformed.mif 4ttimage_' PAR_NAME, '.mif 5ttimage_' PAR_NAME '.mif -force']);
     
     %check that your 5ttimage conforms to MRtrix's expected format
     FiveTTImageCheck(PAR_NAME, derivdir, period, groupname);
 
     %d) Create a 'seed' boundary between the white and gray matter for
     %streamline generation
-    unix(['5tt2gmwmi 5ttimage_' PAR_NAME '.mif gmwmSeed_mask_' PAR_NAME '.mif']);
+    unix(['5tt2gmwmi 5ttimage_' PAR_NAME '.mif gmwmSeed_mask_' PAR_NAME '.mif -force']);
    
     %---------------------------------------------------------------------%
     %Step 3: Generate streamline tracks with -act
-    unix(['tckgen -act 5ttimage_' PAR_NAME '.mif -backtrack -seed_gmwmi gmwmSeed_mask_' PAR_NAME '.mif -maxlength 250 -cutoff 0.06 -select 10000000 ' DWIPreprocDir, 'wmfod_norm_' PAR_NAME '.mif tracks_10M_' PAR_NAME '.tck']);
+    unix(['tckgen -act 5ttimage_' PAR_NAME '.mif -backtrack -seed_gmwmi gmwmSeed_mask_' PAR_NAME '.mif -maxlength 250 -cutoff 0.06 -select 10000000 ' DWIPreprocDir, 'wmfod_norm_' PAR_NAME '.mif tracks_10M_' PAR_NAME '.tck -force']);
     
     %if you want to view the tracks, make a smaller version of them:
     %unix(['tckedit tracks_10M_' PAR_NAME '.tck -number 200k smallerTracks_200k_' PAR_NAME '.tck']);
     
     %---------------------------------------------------------------------%
     %Step 4: Refine streamlines with tcksift2
-    unix(['tcksift2 -act 5ttimage_' PAR_NAME '.mif -out_mu sift_mu_' PAR_NAME '.txt -out_coeffs sift_coeffs_' PAR_NAME '.txt tracks_10M_' PAR_NAME '.tck ' DWIPreprocDir, 'wmfod_norm_' PAR_NAME '.mif sift_1M_' PAR_NAME '.txt']);
+    unix(['tcksift2 -act 5ttimage_' PAR_NAME '.mif -out_mu sift_mu_' PAR_NAME '.txt -out_coeffs sift_coeffs_' PAR_NAME '.txt tracks_10M_' PAR_NAME '.tck ' DWIPreprocDir, 'wmfod_norm_' PAR_NAME '.mif sift_1M_' PAR_NAME '.txt -force']);
     
     %Also, generate the .tck 1M SIFT file, used for connectome visualisation later on 
-    unix(['tcksift -act 5ttimage_' PAR_NAME '.mif -term_number 1000000 tracks_10M_' PAR_NAME '.tck ' DWIPreprocDir 'wmfod_norm_' PAR_NAME '.mif sift_1M_' PAR_NAME '.tck']);
+    unix(['tcksift -act 5ttimage_' PAR_NAME '.mif -term_number 1000000 tracks_10M_' PAR_NAME '.tck ' DWIPreprocDir 'wmfod_norm_' PAR_NAME '.mif sift_1M_' PAR_NAME '.tck -force']);
     
 
 %     %Compare the tracks with and without SIFT with 10k tracks (for
@@ -264,34 +254,35 @@ for i = 1:length(participants)
     %file to .mif format (use datatype uint32, which is liked best by
     %MRtrix). 
     unix(['mri_aparc2aseg --old-ribbon --s ' PAR_NAME ' --annot hcpmmp1 --o ' PAR_NAME '_hcpmmp1.mgz']);
-    unix(['mrconvert -datatype uint32 ' PAR_NAME '_hcpmmp1.mgz ' PAR_NAME '_hcpmmp1.mif']);
+    unix(['mrconvert -datatype uint32 ' PAR_NAME '_hcpmmp1.mgz ' PAR_NAME '_hcpmmp1.mif -force']);
     
     %c) Replace the random integers of the hcpmmp1.mif file with integers that
     %start at 1 and increase by 1. 
-    unix(['labelconvert ' PAR_NAME '_hcpmmp1.mif /SOFTWARE/anaconda3/share/mrtrix3/labelconvert/hcpmmp1_original.txt /SOFTWARE/anaconda3/share/mrtrix3/labelconvert/hcpmmp1_ordered.txt ' PAR_NAME '_hcpmmp1_parcels_nocoreg.mif']);
+    unix(['labelconvert ' PAR_NAME '_hcpmmp1.mif /SOFTWARE/anaconda3/share/mrtrix3/labelconvert/hcpmmp1_original.txt /SOFTWARE/anaconda3/share/mrtrix3/labelconvert/hcpmmp1_ordered.txt ' PAR_NAME '_hcpmmp1_parcels_nocoreg.mif -force']);
    
     %d) Register the ordered atlas-based volumetric parcellation to diffusion
     %space. 
-    unix(['mrtransform ' PAR_NAME '_hcpmmp1_parcels_nocoreg.mif -linear transform_mrtrix_t12dwi_' PAR_NAME '.txt -inverse -datatype uint32 ' PAR_NAME '_hcpmmp1_parcels_coreg.mif']);
+    unix(['mrtransform ' PAR_NAME '_hcpmmp1_parcels_nocoreg.mif -linear transform_mrtrix_t12dwi_' PAR_NAME '.txt -inverse -datatype uint32 ' PAR_NAME '_hcpmmp1_parcels_coreg.mif -force']);
     
     %e) Create the whole-brain connectome: 
-    unix(['tck2connectome -symmetric -zero_diagonal -scale_invnodevol sift_1M_' PAR_NAME '.tck ' PAR_NAME '_hcpmmp1_parcels_coreg.mif hcpmmp1_' PAR_NAME '.csv -out_assignment assignments_hcpmmp1_' PAR_NAME '.csv']);
+    unix(['tck2connectome -symmetric -zero_diagonal -scale_invnodevol sift_1M_' PAR_NAME '.tck ' PAR_NAME '_hcpmmp1_parcels_coreg.mif hcpmmp1_' PAR_NAME '.csv -out_assignment assignments_hcpmmp1_' PAR_NAME '.csv -force']);
     
     %try with weights (but will give you too 'bright' of a connectome image):
-    unix(['tck2connectome -symmetric -zero_diagonal -scale_invnodevol -tck_weights_in sift_1M_' PAR_NAME '.txt tracks_10M_' PAR_NAME '.tck ' PAR_NAME '_hcpmmp1_parcels_coreg.mif hcpmmp1w_' PAR_NAME '.csv -out_assignment assignments_hcpmmp1w_' PAR_NAME '.csv']);
+    unix(['tck2connectome -symmetric -zero_diagonal -scale_invnodevol -tck_weights_in sift_1M_' PAR_NAME '.txt tracks_10M_' PAR_NAME '.tck ' PAR_NAME '_hcpmmp1_parcels_coreg.mif hcpmmp1w_' PAR_NAME '.csv -out_assignment assignments_hcpmmp1w_' PAR_NAME '.csv -force']);
 
+end 
+
+for i = 1:length(participants)
     
+    [upper_path, PAR_NAME, ~] = fileparts(participants{1,i}); 
     %---------------------------------------------------------------------%
     %Step 6: Select a specfic tract between specific regions from the connectome
-    %tic
-    %for the whole FPN (complete) 
-    %unix(['connectome2tck -nodes 73,253,67,247,97,277,98,278,26,206,70,250,71,251,87,267,68,248,83,263,85,265,84,264,86,266,40,220,41,221,55,235,44,224,43,223,36,216,39,219,37,217,48,228,95,275,49,229,117,297,50,230,47,227,42,222,45,225,46,226,29,209,143,323,151,331,150,330,149,329,148,328,116,296,147,327,146,326,145,325,144,324 -files single -exclusive sift_1M_' PAR_NAME '.tck assignments_hcpmmp1_' PAR_NAME '.csv ' PAR_NAME '_whole-FPN']);
-    %toc
-    %tic
-    %for the whole FPN (complete) with weights: 
-    %unix(['connectome2tck -nodes 73,253,67,247,97,277,98,278,26,206,70,250,71,251,87,267,68,248,83,263,85,265,84,264,86,266,40,220,41,221,55,235,44,224,43,223,36,216,39,219,37,217,48,228,95,275,49,229,117,297,50,230,47,227,42,222,45,225,46,226,29,209,143,323,151,331,150,330,149,329,148,328,116,296,147,327,146,326,145,325,144,324 -files single -exclusive tracks_10M_' PAR_NAME '.tck -tck_weights_in sift_1M_' PAR_NAME '.txt assignments_hcpmmp1w_' PAR_NAME '.csv ' PAR_NAME '_whole-FPN_w']);
-    %toc
     
+    %for the whole FPN (complete) 
+    unix(['connectome2tck -nodes 73,253,67,247,97,277,98,278,26,206,70,250,71,251,87,267,68,248,83,263,85,265,84,264,86,266,40,220,41,221,55,235,44,224,43,223,36,216,39,219,37,217,48,228,95,275,49,229,117,297,50,230,47,227,42,222,45,225,46,226,29,209,143,323,151,331,150,330,149,329,148,328,116,296,147,327,146,326,145,325,144,324 -files single -exclusive sift_1M_' PAR_NAME '.tck assignments_hcpmmp1_' PAR_NAME '.csv ' PAR_NAME '_whole-FPN']);
+    
+    %for the whole FPN (complete) with weights: 
+    unix(['connectome2tck -nodes 73,253,67,247,97,277,98,278,26,206,70,250,71,251,87,267,68,248,83,263,85,265,84,264,86,266,40,220,41,221,55,235,44,224,43,223,36,216,39,219,37,217,48,228,95,275,49,229,117,297,50,230,47,227,42,222,45,225,46,226,29,209,143,323,151,331,150,330,149,329,148,328,116,296,147,327,146,326,145,325,144,324 -files single -exclusive tracks_10M_' PAR_NAME '.tck -tck_weights_in sift_1M_' PAR_NAME '.txt assignments_hcpmmp1w_' PAR_NAME '.csv ' PAR_NAME '_whole-FPN_w']);    
     
 end 
 
@@ -304,13 +295,14 @@ end
     InputConnectomeFileList(participants);
     
     %run connectome stats
-    unix(['connectomestats ConnectomeInput.txt tfnbs stats_matrices/design_matrix_CvAD_clinsite_covar.txt stats_matrices/contrast_matrix_CvAD_clinsite_covar.txt outputWhole_connectome_stats/output_CvAD']);
+    unix(['connectomestats ConnectomeInput.txt tfnbs stats_matrices/design_matrix_cov-age_sex.txt stats_matrices/contrast_matrix_cov-age_sex.txt stats_results/ConnectomeWhole_stats_covar/outputWhole_connectome_covar_']);
    
     %create connectome template to visualise group differences. 
     CreateConnectomeTemplate(participants);
     
     %for a subnetwork, like the FPN, use vectorstats: 
-    unix(['vectorstats InputFPN_list.txt stats_matrices/design_matrix_CvAD_clinsite_covar.txt stats_matrices/contrast_matrix_CvAD_clinsite_covar.txt outputFPN_stats/output_FPN_stats-']);
+    unix(['vectorstats -strong FPN_small-node_Input.txt stats_matrices/design_matrix.txt stats_matrices/contrast_matrix.txt stats_results/FPN_stats/strong/smallNode/small-node_FPN_stats-']);
+    unix(['vectorstats -strong FPN_big-node_Input.txt stats_matrices/design_matrix.txt stats_matrices/contrast_matrix.txt stats_results/FPN_stats/strong/bigNode/big-node_FPN_stats-']);
 
     
     
