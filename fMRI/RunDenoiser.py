@@ -24,9 +24,9 @@ import subprocess
 #define location of the denoiser script
 denoiserLocation = 'C:/Users/ltah262/Programs/denoiser-master/run_denoise.py'
 #define fmriprepped data directory
-fmriprepDir = 'H:/ltah262/NECTAR_data/LENORE/derivatives/fmriprepped_data/derivatives/fmriprep/'
+fmriprepDir = 'V:/NECTAR_data/LENORE/derivatives/fmriprepped_data/derivatives/fmriprep/'
 #define output path
-out_path = 'H:/ltah262/NECTAR_data/LENORE/derivatives/fMRI_denoised/'
+out_path = 'V:/NECTAR_data/LENORE/derivatives/fMRI_denoised/'
 
 #go into fmriprepped derivatives directory
 os.chdir(fmriprepDir)
