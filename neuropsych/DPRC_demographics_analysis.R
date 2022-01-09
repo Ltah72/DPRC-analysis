@@ -25,7 +25,6 @@ setwd('H:/ltah262/PhD/ExecutiveFunction/NeuroPsychAssessment/data/')
 
 
 
-
 #######----------------- Cross-sectional (F0) analysis -----------------########
 
 #read in excel files (participant file) - choose cross-sectional or longitudinal analysis
@@ -53,7 +52,6 @@ clinsite_descrip <- by(DPRC_demographics$Group, DPRC_demographics$Clinical_site,
 
 
 #---------------------plot the data to visualise-------------------------------#
-
 
 #plot age (violin plot)
 ggplot(DPRC_demographics, aes(x = Group, y = Age)) + 
@@ -93,7 +91,6 @@ ggplot(data=gender_data, aes(x=Group, y=Count, fill=Sex)) +
     theme_bw() + 
     theme(panel.border = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
 
-
 #plot clinical site
 location_data <- data.frame(table(DPRC_demographics$Classification, DPRC_demographics$Clinical_site))
 names(location_data) <- c("Group", "Clinical_site", "Count")
@@ -106,7 +103,6 @@ ggplot(data=location_data, aes(x=Group, y=Count, fill=Clinical_site)) +
     theme_bw() + 
     theme(panel.border = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
 
-
 #plot ACE (violin plot)
 ggplot(DPRC_demographics, aes(x = Group, y = ACE)) + 
     geom_boxplot(width = 0.1, fill = "white", outlier.size = 1, aes(colour = Group)) + 
@@ -117,7 +113,6 @@ ggplot(DPRC_demographics, aes(x = Group, y = ACE)) +
     theme_classic() +
     theme(legend.position = "none") +
     geom_violin(trim = FALSE, alpha = .5, aes(fill = Group, colour = Group), size = 1)
-
 
 #plot ACE (raincloud plot)
 ggplot(DPRC_demographics, aes(x = Group, y = ACE, fill = Group)) + 
@@ -131,6 +126,18 @@ ggplot(DPRC_demographics, aes(x = Group, y = ACE, fill = Group)) +
     theme_classic() +
     theme(legend.position = "none") +
     coord_flip()
+
+#linear trend example plot
+#DPRC_demographics$Group <- as.numeric(DPRC_demographics$Group)
+ggplot(DPRC_demographics, aes(x = Group, y = ACE, fill = Group)) + 
+    geom_point(aes(y = ACE, color = factor(Group))) +
+    geom_smooth(method = lm, se = TRUE)+ 
+    xlab("Group") + 
+    ylab("ACE") +
+    theme_classic() +
+    theme(legend.position = "none")
+#DPRC_demographics$Group <- as.factor(DPRC_demographics$Group)
+
 
 
 # #plot FBA metrics--
@@ -184,7 +191,7 @@ power_age_power<- power.anova.test(groups = length(ACE_group_means), between.var
 
 #check for significant difference in gender between groups 
 #reformat data for chi-square test
-gender_data_chisq <- rbind(c(27,38,24,28,7), c(8,22,31,24,20))
+gender_data_chisq <- rbind(c(27,38,24,27,7), c(8,22,31,25,20))
 colnames(gender_data_chisq) <- c("C", "SCD", "aMCI", "mMCI", "AD")
 rownames(gender_data_chisq) <- c("F", "M")
 #run chi-square test
@@ -210,6 +217,7 @@ cramersV(location_data_chisq)
 #check for significant difference in ACE between groups 
 ACE_mod <- lm(ACE ~ Group, data = DPRC_demographics)
 anova(ACE_mod)
+summary(ACE_mod) #for linear trend analysis
 anovaBF(ACE ~ Group, data = For_Bay_data_noNas) 
 etaSquared(ACE_mod)
 

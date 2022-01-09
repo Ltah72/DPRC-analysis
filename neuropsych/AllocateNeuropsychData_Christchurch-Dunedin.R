@@ -7,18 +7,18 @@
 
 
 #install package manager to handle all other package installations and dependencies. 
-install.packages("pacman")
+#install.packages("pacman")
 pacman::p_load(xlsx, stringr, data.table)
 
 #load in libraries
-library("xlsx")
-library("stringr")
-library("data.table") 
+#library("xlsx")
+#library("stringr")
+#library("data.table") 
 
 # choose & set to your directory. This is where each of your participant's 
 #files should be. 
-#setwd("H:/ltah262/PhD/NeuroPsychAssessment/files/Christchurch") #or
-#setwd("H:/ltah262/PhD/NeuroPsychAssessment/files/Dunedin2")
+#setwd("H:/ltah262/PhD/ExecutiveFunction/NeuroPsychAssessment/other_clinical_sites_files/Christchurch") #or
+setwd("H:/ltah262/PhD/ExecutiveFunction/NeuroPsychAssessment/other_clinical_sites_files/Dunedin2")
 
 #load the file names from directory into the work space
 files_all <- list.files() 
@@ -104,7 +104,7 @@ for(i in sequence(length(files_all))){
     neuropsych_matrixF0[i,9] <- pt_dataF0[1,'Scaled'] #TOPF Scaled
     neuropsych_matrixF0[i,10] <- pt_dataF0[1,'Z.1'] #Clinical Premorbid z 
     neuropsych_matrixF0[i,11] <- pt_dataF0[1,'Scaled.1'] #Clinical Premorbid Scaled
-    neuropsych_matrixF0[i,12] <- pt_dataF0[1,'Cut.off'] #Clinical Premorbid cutoff
+    #neuropsych_matrixF0[i,12] <- pt_dataF0[1,'Cut.off'] #Clinical Premorbid cutoff
     neuropsych_matrixF0[i,13] <- pt_dataF0[2,'Raw'] #DSF raw
     neuropsych_matrixF0[i,14] <- pt_dataF0[2,'Z'] #DSF Z
     neuropsych_matrixF0[i,15] <- pt_dataF0[2,'Scaled'] #DSF Scaled
@@ -303,7 +303,7 @@ for(i in sequence(length(files_all))){
     neuropsych_matrixF1[i,9] <- pt_dataF1[1,'Scaled'] #TOPF Scaled
     neuropsych_matrixF1[i,10] <- pt_dataF1[1,'Z.1'] #Clinical Premorbid z 
     neuropsych_matrixF1[i,11] <- pt_dataF1[1,'Scaled.1'] #Clinical Premorbid Scaled
-    neuropsych_matrixF1[i,12] <- pt_dataF1[1,'Cut.off'] #Clinical Premorbid cutoff
+    #neuropsych_matrixF1[i,12] <- pt_dataF1[1,'Cut.off'] #Clinical Premorbid cutoff
     neuropsych_matrixF1[i,13] <- pt_dataF1[2,'Raw'] #DSF raw
     neuropsych_matrixF1[i,14] <- pt_dataF1[2,'Z'] #DSF Z
     neuropsych_matrixF1[i,15] <- pt_dataF1[2,'Scaled'] #DSF Scaled
@@ -502,7 +502,7 @@ for(i in sequence(length(files_all))){
     neuropsych_matrixF2[i,9] <- pt_dataF2[1,'Scaled'] #TOPF Scaled
     neuropsych_matrixF2[i,10] <- pt_dataF2[1,'Z.1'] #Clinical Premorbid z 
     neuropsych_matrixF2[i,11] <- pt_dataF2[1,'Scaled.1'] #Clinical Premorbid Scaled
-    neuropsych_matrixF2[i,12] <- pt_dataF2[1,'Cut.off'] #Clinical Premorbid cutoff
+    #neuropsych_matrixF2[i,12] <- pt_dataF2[1,'Cut.off'] #Clinical Premorbid cutoff
     neuropsych_matrixF2[i,13] <- pt_dataF2[2,'Raw'] #DSF raw
     neuropsych_matrixF2[i,14] <- pt_dataF2[2,'Z'] #DSF Z
     neuropsych_matrixF2[i,15] <- pt_dataF2[2,'Scaled'] #DSF Scaled
@@ -701,7 +701,7 @@ for(i in sequence(length(files_all))){
     neuropsych_matrixF3[i,9] <- pt_dataF3[1,'Scaled'] #TOPF Scaled
     neuropsych_matrixF3[i,10] <- pt_dataF3[1,'Z.1'] #Clinical Premorbid z 
     neuropsych_matrixF3[i,11] <- pt_dataF3[1,'Scaled.1'] #Clinical Premorbid Scaled
-    neuropsych_matrixF3[i,12] <- pt_dataF3[1,'Cut.off'] #Clinical Premorbid cutoff
+    #neuropsych_matrixF3[i,12] <- pt_dataF3[1,'Cut.off'] #Clinical Premorbid cutoff
     neuropsych_matrixF3[i,13] <- pt_dataF3[2,'Raw'] #DSF raw
     neuropsych_matrixF3[i,14] <- pt_dataF3[2,'Z'] #DSF Z
     neuropsych_matrixF3[i,15] <- pt_dataF3[2,'Scaled'] #DSF Scaled
@@ -900,7 +900,7 @@ for(i in sequence(length(files_all))){
     neuropsych_matrixF4[i,9] <- pt_dataF4[1,'Scaled'] #TOPF Scaled
     neuropsych_matrixF4[i,10] <- pt_dataF4[1,'Z.1'] #Clinical Premorbid z 
     neuropsych_matrixF4[i,11] <- pt_dataF4[1,'Scaled.1'] #Clinical Premorbid Scaled
-    neuropsych_matrixF4[i,12] <- pt_dataF4[1,'Cut.off'] #Clinical Premorbid cutoff
+    #neuropsych_matrixF4[i,12] <- pt_dataF4[1,'Cut.off'] #Clinical Premorbid cutoff
     neuropsych_matrixF4[i,13] <- pt_dataF4[2,'Raw'] #DSF raw
     neuropsych_matrixF4[i,14] <- pt_dataF4[2,'Z'] #DSF Z
     neuropsych_matrixF4[i,15] <- pt_dataF4[2,'Scaled'] #DSF Scaled
