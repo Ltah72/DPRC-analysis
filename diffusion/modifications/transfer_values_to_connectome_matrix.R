@@ -21,7 +21,7 @@ FPN_stats_connectome_fwe1 <- read.csv('output_FPN_stats-fwe_1mpvalue_t1.csv', he
 FPN_stats_connectome_fwe2 <- read.csv('output_FPN_stats-fwe_1mpvalue_t2.csv', header = FALSE) #one-tailed (AD > C)
 
 
-#use the same node pair as in the previous script (create_FPN_connectome_files.R) 
+#use the same node pair as in the previous script (create_FPN_big_node_connectome_files.R) 
 # - my chosen nodes are below:
 #nodes <- c(" ")
 nodes <- c(73,253,67,247,97,277,98,278,26,206,70,250,71,251,87,267,68,248,83,263,85,265,84,264,86,266,40,220,41,221,55,235,44,224,43,223,36,216,39,219,37,217,48,228,95,275,49,229,117,297,50,230,47,227,42,222,45,225,46,226,29,209,143,323,151,331,150,330,149,329,148,328,116,296,147,327,146,326,145,325,144,324)

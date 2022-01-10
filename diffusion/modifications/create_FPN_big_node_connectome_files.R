@@ -12,7 +12,7 @@
 
 # choose & set to your directory. This is where all of your participant 
 #whole-brain connectome files should be. 
-setwd("/Connectome_test/pt_connectome_csv_files/FPN_connectome_csv_files")  
+setwd('V:/NECTAR_data/LENORE/test/connectome_test/hcpmmpFiles/')  
 
 #calculate your node pairs - my chosen nodes are below:
 #nodes <- c(" ")
@@ -29,7 +29,7 @@ for(i in sequence(length(files_all))){
   #extract participant name
   PAR_NAME = substr(files_all[i], 9, 23) 
   
-  fullname <- paste('FPN_BigNodeData-', PAR_NAME, '.csv', sep='')
+  fullname <- paste('FPN_BigNodeData_', PAR_NAME, '.csv', sep='')
   
   pt_data <- read.csv(files_all[i], header = FALSE)
   
