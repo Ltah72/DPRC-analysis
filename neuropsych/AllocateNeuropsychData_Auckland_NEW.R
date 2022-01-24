@@ -7,6 +7,9 @@
 #Date: 13/01/22
 
 
+#increase heap size to prevent R and xlsx package from crashing. Set to utilise 15 GB RAM.
+options(java.parameters = "-Xmx15000m")
+
 #install package manager to handle all other package installations and dependencies. 
 #install.packages("pacman")
 pacman::p_load(xlsx, stringr, data.table)
@@ -18,13 +21,15 @@ library("data.table")
 
 # choose & set to your directory. This is where each of your participant's 
 #files should be. 
-setwd("C:/Users/ltah262/Desktop/DPRC_data_organisation/Participant Files/")  
-#setwd("Z:/DPRC Neuropsychologists/Participant Files/")  
+#setwd("C:/Users/ltah262/Desktop/DPRC_data_organisation/Participant Files/")  
+setwd("Z:/DPRC Neuropsychologists/Participant Files/")  
 
 #load the file names from directory into the work space
 files_all_whole <- list.files() 
-files_all <- files_all_whole
+#files_all <- files_all_whole
+files_all <- files_all_whole[3:215]
 #files_all <- files_all_whole[4:198]
+files_all <- files_all[-c(82,83,135,145,191)]#exclude certain participants (e.g. don't have excel file)
 #files_all <- files_all[-c(74, 75, 131)]#exclude certain participants (e.g. don't have excel file)
 
 #vector for time points: 
@@ -34,7 +39,7 @@ timepoints <- c('F0','F1','F2','F3','F4','F5','F6','F8','F10') #The 9 timepoints
 for (j in 1:length(timepoints)){                               
   
   current_matrix <- matrix(nrow = length(files_all), ncol=133)
-  colnames(current_matrix) <- c('ParticipantID','Date of Assessment','TOPF Raw','TOPF z-score','TOPF St Score','Agreed premorbid z-score','Education','DF max span','DF max span z-score','DB max span','DB max span z-score','DF total raw','DF total z-score','DF total scaled score','DB total raw','DB total z-score','DB total scaled score','Trails A raw','Trails A z-score','Trails A errors','Trails B raw','Trails B z-score','Trails B errors','Coding raw','Coding z-score','Coding scaled score','Stroop Color Naming raw','Stroop Color Naming z-score','Stroop Color Naming scaled score','Stroop Word raw','Stroop Word z-score','Stroop Word scaled score','Stroop Inhibition raw','Stroop Inhibition z-score','Stroop Inhibition scaled score','Stroop Inhibition errors','Stroop Inhibition errors z-score','Stroop Inhibition errors scaled score','SYDBAT Naming raw','SYDBAT Naming z-score','SYDBAT Naming cut-off','SYDBAT Comprehension raw','SYDBAT Comprehension z-score','SYDBAT Comprehension cut-off','SYDBAT Semantic raw','SYDBAT Semantic z-score','SYDBAT Semantic cut-off','Boston 30 raw','Boston 60 raw','Boston Manual z-score','Boston Ivnik z-score','Boston Ivnik scaled score','JOL raw','JOL z-score','JOL scaled score','RCFT Copy raw','RCFT Copy z-score','RCFT Copy Time','RCFT Copy Time z-score','RCFT Immediate raw','RCFT Immediate z-score','RCFT Delayed raw','RCFT Delayed z-score','RCFT Recognition raw','RCFT Recognition z-score','BVMT Trail 1','BVMT Trail 2','BVMT Trail 3','BVMT Total raw','BVMT Total manual z-score','BVMT Delayed raw','BVMT Delayed manual z-score','BVMT Recognition Discrimination raw','BVMT Recognition Discrimination manual z-score','BVMT Total gale z-score','BVMT Delayed gale z-score','LM I raw','LM I z-score','LM I scaled score','LM II raw','LM II z-score','LM II scaled score','Story A I','Story A II','CVLT Trial One','CVLT Trial One z-score','CVLT Trial Two','CVLT Trial Three','CVLT Trial Four','CVLT Trial Five','CVLT Total raw','CVLT Total z-score','CVLT Short Delay raw','CVLT Short Delay raw z-score','CVLT Long Delay raw','CVLT Long Delay raw z-score','CVLT Recog Discrimination raw','CVLT Recog Discrimination raw z-score','Letter Fluency F','Letter Fluency A','Letter Fluency S','Letter Fluency Total raw','Letter Fluency z-score','Letter Fluency scaled score','Category Fluency Animals','Category Fluency Boys names','Category Fluency Total raw','Category Fluency Total z-score','Category Fluency Total scaled score','Category Switching Accuracy raw','Category Switching Accuracy z-score','Category Switching Accuracy scaled score','Hayling Manual Overall Scaled Score','Hayling Bielak Time 1 raw','Hayling Bielak Time 1 z-score','Hayling Bielak Time 2 raw','Hayling Bielak Time 2 z-score','Hayling Category A Errors raw','Hayling Category A Errors z-score','Hayling Category B Errors raw','Hayling Category A Errors z-score','BD raw','BD z-score','BD scaled score','BD No Time Bonus raw','BD No Time Bonus z-score','BD No Time Bonus scaled score','Matrix raw','Matrix z-score','Matrix scaled score','Similaritites raw','Similaritites z-score','Similaritites scaled score')
+  colnames(current_matrix) <- c('ParticipantID','Date of Assessment','TOPF Raw','TOPF z-score','TOPF St Score','Agreed premorbid z-score','Education','DF max span','DF max span z-score','DB max span','DB max span z-score','DF total raw','DF total z-score','DF total scaled score','DB total raw','DB total z-score','DB total scaled score','Trails A raw','Trails A z-score','Trails A errors','Trails B raw','Trails B z-score','Trails B errors','Coding raw','Coding z-score','Coding scaled score','Stroop Color Naming raw','Stroop Color Naming z-score','Stroop Color Naming scaled score','Stroop Word raw','Stroop Word z-score','Stroop Word scaled score','Stroop Inhibition raw','Stroop Inhibition z-score','Stroop Inhibition scaled score','Stroop Inhibition errors','Stroop Inhibition errors z-score','Stroop Inhibition errors scaled score','SYDBAT Naming raw','SYDBAT Naming z-score','SYDBAT Naming cut-off','SYDBAT Comprehension raw','SYDBAT Comprehension z-score','SYDBAT Comprehension cut-off','SYDBAT Semantic raw','SYDBAT Semantic z-score','SYDBAT Semantic cut-off','Boston 30 raw','Boston 60 raw','Boston Manual z-score','Boston Ivnik z-score','Boston Ivnik scaled score','JOL raw','JOL z-score','JOL scaled score','RCFT Copy raw','RCFT Copy z-score','RCFT Copy Time','RCFT Copy Time z-score','RCFT Immediate raw','RCFT Immediate z-score','RCFT Delayed raw','RCFT Delayed z-score','RCFT Recognition raw','RCFT Recognition z-score','BVMT Trail 1','BVMT Trail 2','BVMT Trail 3','BVMT Total raw','BVMT Total manual z-score','BVMT Delayed raw','BVMT Delayed manual z-score','BVMT Recognition Discrimination raw','BVMT Recognition Discrimination manual z-score','BVMT Total gale z-score','BVMT Delayed gale z-score','LM I raw','LM I z-score','LM I scaled score','LM II raw','LM II z-score','LM II scaled score','Story A I','Story A II','CVLT Trial One','CVLT Trial One z-score','CVLT Trial Two','CVLT Trial Three','CVLT Trial Four','CVLT Trial Five','CVLT Total raw','CVLT Total z-score','CVLT Short Delay raw','CVLT Short Delay raw z-score','CVLT Long Delay raw','CVLT Long Delay raw z-score','CVLT Recog Discrimination raw','CVLT Recog Discrimination raw z-score','Letter Fluency F','Letter Fluency A','Letter Fluency S','Letter Fluency Total raw','Letter Fluency z-score','Letter Fluency scaled score','Category Fluency Animals','Category Fluency Boys names','Category Fluency Total raw','Category Fluency Total z-score','Category Fluency Total scaled score','Category Switching Accuracy raw','Category Switching Accuracy z-score','Category Switching Accuracy scaled score','Hayling Manual Overall Scaled Score','Hayling Bielak Time 1 raw','Hayling Bielak Time 1 z-score','Hayling Bielak Time 2 raw','Hayling Bielak Time 2 z-score','Hayling Category A Errors raw','Hayling Category A Errors z-score','Hayling Category B Errors raw','Hayling Category B Errors z-score','BD raw','BD z-score','BD scaled score','BD No Time Bonus raw','BD No Time Bonus z-score','BD No Time Bonus scaled score','Matrix raw','Matrix z-score','Matrix scaled score','Similaritites raw','Similaritites z-score','Similaritites scaled score')
   
   #loop through every participant
   for(i in 1:length(files_all)){
@@ -42,7 +47,7 @@ for (j in 1:length(timepoints)){
     #read in each of the participant files 
     setwd(files_all[i])
     pt_directory <- list.files(pattern = '^[^~]') #pattern will ignore the temp files 
-    xlsx_filename <- pt_directory[grepl('.xlsx', pt_directory) & !grepl('.xlsx.sb', pt_directory) & grepl('NEW', pt_directory)] #choose the NEW excel file and ignore the temp folder named with .xlsx
+    xlsx_filename <- pt_directory[grepl('.xlsx', pt_directory) & !grepl('.xlsx.sb', pt_directory) & grepl('NEW ', pt_directory)] #choose the NEW excel file and ignore the temp folder named with .xlsx
     
     #if the sheet of the specific timepoint exists, then read in the data from the file.
     pt_data <- read.xlsx(xlsx_filename, sheetName = 'REDcap')
@@ -175,9 +180,9 @@ for (j in 1:length(timepoints)){
       current_matrix[i,'Hayling Bielak Time 2 raw'] <- pt_data[126,pt_ID] 
       current_matrix[i,'Hayling Bielak Time 2 z-score'] <- pt_data[127,pt_ID] 
       current_matrix[i,'Hayling Category A Errors raw'] <- pt_data[128,pt_ID] 
-      #current_matrix[i,'Hayling Category A Errors z-score'] <- pt_data[129,pt_ID] 
+      current_matrix[i,'Hayling Category A Errors z-score'] <- pt_data[129,pt_ID] 
       current_matrix[i,'Hayling Category B Errors raw'] <- pt_data[130,pt_ID] 
-      #current_matrix[i,'Hayling Category B Errors z-score'] <- pt_data[131,pt_ID] 
+      current_matrix[i,'Hayling Category B Errors z-score'] <- pt_data[131,pt_ID] 
       current_matrix[i,'BD raw'] <- pt_data[134,pt_ID] 
       current_matrix[i,'BD z-score'] <- pt_data[135,pt_ID] 
       current_matrix[i,'BD scaled score'] <- pt_data[136,pt_ID] 
