@@ -77,7 +77,7 @@ for i = 1:length(participants)
     %right SLF tract
     ant_xyzmm_SLF1_R = [17.2 30.6 35];
     ant_xyz_SLF1_R = round(double(ant_xyzmm_SLF1_R./(ones(size(ant_xyzmm_SLF1_R,1),1)*voxel_size)+ones(size(ant_xyzmm_SLF1_R,1),1)*origin));
-    ant_xyzmm_SLF2_R = [30, 25, 30]; %guessed coordinates for now for SLF2_R
+    ant_xyzmm_SLF2_R = [32.2, 25.9, 25];
     ant_xyz_SLF2_R = round(double(ant_xyzmm_SLF2_R./(ones(size(ant_xyzmm_SLF2_R,1),1)*voxel_size)+ones(size(ant_xyzmm_SLF2_R,1),1)*origin));
     ant_xyzmm_SLF3_R = [36 34.8 -6.2];
     ant_xyz_SLF3_R = round(double(ant_xyzmm_SLF3_R./(ones(size(ant_xyzmm_SLF3_R,1),1)*voxel_size)+ones(size(ant_xyzmm_SLF3_R,1),1)*origin));
@@ -93,7 +93,7 @@ for i = 1:length(participants)
     %right SLF tract
     post_xyzmm_SLF1_R = [14.6 -64.6 48.6];
     post_xyz_SLF1_R = round(double(post_xyzmm_SLF1_R./(ones(size(post_xyzmm_SLF1_R,1),1)*voxel_size)+ones(size(post_xyzmm_SLF1_R,1),1)*origin));
-    post_xyzmm_SLF2_R = [30, -70, 28]; %guessed coordinates for now for SLF2_R
+    post_xyzmm_SLF2_R = [34.7, -60.9, 27.7]; 
     post_xyz_SLF2_R = round(double(post_xyzmm_SLF2_R./(ones(size(post_xyzmm_SLF2_R,1),1)*voxel_size)+ones(size(post_xyzmm_SLF2_R,1),1)*origin));
     post_xyzmm_SLF3_R = [42.8 -46.9 30.1];
     post_xyz_SLF3_R = round(double(post_xyzmm_SLF3_R./(ones(size(post_xyzmm_SLF3_R,1),1)*voxel_size)+ones(size(post_xyzmm_SLF3_R,1),1)*origin));
