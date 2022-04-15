@@ -41,6 +41,24 @@ DPRC_demographics$Sex_binary <- as.factor(DPRC_demographics$Sex_binary)
 DPRC_demographics$Age<- as.numeric(DPRC_demographics$Age)
 DPRC_demographics$ACE<- as.numeric(DPRC_demographics$ACE)
 
+#add in trend Group variable
+Trend_Group <- as.numeric(DPRC_demographics$Group)
+#Trend group with contrasts that sum to zero
+Trend_Group_equate_zero_contrast<- vector(mode='numeric',length=length(Trend_Group))
+for (i in seq(Trend_Group)) {
+    if ((Trend_Group[i] >= 1) && (Trend_Group[i]<= 1)) {
+        Trend_Group_equate_zero_contrast[i] <- 2
+    }  else if   ((Trend_Group[i] >= 2) && (Trend_Group[i]<= 2)) {
+        Trend_Group_equate_zero_contrast[i] <- 1
+    }  else if   ((Trend_Group[i] >= 3) && (Trend_Group[i]<= 3)) {
+        Trend_Group_equate_zero_contrast[i] <- 0
+    }  else if   ((Trend_Group[i] >= 4) && (Trend_Group[i]<= 4)) {
+        Trend_Group_equate_zero_contrast[i] <- -1
+    }  else if   ((Trend_Group[i] >= 5) && (Trend_Group[i]<= 5)) {
+        Trend_Group_equate_zero_contrast[i] <- -2
+    }
+}
+
 #look at descriptive statistics
 age_descrip <- describeBy(DPRC_demographics$Age, DPRC_demographics$Group)
 ACE_descrip <- describeBy(DPRC_demographics$ACE, DPRC_demographics$Group)
@@ -49,6 +67,16 @@ gender_descrip_detail <- describeBy(DPRC_demographics ~ Sex_binary + Group, skew
 clinsite_descrip <- by(DPRC_demographics$Group, DPRC_demographics$Clinical_site, summary)
 
 #clinsite_descrip <- describeBy(DPRC_demographics ~ Sex_binary + Group, skew=FALSE, ranges=FALSE)
+
+#find mean & SD from total sample:
+#Age
+mean(DPRC_demographics$Age)
+sd(DPRC_demographics$Age)
+#ACE
+all_ACE <- DPRC_demographics$ACE
+noNAsACE <- na.omit(all_ACE)
+mean(noNAsACE)
+sd(noNAsACE)
 
 
 #---------------------plot the data to visualise-------------------------------#
@@ -214,6 +242,8 @@ cramersV(location_data_chisq)
 #location_chi_test <- chisq.test(location_data_chisq, simulate.p.value = TRUE)
 
 
+#check for homogeneity of variance
+leveneTest(ACE~Group, data=DPRC_demographics) #violation
 #check for significant difference in ACE between groups 
 ACE_mod <- lm(ACE ~ Group, data = DPRC_demographics)
 anova(ACE_mod)
@@ -227,6 +257,15 @@ ACE_group_means <- c(ACE_descrip$`1`$mean, ACE_descrip$`2`$mean, ACE_descrip$`3`
 power_ACE_n <- power.anova.test(groups = length(ACE_group_means), between.var = anova(ACE_mod)$`Sum Sq`[1], within.var = anova(ACE_mod)$`Sum Sq`[2], power = .8, sig.level = 0.05)
 power_ACE_power<- power.anova.test(groups = length(ACE_group_means), between.var = anova(ACE_mod)$`Sum Sq`[1], within.var = anova(ACE_mod)$`Sum Sq`[2], n = 41, sig.level = 0.05)
 
+#add in Linear Trend Analysis in Linear Regression
+ACE_LinTrend_mod <- lm(ACE ~ Trend_Group + Group, data = DPRC_demographics)
+anova(ACE_LinTrend_mod)
+summary(ACE_LinTrend_mod) 
+
+#Try with the linear contrasts summing to zero
+ACE_LinTrendZeroCont_mod <- lm(ACE ~ Trend_Group_equate_zero_contrast + Group, data = DPRC_demographics)
+anova(ACE_LinTrendZeroCont_mod)
+summary(ACE_LinTrendZeroCont_mod)
 
 # #check for significant difference in FBA metrics between groups 
 # FD_mod <- lm(Mean_FD ~ Group, data = covariates_data)
