@@ -79,7 +79,7 @@ mean(noNAsACE)
 sd(noNAsACE)
 
 
-#---------------------plot the data to visualise-------------------------------#
+####---------------------plot & analyse the data to visualise-------------------------------#####
 
 #plot age (violin plot)
 ggplot(DPRC_demographics, aes(x = Group, y = Age)) + 
@@ -486,6 +486,8 @@ shapiro.test(age_mod$residuals)
 
 
 
+
+
 #######--------------- Longitudinal (F0 vs. F2) analysis ---------------########
 
 
@@ -513,7 +515,8 @@ clinsite_descrip <- by(DPRC_demographics$Group, list(DPRC_demographics$Clinical_
 #Age
 mean(baseline_DPRC_demographics$Age)
 sd(baseline_DPRC_demographics$Age)
-#---------------------plot the data to visualise-------------------------------#
+
+####---------------------plot & analyse the data to visualise-------------------------------####
 
 #take a subset of the DPRC data - only baseline data (F0) to display in graphs
 baseline_DPRC_demographics <- DPRC_demographics[ which(DPRC_demographics$Timepoint=='F0'), ]
@@ -556,7 +559,6 @@ ggplot(data=gender_data, aes(x=Group, y=Count, fill=Sex)) +
     theme_bw() + 
     theme(panel.border = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
 
-
 #plot clinical site
 location_data <- data.frame(table(baseline_DPRC_demographics$Classification, baseline_DPRC_demographics$Clinical_site))
 names(location_data) <- c("Group", "Clinical_site", "Count")
@@ -568,7 +570,6 @@ ggplot(data=location_data, aes(x=Group, y=Count, fill=Clinical_site)) +
     scale_fill_discrete(name = "Clinical Site") + 
     theme_bw() + 
     theme(panel.border = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
-
 
 #plot ACE (violin plot) - for F0
 ggplot(baseline_DPRC_demographics, aes(x = Group, y = ACE)) + 
