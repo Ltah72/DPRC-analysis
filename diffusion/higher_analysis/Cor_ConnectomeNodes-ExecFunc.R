@@ -39,10 +39,10 @@ small_node_data <- setNames(data.frame(matrix(ncol = 10, nrow = 227)), c("L-DLPF
                                                     "L-Par--MidCing","R-Par--MidCing"))
 
 #navigate to connectome data pathway
-setwd('V:/NECTAR_data/LENORE/derivatives/groups/F0/diff_data/cross-sectional/connectome/FPN/small-nodes')
+setwd('V:/Vault/NECTAR_data/LENORE/derivatives/groups/F0/diff_data/cross-sectional/connectome/FPN_Files/small-nodes')
 
 #collate connectome values into dataset
-filenames <- list.files(path='V:/NECTAR_data/LENORE/derivatives/groups/F0/diff_data/cross-sectional/connectome/FPN/small-nodes')
+filenames <- list.files(path='V:/Vault/NECTAR_data/LENORE/derivatives/groups/F0/diff_data/cross-sectional/connectome/FPN_Files/small-nodes')
 r.nms <- c("1", "2", "3", "4", "5", "6", "7", "8", "9", "10")
 AllData <- lapply(filenames, read.table, header=FALSE, row.names=r.nms, col.names="V1")
 
@@ -395,15 +395,734 @@ pcor.test(Connectome_data_Switching$`L-Par--MidCing`, Connectome_data_Switching$
 pcor.test(Connectome_data_Switching$`R-Par--MidCing`, Connectome_data_Switching$Switching.Raw, Connectome_data_Switching[,c("Age", "Sex_binary")])
 
 
-
-
-
-
-
-
-
-
-
-
-
-
+#Look at correlations per group
+#for L-DLPFC--R-DLPFC
+#TMT-A
+cor.test(formula= ~ `L-DLPFC--R-DLPFC` + TrailsA.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-DLPFC` + TrailsA.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-DLPFC` + TrailsA.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-DLPFC` + TrailsA.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-DLPFC` + TrailsA.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#TMT-B
+cor.test(formula= ~ `L-DLPFC--R-DLPFC` + TrailsB.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-DLPFC` + TrailsB.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-DLPFC` + TrailsB.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-DLPFC` + TrailsB.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-DLPFC` + TrailsB.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#Stroop - ColourNaming
+cor.test(formula= ~ `L-DLPFC--R-DLPFC` + ColorNaming.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-DLPFC` + ColorNaming.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-DLPFC` + ColorNaming.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-DLPFC` + ColorNaming.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-DLPFC` + ColorNaming.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#Stroop - WordReading
+cor.test(formula= ~ `L-DLPFC--R-DLPFC` + WordReading.Raw, data = Connectome_data, subset = Group == c("1")) #sig
+cor.test(formula= ~ `L-DLPFC--R-DLPFC` + WordReading.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-DLPFC` + WordReading.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-DLPFC` + WordReading.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-DLPFC` + WordReading.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#Stroop - Inhibition
+cor.test(formula= ~ `L-DLPFC--R-DLPFC` + Inhibition.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-DLPFC` + Inhibition.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-DLPFC` + Inhibition.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-DLPFC` + Inhibition.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-DLPFC` + Inhibition.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#LetFluency
+cor.test(formula= ~ `L-DLPFC--R-DLPFC` + LetFluency.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-DLPFC` + LetFluency.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-DLPFC` + LetFluency.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-DLPFC` + LetFluency.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-DLPFC` + LetFluency.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#CatFluency
+cor.test(formula= ~ `L-DLPFC--R-DLPFC` + CatFluency.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-DLPFC` + CatFluency.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-DLPFC` + CatFluency.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-DLPFC` + CatFluency.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-DLPFC` + CatFluency.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#Switching
+cor.test(formula= ~ `L-DLPFC--R-DLPFC` + Switching.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-DLPFC` + Switching.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-DLPFC` + Switching.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-DLPFC` + Switching.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-DLPFC` + Switching.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#HayBTime1
+cor.test(formula= ~ `L-DLPFC--R-DLPFC` + HayBTime1.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-DLPFC` + HayBTime1.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-DLPFC` + HayBTime1.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-DLPFC` + HayBTime1.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-DLPFC` + HayBTime1.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#HayBTime2
+cor.test(formula= ~ `L-DLPFC--R-DLPFC` + HayBTime2.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-DLPFC` + HayBTime2.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-DLPFC` + HayBTime2.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-DLPFC` + HayBTime2.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-DLPFC` + HayBTime2.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#HayBCatA
+cor.test(formula= ~ `L-DLPFC--R-DLPFC` + HayBCatA.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-DLPFC` + HayBCatA.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-DLPFC` + HayBCatA.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-DLPFC` + HayBCatA.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-DLPFC` + HayBCatA.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#HayBCatB
+cor.test(formula= ~ `L-DLPFC--R-DLPFC` + HayBCatB.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-DLPFC` + HayBCatB.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-DLPFC` + HayBCatB.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-DLPFC` + HayBCatB.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-DLPFC` + HayBCatB.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#for L-DLPFC--MidCing
+#TMT-A
+cor.test(formula= ~ `L-DLPFC--MidCing` + TrailsA.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-DLPFC--MidCing` + TrailsA.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-DLPFC--MidCing` + TrailsA.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-DLPFC--MidCing` + TrailsA.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-DLPFC--MidCing` + TrailsA.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#TMT-B
+cor.test(formula= ~ `L-DLPFC--MidCing` + TrailsB.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-DLPFC--MidCing` + TrailsB.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-DLPFC--MidCing` + TrailsB.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-DLPFC--MidCing` + TrailsB.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-DLPFC--MidCing` + TrailsB.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#Stroop - ColourNaming
+cor.test(formula= ~ `L-DLPFC--MidCing` + ColorNaming.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-DLPFC--MidCing` + ColorNaming.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-DLPFC--MidCing` + ColorNaming.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-DLPFC--MidCing` + ColorNaming.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-DLPFC--MidCing` + ColorNaming.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#Stroop - WordReading
+cor.test(formula= ~ `L-DLPFC--MidCing` + WordReading.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-DLPFC--MidCing` + WordReading.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-DLPFC--MidCing` + WordReading.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-DLPFC--MidCing` + WordReading.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-DLPFC--MidCing` + WordReading.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#Stroop - Inhibition
+cor.test(formula= ~ `L-DLPFC--MidCing` + Inhibition.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-DLPFC--MidCing` + Inhibition.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-DLPFC--MidCing` + Inhibition.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-DLPFC--MidCing` + Inhibition.Raw, data = Connectome_data, subset = Group == c("4")) #sig
+cor.test(formula= ~ `L-DLPFC--MidCing` + Inhibition.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#LetFluency
+cor.test(formula= ~ `L-DLPFC--MidCing` + LetFluency.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-DLPFC--MidCing` + LetFluency.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-DLPFC--MidCing` + LetFluency.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-DLPFC--MidCing` + LetFluency.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-DLPFC--MidCing` + LetFluency.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#CatFluency
+cor.test(formula= ~ `L-DLPFC--MidCing` + CatFluency.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-DLPFC--MidCing` + CatFluency.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-DLPFC--MidCing` + CatFluency.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-DLPFC--MidCing` + CatFluency.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-DLPFC--MidCing` + CatFluency.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#Switching
+cor.test(formula= ~ `L-DLPFC--MidCing` + Switching.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-DLPFC--MidCing` + Switching.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-DLPFC--MidCing` + Switching.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-DLPFC--MidCing` + Switching.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-DLPFC--MidCing` + Switching.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#HayBTime1
+cor.test(formula= ~ `L-DLPFC--MidCing` + HayBTime1.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-DLPFC--MidCing` + HayBTime1.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-DLPFC--MidCing` + HayBTime1.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-DLPFC--MidCing` + HayBTime1.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-DLPFC--MidCing` + HayBTime1.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#HayBTime2
+cor.test(formula= ~ `L-DLPFC--MidCing` + HayBTime2.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-DLPFC--MidCing` + HayBTime2.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-DLPFC--MidCing` + HayBTime2.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-DLPFC--MidCing` + HayBTime2.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-DLPFC--MidCing` + HayBTime2.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#HayBCatA
+cor.test(formula= ~ `L-DLPFC--MidCing` + HayBCatA.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-DLPFC--MidCing` + HayBCatA.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-DLPFC--MidCing` + HayBCatA.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-DLPFC--MidCing` + HayBCatA.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-DLPFC--MidCing` + HayBCatA.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#HayBCatB
+cor.test(formula= ~ `L-DLPFC--MidCing` + HayBCatB.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-DLPFC--MidCing` + HayBCatB.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-DLPFC--MidCing` + HayBCatB.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-DLPFC--MidCing` + HayBCatB.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-DLPFC--MidCing` + HayBCatB.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#for R-DLPFC--MidCing
+#TMT-A
+cor.test(formula= ~ `R-DLPFC--MidCing` + TrailsA.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `R-DLPFC--MidCing` + TrailsA.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `R-DLPFC--MidCing` + TrailsA.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `R-DLPFC--MidCing` + TrailsA.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `R-DLPFC--MidCing` + TrailsA.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#TMT-B
+cor.test(formula= ~ `R-DLPFC--MidCing` + TrailsB.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `R-DLPFC--MidCing` + TrailsB.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `R-DLPFC--MidCing` + TrailsB.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `R-DLPFC--MidCing` + TrailsB.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `R-DLPFC--MidCing` + TrailsB.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#Stroop - ColourNaming
+cor.test(formula= ~ `R-DLPFC--MidCing` + ColorNaming.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `R-DLPFC--MidCing` + ColorNaming.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `R-DLPFC--MidCing` + ColorNaming.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `R-DLPFC--MidCing` + ColorNaming.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `R-DLPFC--MidCing` + ColorNaming.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#Stroop - WordReading
+cor.test(formula= ~ `R-DLPFC--MidCing` + WordReading.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `R-DLPFC--MidCing` + WordReading.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `R-DLPFC--MidCing` + WordReading.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `R-DLPFC--MidCing` + WordReading.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `R-DLPFC--MidCing` + WordReading.Raw, data = Connectome_data, subset = Group == c("5")) #sig
+#Stroop - Inhibition
+cor.test(formula= ~ `R-DLPFC--MidCing` + Inhibition.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `R-DLPFC--MidCing` + Inhibition.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `R-DLPFC--MidCing` + Inhibition.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `R-DLPFC--MidCing` + Inhibition.Raw, data = Connectome_data, subset = Group == c("4")) #sig
+cor.test(formula= ~ `R-DLPFC--MidCing` + Inhibition.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#LetFluency
+cor.test(formula= ~ `R-DLPFC--MidCing` + LetFluency.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `R-DLPFC--MidCing` + LetFluency.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `R-DLPFC--MidCing` + LetFluency.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `R-DLPFC--MidCing` + LetFluency.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `R-DLPFC--MidCing` + LetFluency.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#CatFluency
+cor.test(formula= ~ `R-DLPFC--MidCing` + CatFluency.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `R-DLPFC--MidCing` + CatFluency.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `R-DLPFC--MidCing` + CatFluency.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `R-DLPFC--MidCing` + CatFluency.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `R-DLPFC--MidCing` + CatFluency.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#Switching
+cor.test(formula= ~ `R-DLPFC--MidCing` + Switching.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `R-DLPFC--MidCing` + Switching.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `R-DLPFC--MidCing` + Switching.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `R-DLPFC--MidCing` + Switching.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `R-DLPFC--MidCing` + Switching.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#HayBTime1
+cor.test(formula= ~ `R-DLPFC--MidCing` + HayBTime1.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `R-DLPFC--MidCing` + HayBTime1.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `R-DLPFC--MidCing` + HayBTime1.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `R-DLPFC--MidCing` + HayBTime1.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `R-DLPFC--MidCing` + HayBTime1.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#HayBTime2
+cor.test(formula= ~ `R-DLPFC--MidCing` + HayBTime2.Raw, data = Connectome_data, subset = Group == c("1")) #sig
+cor.test(formula= ~ `R-DLPFC--MidCing` + HayBTime2.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `R-DLPFC--MidCing` + HayBTime2.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `R-DLPFC--MidCing` + HayBTime2.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `R-DLPFC--MidCing` + HayBTime2.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#HayBCatA
+cor.test(formula= ~ `R-DLPFC--MidCing` + HayBCatA.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `R-DLPFC--MidCing` + HayBCatA.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `R-DLPFC--MidCing` + HayBCatA.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `R-DLPFC--MidCing` + HayBCatA.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `R-DLPFC--MidCing` + HayBCatA.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#HayBCatB
+cor.test(formula= ~ `R-DLPFC--MidCing` + HayBCatB.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `R-DLPFC--MidCing` + HayBCatB.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `R-DLPFC--MidCing` + HayBCatB.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `R-DLPFC--MidCing` + HayBCatB.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `R-DLPFC--MidCing` + HayBCatB.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#for L-DLPFC--L-Par
+#TMT-A
+cor.test(formula= ~ `L-DLPFC--L-Par` + TrailsA.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-DLPFC--L-Par` + TrailsA.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-DLPFC--L-Par` + TrailsA.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-DLPFC--L-Par` + TrailsA.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-DLPFC--L-Par` + TrailsA.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#TMT-B
+cor.test(formula= ~ `L-DLPFC--L-Par` + TrailsB.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-DLPFC--L-Par` + TrailsB.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-DLPFC--L-Par` + TrailsB.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-DLPFC--L-Par` + TrailsB.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-DLPFC--L-Par` + TrailsB.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#Stroop - ColourNaming
+cor.test(formula= ~ `L-DLPFC--L-Par` + ColorNaming.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-DLPFC--L-Par` + ColorNaming.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-DLPFC--L-Par` + ColorNaming.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-DLPFC--L-Par` + ColorNaming.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-DLPFC--L-Par` + ColorNaming.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#Stroop - WordReading
+cor.test(formula= ~ `L-DLPFC--L-Par` + WordReading.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-DLPFC--L-Par` + WordReading.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-DLPFC--L-Par` + WordReading.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-DLPFC--L-Par` + WordReading.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-DLPFC--L-Par` + WordReading.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#Stroop - Inhibition
+cor.test(formula= ~ `L-DLPFC--L-Par` + Inhibition.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-DLPFC--L-Par` + Inhibition.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-DLPFC--L-Par` + Inhibition.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-DLPFC--L-Par` + Inhibition.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-DLPFC--L-Par` + Inhibition.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#LetFluency
+cor.test(formula= ~ `L-DLPFC--L-Par` + LetFluency.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-DLPFC--L-Par` + LetFluency.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-DLPFC--L-Par` + LetFluency.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-DLPFC--L-Par` + LetFluency.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-DLPFC--L-Par` + LetFluency.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#CatFluency
+cor.test(formula= ~ `L-DLPFC--L-Par` + CatFluency.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-DLPFC--L-Par` + CatFluency.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-DLPFC--L-Par` + CatFluency.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-DLPFC--L-Par` + CatFluency.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-DLPFC--L-Par` + CatFluency.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#Switching
+cor.test(formula= ~ `L-DLPFC--L-Par` + Switching.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-DLPFC--L-Par` + Switching.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-DLPFC--L-Par` + Switching.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-DLPFC--L-Par` + Switching.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-DLPFC--L-Par` + Switching.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#HayBTime1
+cor.test(formula= ~ `L-DLPFC--L-Par` + HayBTime1.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-DLPFC--L-Par` + HayBTime1.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-DLPFC--L-Par` + HayBTime1.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-DLPFC--L-Par` + HayBTime1.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-DLPFC--L-Par` + HayBTime1.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#HayBTime2
+cor.test(formula= ~ `L-DLPFC--L-Par` + HayBTime2.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-DLPFC--L-Par` + HayBTime2.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-DLPFC--L-Par` + HayBTime2.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-DLPFC--L-Par` + HayBTime2.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-DLPFC--L-Par` + HayBTime2.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#HayBCatA
+cor.test(formula= ~ `L-DLPFC--L-Par` + HayBCatA.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-DLPFC--L-Par` + HayBCatA.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-DLPFC--L-Par` + HayBCatA.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-DLPFC--L-Par` + HayBCatA.Raw, data = Connectome_data, subset = Group == c("4")) #sig
+cor.test(formula= ~ `L-DLPFC--L-Par` + HayBCatA.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#HayBCatB
+cor.test(formula= ~ `L-DLPFC--L-Par` + HayBCatB.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-DLPFC--L-Par` + HayBCatB.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-DLPFC--L-Par` + HayBCatB.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-DLPFC--L-Par` + HayBCatB.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-DLPFC--L-Par` + HayBCatB.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#for R-DLPFC--R-Par
+#TMT-A
+cor.test(formula= ~ `R-DLPFC--R-Par` + TrailsA.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `R-DLPFC--R-Par` + TrailsA.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `R-DLPFC--R-Par` + TrailsA.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `R-DLPFC--R-Par` + TrailsA.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `R-DLPFC--R-Par` + TrailsA.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#TMT-B
+cor.test(formula= ~ `R-DLPFC--R-Par` + TrailsB.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `R-DLPFC--R-Par` + TrailsB.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `R-DLPFC--R-Par` + TrailsB.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `R-DLPFC--R-Par` + TrailsB.Raw, data = Connectome_data, subset = Group == c("4")) #sig
+cor.test(formula= ~ `R-DLPFC--R-Par` + TrailsB.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#Stroop - ColourNaming
+cor.test(formula= ~ `R-DLPFC--R-Par` + ColorNaming.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `R-DLPFC--R-Par` + ColorNaming.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `R-DLPFC--R-Par` + ColorNaming.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `R-DLPFC--R-Par` + ColorNaming.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `R-DLPFC--R-Par` + ColorNaming.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#Stroop - WordReading
+cor.test(formula= ~ `R-DLPFC--R-Par` + WordReading.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `R-DLPFC--R-Par` + WordReading.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `R-DLPFC--R-Par` + WordReading.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `R-DLPFC--R-Par` + WordReading.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `R-DLPFC--R-Par` + WordReading.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#Stroop - Inhibition
+cor.test(formula= ~ `R-DLPFC--R-Par` + Inhibition.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `R-DLPFC--R-Par` + Inhibition.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `R-DLPFC--R-Par` + Inhibition.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `R-DLPFC--R-Par` + Inhibition.Raw, data = Connectome_data, subset = Group == c("4")) #sig
+cor.test(formula= ~ `R-DLPFC--R-Par` + Inhibition.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#LetFluency
+cor.test(formula= ~ `R-DLPFC--R-Par` + LetFluency.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `R-DLPFC--R-Par` + LetFluency.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `R-DLPFC--R-Par` + LetFluency.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `R-DLPFC--R-Par` + LetFluency.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `R-DLPFC--R-Par` + LetFluency.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#CatFluency
+cor.test(formula= ~ `R-DLPFC--R-Par` + CatFluency.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `R-DLPFC--R-Par` + CatFluency.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `R-DLPFC--R-Par` + CatFluency.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `R-DLPFC--R-Par` + CatFluency.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `R-DLPFC--R-Par` + CatFluency.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#Switching
+cor.test(formula= ~ `R-DLPFC--R-Par` + Switching.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `R-DLPFC--R-Par` + Switching.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `R-DLPFC--R-Par` + Switching.Raw, data = Connectome_data, subset = Group == c("3")) #sig
+cor.test(formula= ~ `R-DLPFC--R-Par` + Switching.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `R-DLPFC--R-Par` + Switching.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#HayBTime1
+cor.test(formula= ~ `R-DLPFC--R-Par` + HayBTime1.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `R-DLPFC--R-Par` + HayBTime1.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `R-DLPFC--R-Par` + HayBTime1.Raw, data = Connectome_data, subset = Group == c("3")) #sig
+cor.test(formula= ~ `R-DLPFC--R-Par` + HayBTime1.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `R-DLPFC--R-Par` + HayBTime1.Raw, data = Connectome_data, subset = Group == c("5")) #sig
+#HayBTime2
+cor.test(formula= ~ `R-DLPFC--R-Par` + HayBTime2.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `R-DLPFC--R-Par` + HayBTime2.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `R-DLPFC--R-Par` + HayBTime2.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `R-DLPFC--R-Par` + HayBTime2.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `R-DLPFC--R-Par` + HayBTime2.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#HayBCatA
+cor.test(formula= ~ `R-DLPFC--R-Par` + HayBCatA.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `R-DLPFC--R-Par` + HayBCatA.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `R-DLPFC--R-Par` + HayBCatA.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `R-DLPFC--R-Par` + HayBCatA.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `R-DLPFC--R-Par` + HayBCatA.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#HayBCatB
+cor.test(formula= ~ `R-DLPFC--R-Par` + HayBCatB.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `R-DLPFC--R-Par` + HayBCatB.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `R-DLPFC--R-Par` + HayBCatB.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `R-DLPFC--R-Par` + HayBCatB.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `R-DLPFC--R-Par` + HayBCatB.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#for L-DLPFC--R-Par
+#TMT-A
+cor.test(formula= ~ `L-DLPFC--R-Par` + TrailsA.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-Par` + TrailsA.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-Par` + TrailsA.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-Par` + TrailsA.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-Par` + TrailsA.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#TMT-B
+cor.test(formula= ~ `L-DLPFC--R-Par` + TrailsB.Raw, data = Connectome_data, subset = Group == c("1")) #sig
+cor.test(formula= ~ `L-DLPFC--R-Par` + TrailsB.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-Par` + TrailsB.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-Par` + TrailsB.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-Par` + TrailsB.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#Stroop - ColourNaming
+cor.test(formula= ~ `L-DLPFC--R-Par` + ColorNaming.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-Par` + ColorNaming.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-Par` + ColorNaming.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-Par` + ColorNaming.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-Par` + ColorNaming.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#Stroop - WordReading
+cor.test(formula= ~ `L-DLPFC--R-Par` + WordReading.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-Par` + WordReading.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-Par` + WordReading.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-Par` + WordReading.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-Par` + WordReading.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#Stroop - Inhibition
+cor.test(formula= ~ `L-DLPFC--R-Par` + Inhibition.Raw, data = Connectome_data, subset = Group == c("1")) #sig
+cor.test(formula= ~ `L-DLPFC--R-Par` + Inhibition.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-Par` + Inhibition.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-Par` + Inhibition.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-Par` + Inhibition.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#LetFluency
+cor.test(formula= ~ `L-DLPFC--R-Par` + LetFluency.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-Par` + LetFluency.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-Par` + LetFluency.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-Par` + LetFluency.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-Par` + LetFluency.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#CatFluency
+cor.test(formula= ~ `L-DLPFC--R-Par` + CatFluency.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-Par` + CatFluency.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-Par` + CatFluency.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-Par` + CatFluency.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-Par` + CatFluency.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#Switching
+cor.test(formula= ~ `L-DLPFC--R-Par` + Switching.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-Par` + Switching.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-Par` + Switching.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-Par` + Switching.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-Par` + Switching.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#HayBTime1
+cor.test(formula= ~ `L-DLPFC--R-Par` + HayBTime1.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-Par` + HayBTime1.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-Par` + HayBTime1.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-Par` + HayBTime1.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-Par` + HayBTime1.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#HayBTime2
+cor.test(formula= ~ `L-DLPFC--R-Par` + HayBTime2.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-Par` + HayBTime2.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-Par` + HayBTime2.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-Par` + HayBTime2.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-Par` + HayBTime2.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#HayBCatA
+cor.test(formula= ~ `L-DLPFC--R-Par` + HayBCatA.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-Par` + HayBCatA.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-Par` + HayBCatA.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-Par` + HayBCatA.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-Par` + HayBCatA.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#HayBCatB
+cor.test(formula= ~ `L-DLPFC--R-Par` + HayBCatB.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-Par` + HayBCatB.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-Par` + HayBCatB.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-Par` + HayBCatB.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-DLPFC--R-Par` + HayBCatB.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#for R-DLPFC--L-Par
+#TMT-A
+cor.test(formula= ~ `R-DLPFC--L-Par` + TrailsA.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `R-DLPFC--L-Par` + TrailsA.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `R-DLPFC--L-Par` + TrailsA.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `R-DLPFC--L-Par` + TrailsA.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `R-DLPFC--L-Par` + TrailsA.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#TMT-B
+cor.test(formula= ~ `R-DLPFC--L-Par` + TrailsB.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `R-DLPFC--L-Par` + TrailsB.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `R-DLPFC--L-Par` + TrailsB.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `R-DLPFC--L-Par` + TrailsB.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `R-DLPFC--L-Par` + TrailsB.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#Stroop - ColourNaming
+cor.test(formula= ~ `R-DLPFC--L-Par` + ColorNaming.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `R-DLPFC--L-Par` + ColorNaming.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `R-DLPFC--L-Par` + ColorNaming.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `R-DLPFC--L-Par` + ColorNaming.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `R-DLPFC--L-Par` + ColorNaming.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#Stroop - WordReading
+cor.test(formula= ~ `R-DLPFC--L-Par` + WordReading.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `R-DLPFC--L-Par` + WordReading.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `R-DLPFC--L-Par` + WordReading.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `R-DLPFC--L-Par` + WordReading.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `R-DLPFC--L-Par` + WordReading.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#Stroop - Inhibition
+cor.test(formula= ~ `R-DLPFC--L-Par` + Inhibition.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `R-DLPFC--L-Par` + Inhibition.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `R-DLPFC--L-Par` + Inhibition.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `R-DLPFC--L-Par` + Inhibition.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `R-DLPFC--L-Par` + Inhibition.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#LetFluency
+cor.test(formula= ~ `R-DLPFC--L-Par` + LetFluency.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `R-DLPFC--L-Par` + LetFluency.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `R-DLPFC--L-Par` + LetFluency.Raw, data = Connectome_data, subset = Group == c("3")) #sig
+cor.test(formula= ~ `R-DLPFC--L-Par` + LetFluency.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `R-DLPFC--L-Par` + LetFluency.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#CatFluency
+cor.test(formula= ~ `R-DLPFC--L-Par` + CatFluency.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `R-DLPFC--L-Par` + CatFluency.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `R-DLPFC--L-Par` + CatFluency.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `R-DLPFC--L-Par` + CatFluency.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `R-DLPFC--L-Par` + CatFluency.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#Switching
+cor.test(formula= ~ `R-DLPFC--L-Par` + Switching.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `R-DLPFC--L-Par` + Switching.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `R-DLPFC--L-Par` + Switching.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `R-DLPFC--L-Par` + Switching.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `R-DLPFC--L-Par` + Switching.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#HayBTime1
+cor.test(formula= ~ `R-DLPFC--L-Par` + HayBTime1.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `R-DLPFC--L-Par` + HayBTime1.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `R-DLPFC--L-Par` + HayBTime1.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `R-DLPFC--L-Par` + HayBTime1.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `R-DLPFC--L-Par` + HayBTime1.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#HayBTime2
+cor.test(formula= ~ `R-DLPFC--L-Par` + HayBTime2.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `R-DLPFC--L-Par` + HayBTime2.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `R-DLPFC--L-Par` + HayBTime2.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `R-DLPFC--L-Par` + HayBTime2.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `R-DLPFC--L-Par` + HayBTime2.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#HayBCatA
+cor.test(formula= ~ `R-DLPFC--L-Par` + HayBCatA.Raw, data = Connectome_data, subset = Group == c("1")) #sig
+cor.test(formula= ~ `R-DLPFC--L-Par` + HayBCatA.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `R-DLPFC--L-Par` + HayBCatA.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `R-DLPFC--L-Par` + HayBCatA.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `R-DLPFC--L-Par` + HayBCatA.Raw, data = Connectome_data, subset = Group == c("5")) #sig
+#HayBCatB
+cor.test(formula= ~ `R-DLPFC--L-Par` + HayBCatB.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `R-DLPFC--L-Par` + HayBCatB.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `R-DLPFC--L-Par` + HayBCatB.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `R-DLPFC--L-Par` + HayBCatB.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `R-DLPFC--L-Par` + HayBCatB.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#for L-Par--R-Par
+#TMT-A
+cor.test(formula= ~ `L-Par--R-Par` + TrailsA.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-Par--R-Par` + TrailsA.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-Par--R-Par` + TrailsA.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-Par--R-Par` + TrailsA.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-Par--R-Par` + TrailsA.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#TMT-B
+cor.test(formula= ~ `L-Par--R-Par` + TrailsB.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-Par--R-Par` + TrailsB.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-Par--R-Par` + TrailsB.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-Par--R-Par` + TrailsB.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-Par--R-Par` + TrailsB.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#Stroop - ColourNaming
+cor.test(formula= ~ `L-Par--R-Par` + ColorNaming.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-Par--R-Par` + ColorNaming.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-Par--R-Par` + ColorNaming.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-Par--R-Par` + ColorNaming.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-Par--R-Par` + ColorNaming.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#Stroop - WordReading
+cor.test(formula= ~ `L-Par--R-Par` + WordReading.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-Par--R-Par` + WordReading.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-Par--R-Par` + WordReading.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-Par--R-Par` + WordReading.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-Par--R-Par` + WordReading.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#Stroop - Inhibition
+cor.test(formula= ~ `L-Par--R-Par` + Inhibition.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-Par--R-Par` + Inhibition.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-Par--R-Par` + Inhibition.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-Par--R-Par` + Inhibition.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-Par--R-Par` + Inhibition.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#LetFluency
+cor.test(formula= ~ `L-Par--R-Par` + LetFluency.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-Par--R-Par` + LetFluency.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-Par--R-Par` + LetFluency.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-Par--R-Par` + LetFluency.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-Par--R-Par` + LetFluency.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#CatFluency
+cor.test(formula= ~ `L-Par--R-Par` + CatFluency.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-Par--R-Par` + CatFluency.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-Par--R-Par` + CatFluency.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-Par--R-Par` + CatFluency.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-Par--R-Par` + CatFluency.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#Switching
+cor.test(formula= ~ `L-Par--R-Par` + Switching.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-Par--R-Par` + Switching.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-Par--R-Par` + Switching.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-Par--R-Par` + Switching.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-Par--R-Par` + Switching.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#HayBTime1
+cor.test(formula= ~ `L-Par--R-Par` + HayBTime1.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-Par--R-Par` + HayBTime1.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-Par--R-Par` + HayBTime1.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-Par--R-Par` + HayBTime1.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-Par--R-Par` + HayBTime1.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#HayBTime2
+cor.test(formula= ~ `L-Par--R-Par` + HayBTime2.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-Par--R-Par` + HayBTime2.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-Par--R-Par` + HayBTime2.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-Par--R-Par` + HayBTime2.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-Par--R-Par` + HayBTime2.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#HayBCatA
+cor.test(formula= ~ `L-Par--R-Par` + HayBCatA.Raw, data = Connectome_data, subset = Group == c("1")) #sig
+cor.test(formula= ~ `L-Par--R-Par` + HayBCatA.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-Par--R-Par` + HayBCatA.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-Par--R-Par` + HayBCatA.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-Par--R-Par` + HayBCatA.Raw, data = Connectome_data, subset = Group == c("5")) #sig
+#HayBCatB
+cor.test(formula= ~ `L-Par--R-Par` + HayBCatB.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-Par--R-Par` + HayBCatB.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-Par--R-Par` + HayBCatB.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-Par--R-Par` + HayBCatB.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-Par--R-Par` + HayBCatB.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#for L-Par--MidCing
+#TMT-A
+cor.test(formula= ~ `L-Par--MidCing` + TrailsA.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-Par--MidCing` + TrailsA.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-Par--MidCing` + TrailsA.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-Par--MidCing` + TrailsA.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-Par--MidCing` + TrailsA.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#TMT-B
+cor.test(formula= ~ `L-Par--MidCing` + TrailsB.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-Par--MidCing` + TrailsB.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-Par--MidCing` + TrailsB.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-Par--MidCing` + TrailsB.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-Par--MidCing` + TrailsB.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#Stroop - ColourNaming
+cor.test(formula= ~ `L-Par--MidCing` + ColorNaming.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-Par--MidCing` + ColorNaming.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-Par--MidCing` + ColorNaming.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-Par--MidCing` + ColorNaming.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-Par--MidCing` + ColorNaming.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#Stroop - WordReading
+cor.test(formula= ~ `L-Par--MidCing` + WordReading.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-Par--MidCing` + WordReading.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-Par--MidCing` + WordReading.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-Par--MidCing` + WordReading.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-Par--MidCing` + WordReading.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#Stroop - Inhibition
+cor.test(formula= ~ `L-Par--MidCing` + Inhibition.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-Par--MidCing` + Inhibition.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-Par--MidCing` + Inhibition.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-Par--MidCing` + Inhibition.Raw, data = Connectome_data, subset = Group == c("4")) #sig
+cor.test(formula= ~ `L-Par--MidCing` + Inhibition.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#LetFluency
+cor.test(formula= ~ `L-Par--MidCing` + LetFluency.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-Par--MidCing` + LetFluency.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-Par--MidCing` + LetFluency.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-Par--MidCing` + LetFluency.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-Par--MidCing` + LetFluency.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#CatFluency
+cor.test(formula= ~ `L-Par--MidCing` + CatFluency.Raw, data = Connectome_data, subset = Group == c("1")) #sig
+cor.test(formula= ~ `L-Par--MidCing` + CatFluency.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-Par--MidCing` + CatFluency.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-Par--MidCing` + CatFluency.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-Par--MidCing` + CatFluency.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#Switching
+cor.test(formula= ~ `L-Par--MidCing` + Switching.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-Par--MidCing` + Switching.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-Par--MidCing` + Switching.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-Par--MidCing` + Switching.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-Par--MidCing` + Switching.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#HayBTime1
+cor.test(formula= ~ `L-Par--MidCing` + HayBTime1.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-Par--MidCing` + HayBTime1.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-Par--MidCing` + HayBTime1.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-Par--MidCing` + HayBTime1.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-Par--MidCing` + HayBTime1.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#HayBTime2
+cor.test(formula= ~ `L-Par--MidCing` + HayBTime2.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-Par--MidCing` + HayBTime2.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-Par--MidCing` + HayBTime2.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-Par--MidCing` + HayBTime2.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-Par--MidCing` + HayBTime2.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#HayBCatA
+cor.test(formula= ~ `L-Par--MidCing` + HayBCatA.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-Par--MidCing` + HayBCatA.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-Par--MidCing` + HayBCatA.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-Par--MidCing` + HayBCatA.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-Par--MidCing` + HayBCatA.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#HayBCatB
+cor.test(formula= ~ `L-Par--MidCing` + HayBCatB.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `L-Par--MidCing` + HayBCatB.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `L-Par--MidCing` + HayBCatB.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `L-Par--MidCing` + HayBCatB.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `L-Par--MidCing` + HayBCatB.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#for R-Par--MidCing
+#TMT-A
+cor.test(formula= ~ `R-Par--MidCing` + TrailsA.Raw, data = Connectome_data, subset = Group == c("1")) #sig
+cor.test(formula= ~ `R-Par--MidCing` + TrailsA.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `R-Par--MidCing` + TrailsA.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `R-Par--MidCing` + TrailsA.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `R-Par--MidCing` + TrailsA.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#TMT-B
+cor.test(formula= ~ `R-Par--MidCing` + TrailsB.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `R-Par--MidCing` + TrailsB.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `R-Par--MidCing` + TrailsB.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `R-Par--MidCing` + TrailsB.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `R-Par--MidCing` + TrailsB.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#Stroop - ColourNaming
+cor.test(formula= ~ `R-Par--MidCing` + ColorNaming.Raw, data = Connectome_data, subset = Group == c("1")) #sig
+cor.test(formula= ~ `R-Par--MidCing` + ColorNaming.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `R-Par--MidCing` + ColorNaming.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `R-Par--MidCing` + ColorNaming.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `R-Par--MidCing` + ColorNaming.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#Stroop - WordReading
+cor.test(formula= ~ `R-Par--MidCing` + WordReading.Raw, data = Connectome_data, subset = Group == c("1")) #sig
+cor.test(formula= ~ `R-Par--MidCing` + WordReading.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `R-Par--MidCing` + WordReading.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `R-Par--MidCing` + WordReading.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `R-Par--MidCing` + WordReading.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#Stroop - Inhibition
+cor.test(formula= ~ `R-Par--MidCing` + Inhibition.Raw, data = Connectome_data, subset = Group == c("1")) #sig
+cor.test(formula= ~ `R-Par--MidCing` + Inhibition.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `R-Par--MidCing` + Inhibition.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `R-Par--MidCing` + Inhibition.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `R-Par--MidCing` + Inhibition.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#LetFluency
+cor.test(formula= ~ `R-Par--MidCing` + LetFluency.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `R-Par--MidCing` + LetFluency.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `R-Par--MidCing` + LetFluency.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `R-Par--MidCing` + LetFluency.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `R-Par--MidCing` + LetFluency.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#CatFluency
+cor.test(formula= ~ `R-Par--MidCing` + CatFluency.Raw, data = Connectome_data, subset = Group == c("1")) #sig
+cor.test(formula= ~ `R-Par--MidCing` + CatFluency.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `R-Par--MidCing` + CatFluency.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `R-Par--MidCing` + CatFluency.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `R-Par--MidCing` + CatFluency.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#Switching
+cor.test(formula= ~ `R-Par--MidCing` + Switching.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `R-Par--MidCing` + Switching.Raw, data = Connectome_data, subset = Group == c("2")) #sig
+cor.test(formula= ~ `R-Par--MidCing` + Switching.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `R-Par--MidCing` + Switching.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `R-Par--MidCing` + Switching.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#HayBTime1
+cor.test(formula= ~ `R-Par--MidCing` + HayBTime1.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `R-Par--MidCing` + HayBTime1.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `R-Par--MidCing` + HayBTime1.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `R-Par--MidCing` + HayBTime1.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `R-Par--MidCing` + HayBTime1.Raw, data = Connectome_data, subset = Group == c("5")) #sig
+#HayBTime2
+cor.test(formula= ~ `R-Par--MidCing` + HayBTime2.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `R-Par--MidCing` + HayBTime2.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `R-Par--MidCing` + HayBTime2.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `R-Par--MidCing` + HayBTime2.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `R-Par--MidCing` + HayBTime2.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#HayBCatA
+cor.test(formula= ~ `R-Par--MidCing` + HayBCatA.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `R-Par--MidCing` + HayBCatA.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `R-Par--MidCing` + HayBCatA.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `R-Par--MidCing` + HayBCatA.Raw, data = Connectome_data, subset = Group == c("4")) #sig
+cor.test(formula= ~ `R-Par--MidCing` + HayBCatA.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
+#HayBCatB
+cor.test(formula= ~ `R-Par--MidCing` + HayBCatB.Raw, data = Connectome_data, subset = Group == c("1")) #not sig
+cor.test(formula= ~ `R-Par--MidCing` + HayBCatB.Raw, data = Connectome_data, subset = Group == c("2")) #not sig
+cor.test(formula= ~ `R-Par--MidCing` + HayBCatB.Raw, data = Connectome_data, subset = Group == c("3")) #not sig
+cor.test(formula= ~ `R-Par--MidCing` + HayBCatB.Raw, data = Connectome_data, subset = Group == c("4")) #not sig
+cor.test(formula= ~ `R-Par--MidCing` + HayBCatB.Raw, data = Connectome_data, subset = Group == c("5")) #not sig
