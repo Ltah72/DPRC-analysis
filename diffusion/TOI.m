@@ -26,7 +26,7 @@ close all;
 
 
 %define/add pathways
-derivdir = '/data/USERS/LENORE/derivatives';
+startdir = '/data/USERS/LENORE';
 
 %Script directory is defined, so that it can be added to path below:
 ScriptDirectory = '/data/USERS/LENORE/scripts/dprc/diffusion';
@@ -40,25 +40,25 @@ period = input('Which time period do you want to analyse, e.g. F0, F2, all, etc?
 %Create TOI folder
 TOI = input('Please name a tract of interest (TOI) that you want to analyse: ', 's');
 
-mkdir([derivdir,'/groups/' period, '/diff_data/', groupname, '/' TOI]);
+mkdir([startdir,'/derivatives/' period, '/diff_data/', groupname, '/' TOI]);
 
 %go into group folder
-cd([derivdir '/groups/' period, '/diff_data/', groupname]);
+cd([startdir '/derivatives/' period, '/diff_data/', groupname]);
 
 %define variables
 participants = dir(fullfile('preprocessed_dwi', '*.mif'));
 
 %Add your script and all necessary files (e.g. data, functions) to path
-addpath(genpath(derivdir));
+addpath(genpath(startdir));
 addpath(genpath(ScriptDirectory));
 
 
 %copy needed files into the TOI directory
-copyfile ([derivdir '/groups/' period, '/diff_data/' groupname '/wmfod_template.mif'], [derivdir,'/groups/' period, '/diff_data/', groupname '/' TOI]);
-copyfile ([derivdir '/groups/' period, '/diff_data/' groupname '/tracks_2_million_sift.tck'], [derivdir,'/groups/' period, '/diff_data/', groupname '/' TOI]);
+copyfile ([startdir '/derivatives/' period, '/diff_data/' groupname '/wmfod_template.mif'], [startdir,'/derivatives/' period, '/diff_data/', groupname '/' TOI]);
+copyfile ([startdir '/derivatives/' period, '/diff_data/' groupname '/tracks_2_million_sift.tck'], [startdir,'/derivatives/' period, '/diff_data/', groupname '/' TOI]);
 
 %go into TOI directory
-cd ([derivdir,'/groups/' period, '/diff_data/', groupname, '/' TOI]);
+cd ([startdir,'/derivatives/' period, '/diff_data/', groupname, '/' TOI]);
 
 
 %-------------------------------------------------------------------------%
@@ -104,10 +104,10 @@ ManualEdits = input('After viewing your TOI, did you make additional edits? (y o
 
 %with edits
 if ManualEdits == 'y'
-    unix(['tck2fixel ' TOI '_sift_edit.tck ' derivdir,'/groups/' period, '/diff_data/', groupname '/fixel_directory/fixel_mask output_' TOI '_TOI_fixel_directory ' TOI '_fixel_mask.mif']);
+    unix(['tck2fixel ' TOI '_sift_edit.tck ' startdir,'/derivatives/' period, '/diff_data/', groupname '/fixel_directory/fixel_mask output_' TOI '_TOI_fixel_directory ' TOI '_fixel_mask.mif']);
 %no edits done    
 elseif ManualEdits == 'n'
-    unix(['tck2fixel ' TOI '_sift.tck ' derivdir,'/groups/' period, '/diff_data/', groupname '/fixel_directory/fixel_mask output_' TOI '_TOI_fixel_directory ' TOI '_fixel_mask.mif']);
+    unix(['tck2fixel ' TOI '_sift.tck ' startdir,'/derivatives/' period, '/diff_data/', groupname '/fixel_directory/fixel_mask output_' TOI '_TOI_fixel_directory ' TOI '_fixel_mask.mif']);
 end
 
 %e.g. of full command:
@@ -121,7 +121,7 @@ unix(['mrthreshold -abs 0.95 output_' TOI '_TOI_fixel_directory/' TOI '_fixel_ma
 
 %-------------------------------------------------------------------------%
 %Step 7: Compute fixel-based metrics (FD, FC, FDC) with the TOI fixel mask per each participant.
-CreateTOIFBAMetricFiles(participants, TOI, derivdir, groupname, period);
+CreateTOIFBAMetricFiles(participants, TOI, startdir, groupname, period);
 
 
 
@@ -134,38 +134,38 @@ CreateTOIFBAMetricFiles(participants, TOI, derivdir, groupname, period);
 %SLF tract parameters
 
 %left SLF
-unix(['tckgen wmfod_template.mif -select 10k -maxlen 250 -minlen 10 -angle 45 -power 1.0 -cutoff 0.15 -seed_sphere -34.19,-30.87,21.51,3 -exclude 50,92,102,2 -exclude -36.41,-71.2,16.21,2 -exclude -36.41,-45.49,37.64,2 -exclude -2.33,-46.72,5.07,3 -exclude 43,96,68,3 -exclude -16.59,-64.65,17.04,2 -exclude -16.54,-68.61,15.82,2 -exclude -29.79,-60.68,17.97,1 -exclude -27.44,-68.82,-2.9,1 SLF_track_L.tck -force']);
+unix(['tckgen wmfod_template.mif -select 10k -maxlen 250 -minlen 10 -angle 45 -power 1.0 -cutoff 0.15 -seed_sphere 32.62,30.05,26.56,3 -seed_sphere 38.13,-30.24,24.24,2 -exclude 16.59,17.93,27.23,2 -exclude 46.95,-21.89,-18.17,5 -exclude 36.59,-31.79,-2.25,1 -exclude 39.12,-26.26,-4.86,2 -exclude 46.03,7.805,-7.66,2 -exclude 49.34,-35.52,-14.41,2 -exclude 50.96,-34.06,-13.5,2 -exclude 42.1,-37,-13.57,2 -exclude 38.3,-39.5,-3.83,2 -exclude 39.75,-41.43,-15.13,1 -exclude 36.41,-45.01,-1.24,1 -exclude 43.92,-34.85,-9.75,1 -exclude 17.36,15.72,28.83,1 -exclude 14.9,18.27,24.22,1 -exclude 29.44,-12.79,17.54,1 -exclude 25.8,10.52,12.03,1 -exclude 41.77,-38.25,-11.79,1 -exclude 39.1,-39.28,-1.16,1 -exclude 41.09,-41.09,-10.73,1 SLF_track_L.tck -force']);
 
 %right SLF
-unix(['tckgen wmfod_template.mif -select 10k -maxlen 250 -minlen 10 -angle 45 -power 1.0 -cutoff 0.15 -seed_sphere 34.93,-29.5,23.28,3 -exclude 17.76,-13.72,31.91,2 -exclude 28.78,-22.39,12.63,2 SLF_track_R.tck -force']);
+unix(['tckgen wmfod_template.mif -select 10k -maxlen 250 -minlen 10 -angle 45 -power 1.0 -cutoff 0.15 -seed_sphere -32.07,-31.95,27.1,2 -seed_sphere -29.58,-29.02,32.48,1 -exclude -20.6,-26.88,30.97,2 -exclude -28.37,-25.79,18.15,2 -exclude -45.73,-38.22,-16.67,3 -exclude -39.33,-38.52,-6.52,2 -exclude -15.1,-16.68,34.53,2 -exclude -42.81,-36.38,-15.77,2 -exclude -21.52,-25.73,32.96,1 -exclude -46.22,-38.92,-13.32,2 -exclude -37.78,-42.51,-4.69,2 -exclude -29.12,-22.63,23.17,1 -exclude -29.56,-29.87,21.41,1 -exclude -30.43,-26.8,21.34,1 -exclude -23.05,-24.8,33.88,1 -exclude -41.68,-40.76,-11.95,2 -exclude -46.46,-33.85,-14.63,1 -exclude -20.87,-14.17,32.98,1 -exclude -30,-26.52,22.69,1 -exclude -36.92,-45.25,-0.20,1 -exclude -44.28,-38.71,-14.34,1 -exclude -40.8,-41.74,-14.69,1 -exclude -39.51,-43.72,-9.23,1 -exclude -39.51,-45.39,-10.57,1 -exclude -39.51,-44.91,-8.12,1 -exclude -39.3,-47.31,-14.82,1 -exclude -30,-24.42,23.55,1 -exclude -49.07,-39.52,-14.89,2 -exclude -29.29,-25.85,24.52,1 -exclude -31.06,-24.19,24.01,1 -exclude -23.29,-18.45,31.67,1 -exclude -40.55,-42.32,-9.28,1 -exclude 37.21,-47.15,-2.85,1 -exclude -44.69,-38.38,-11.58,1 -exclude -38.55,-49.75,-12.89,2 -exclude -35.49,-48.78,-2.35,1 SLF_track_R.tck -force']);
 
 
 %merge the left and right tracks as one track file. 
 unix(['tckedit SLF_track_L.tck SLF_track_R.tck SLF_track_whole.tck']);
 
 %create fixel mask with your track file. 
-unix(['tck2fixel SLF_track_whole.tck fixel_mask output_SLF_whole_fixel_mask SLF_whole_fixel_mask.mif'])
+unix(['tck2fixel SLF_track_whole.tck fixel_mask output_SLF_fixel_mask SLF_fixel_mask.mif'])
 
 %threshold your mask (whole)
-unix(['mrthreshold -abs 0.5 output_SLF_whole_fixel_mask/SLF_whole_fixel_mask.mif output_SLF_whole_fixel_mask/SLF_whole_fixel_mask_thr.mif']);
+unix(['mrthreshold -abs 0.5 output_SLF_fixel_mask/SLF_fixel_mask.mif output_SLF_fixel_mask/SLF_fixel_mask_thr.mif -force']);
 
 
 
 %%%Left SLF %%%
 %create fixel mask with your track file (left SLF). 
-unix(['tck2fixel SLF_track_L.tck fixel_mask output_SLF_track_L_fixel_mask SLF_track_L_fixel_mask.mif'])
+unix(['tck2fixel SLF_track_L.tck fixel_mask output_SLF_track_L_fixel_mask SLF_L_fixel_mask.mif'])
 %threshold your mask (left SLF)
-unix(['mrthreshold -abs 0.5 output_SLF_track_L_fixel_mask/SLF_L_fixel_mask.mif output_SLF_track_L_fixel_mask/SLF_track_L_fixel_mask_thr.mif']);
+unix(['mrthreshold -abs 0.5 output_SLF_track_L_fixel_mask/SLF_L_fixel_mask.mif output_SLF_track_L_fixel_mask/SLF_L_fixel_mask_thr.mif']);
 
 %%%Right SLF %%%
 %create fixel mask with your track file (left SLF). 
-unix(['tck2fixel SLF_track_R.tck fixel_mask output_SLF_track_R_fixel_mask SLF_track_R_fixel_mask.mif'])
+unix(['tck2fixel SLF_track_R.tck fixel_mask output_SLF_track_R_fixel_mask SLF_R_fixel_mask.mif'])
 %threshold your mask (right SLF)
-unix(['mrthreshold -abs 0.5 output_SLF_track_R_fixel_mask/SLF_R_fixel_mask.mif output_SLF_track_R_fixel_mask/SLF_track_R_fixel_mask_thr.mif']);
+unix(['mrthreshold -abs 0.5 output_SLF_track_R_fixel_mask/SLF_R_fixel_mask.mif output_SLF_track_R_fixel_mask/SLF_R_fixel_mask_thr.mif']);
 
 
 %Compute fixel-based metrics (FD, FC, FDC) with the TOI fixel mask per each participant.
-CreateTOIFBAMetricFiles(participants, TOI, derivdir, groupname);
+CreateTOIFBAMetricFiles(participants, TOI, startdir, groupname);
 
 
 

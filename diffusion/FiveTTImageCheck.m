@@ -1,4 +1,4 @@
-function FiveTTImageCheck(PAR_NAME, derivdir, period, groupname)
+function FiveTTImageCheck(PAR_NAME, startdir, period, groupname)
 %This function will check each participant's 5tt image file in that it
 %conforms to the expected five-tissue-type (5TT) format. It will print out
 %all of the checking of the results onto a text file (5ttImage.txt). 
@@ -20,7 +20,7 @@ function FiveTTImageCheck(PAR_NAME, derivdir, period, groupname)
 results = unix(['5ttcheck 5ttimage_' PAR_NAME, '.mif']);
 
 %go back into the qc folder to write about the file
-cd([derivdir '/groups/' period, '/diff_data/', groupname, '/qc/']);
+cd([startdir '/derivatives/' period, '/diff_data/', groupname, '/qc/']);
 
 %open txt file
 fid = fopen('5ttImageCheck.txt','a+');
@@ -40,7 +40,7 @@ fprintf(fid, '%s %s', PAR_NAME, text2file);
 fclose(fid);
 
 %go back into connectome folder to continue processing
-cd([derivdir '/groups/' period, '/diff_data/', groupname, '/connectome/']);
+cd([startdir '/derivatives/' period, '/diff_data/', groupname, '/connectome/']);
 
 end
 

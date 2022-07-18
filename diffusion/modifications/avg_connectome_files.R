@@ -16,7 +16,7 @@ nodes <- sort(c(73,253,67,247,97,277,98,278,26,206,70,250,71,251,87,267,68,248,8
 
 #for Control (C) group
 # choose & set to your directory
-setwd('V:/NECTAR_data/LENORE/derivatives/groups/F0/diff_data/cross-sectional/connectome/hcpmmpFiles/C')  
+setwd('V:/Vault/NECTAR_data/LENORE/derivatives/groups/F0/diff_data/cross-sectional/connectome/hcpmmpFiles/weighted/C')  
 
 files_C <- list.files()  #load the file names into the workspace
 
@@ -36,7 +36,7 @@ write.table(Means_FPN_C, 'Control_avg_FPN_connectome.csv', sep = ",", row.names 
 
 #for Subjective Cognitive Decline (SCD) group
 # choose & set to your directory
-setwd('V:/NECTAR_data/LENORE/derivatives/groups/F0/diff_data/cross-sectional/connectome/hcpmmpFiles/SCD')  
+setwd('V:/Vault/NECTAR_data/LENORE/derivatives/groups/F0/diff_data/cross-sectional/connectome/hcpmmpFiles/weighted/SCD')  
 
 files_SCD <- list.files()  #load the file names into the workspace
 
@@ -55,7 +55,7 @@ write.table(Means_FPN_SCD, 'SCD_avg_FPN_connectome.csv', sep = ",", row.names = 
 
 #for Amnestic Mild Cognitive Impairment (aMCI) group
 # choose & set to your directory
-setwd('V:/NECTAR_data/LENORE/derivatives/groups/F0/diff_data/cross-sectional/connectome/hcpmmpFiles/aMCI')  
+setwd('V:/Vault/NECTAR_data/LENORE/derivatives/groups/F0/diff_data/cross-sectional/connectome/hcpmmpFiles/weighted/aMCI')  
 
 files_aMCI <- list.files()  #load the file names into the workspace
 
@@ -74,7 +74,7 @@ write.table(Means_FPN_aMCI, 'aMCI_avg_FPN_connectome.csv', sep = ",", row.names 
 
 #for Multiple-Domain Mild Cognitive Impairment group
 # choose & set to your directory
-setwd('V:/NECTAR_data/LENORE/derivatives/groups/F0/diff_data/cross-sectional/connectome/hcpmmpFiles/mMCI')  
+setwd('V:/Vault/NECTAR_data/LENORE/derivatives/groups/F0/diff_data/cross-sectional/connectome/hcpmmpFiles/weighted/mMCI')  
 
 files_mMCI <- list.files()  #load the file names into the workspace
 
@@ -93,7 +93,7 @@ write.table(Means_FPN_mMCI, 'mMCI_avg_FPN_connectome.csv', sep = ",", row.names 
 
 #for Alzheimer's Disease (AD) group
 # choose & set to your directory
-setwd('V:/NECTAR_data/LENORE/derivatives/groups/F0/diff_data/cross-sectional/connectome/hcpmmpFiles/AD')  
+setwd('V:/Vault/NECTAR_data/LENORE/derivatives/groups/F0/diff_data/cross-sectional/connectome/hcpmmpFiles/weighted/AD')  
 
 files_AD <- list.files()  #load the file names into the work space
 
@@ -113,7 +113,7 @@ write.table(Means_FPN_AD, 'AD_avg_FPN_connectome.csv', sep = ",", row.names = FA
 
 #for Group average (FBA population template cohort)
 # choose & set to your directory
-setwd('V:/NECTAR_data/LENORE/derivatives/groups/F0/diff_data/cross-sectional/connectome/hcpmmpFiles/group_template')  
+setwd('V:/Vault/NECTAR_data/LENORE/derivatives/groups/F0/diff_data/cross-sectional/connectome/hcpmmpFiles/weighted/group_template')  
 
 files_G <- list.files()  #load the file names into the workspace
 

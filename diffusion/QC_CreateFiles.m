@@ -1,4 +1,4 @@
-function QC_CreateFiles(derivdir, period)
+function QC_CreateFiles(startdir, period)
 %The purpose of this function is to create all of the collated quality 
 %control (qc) files in the dwiqc directory. This directory will hold all 
 %participants' data together on one file for qc checks/analysis.So far, 
@@ -14,7 +14,7 @@ function QC_CreateFiles(derivdir, period)
 %Date: 18/08/20
 
 
-cd ([derivdir '/groups/' period '/diff_data/dwiqc/']);
+cd ([startdir '/derivatives/' period '/diff_data/dwiqc/']);
 
 %create BestB0 text file with header line
 fid = fopen('BestB0.txt', 'w');
@@ -51,7 +51,7 @@ fid4 = fopen('eddyqc_outliers.txt', 'w');
 if (fid4 == -1)
     disp('Error in creating the text file.')
 else
-    fprintf(fid4, '%s     %s %s', 'Participant', 'num_outliers', 'outlier_%');
+    fprintf(fid4, '%s     %s %s', 'Participant', 'num_outliers', 'outlier_percentage');
     fclose(fid4);
 end
 

@@ -1,4 +1,4 @@
-function [BU_used] = BestB0(PAR_NAME, datafile, NumBDs, derivdir, period)
+function [BU_used] = BestB0(PAR_NAME, datafile, NumBDs, startdir, period)
 
 %This function will calculate the 'BestB0' to find the most suitable pair
 %of blip-up (BU or AP) and blip-down (BD or PA) volumes used for topup in
@@ -140,13 +140,13 @@ end
 %create a text file to note down the BU and BD used for the B0, and if any
 %participants have been flagged. Also, choose the best B0 according to
 %Jesper's criterion (see info above and/or in paper referenced)
-cd([derivdir '/groups/' period '/diff_data/dwiqc/']);
+cd([startdir '/derivatives/' period '/diff_data/dwiqc/']);
 
 fid3 = fopen('BestB0.txt', 'a+');
 if (fid3 == -1)
     disp('Error in opening in the BestB0.txt file.')
 else
-    cd([derivdir '/groups/' period '/diff_data/' PAR_NAME, '/dwi/']);
+    cd([startdir '/derivatives/' period '/diff_data/' PAR_NAME, '/dwi/']);
 end
 
 %check that at least 1 B0 is > 0.95; if not, then flag the participant.

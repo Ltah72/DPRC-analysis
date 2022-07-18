@@ -1,4 +1,4 @@
-function CreateTOIFBAMetricFiles(participants, TOI, derivdir, groupname, period)
+function CreateTOIFBAMetricFiles(participants, TOI, startdir, groupname, period)
 %This function will create text files which will have all participants
 %tract of interest (TOI) FBA metrics (FD, log FC, and FDC). Specifically, 
 %the mean, median, std, std_rv (standard error), min, max, and count will 
@@ -66,7 +66,7 @@ for i = 1:length(participants)
     if (fid9 == -1)
         disp('Error in opening the text file.')
     else
-        unix(['mrstats -mask template/SLF/output_' TOI '_fixel_mask/' TOI '_fixel_mask_thr.mif ' derivdir '/groups/' period, '/diff_data/' groupname '/template/fd_smooth/' PAR_NAME '_fd.mif -output mean -output median -output std -output std_rv -output min -output max -output count >> FD_' TOI '_TOI.txt']);
+        unix(['mrstats -mask template/SLF/output_' TOI '_fixel_mask/' TOI '_fixel_mask_thr.mif ' startdir '/derivatives/' period, '/diff_data/' groupname '/template/fd_smooth/' PAR_NAME '_fd.mif -output mean -output median -output std -output std_rv -output min -output max -output count >> FD_' TOI '_TOI.txt']);
         fclose(fid9);
     end
     
@@ -75,7 +75,7 @@ for i = 1:length(participants)
     if (fid10 == -1)
         disp('Error in opening the text file.')
     else
-        unix(['mrstats -mask template/SLF/output_' TOI '_fixel_mask/' TOI '_fixel_mask_thr.mif ' derivdir '/groups/' period, '/diff_data/' groupname '/template/log_fc_smooth/' PAR_NAME '_log_fc.mif -output mean -output median -output std -output std_rv -output min -output max -output count >> FC_log_' TOI '_TOI.txt']);
+        unix(['mrstats -mask template/SLF/output_' TOI '_fixel_mask/' TOI '_fixel_mask_thr.mif ' startdir '/derivatives/' period, '/diff_data/' groupname '/template/log_fc_smooth/' PAR_NAME '_log_fc.mif -output mean -output median -output std -output std_rv -output min -output max -output count >> FC_log_' TOI '_TOI.txt']);
         fclose(fid10);
     end
     
@@ -84,7 +84,7 @@ for i = 1:length(participants)
     if (fid11 == -1)
         disp('Error in opening the text file.')
     else
-        unix(['mrstats -mask template/SLF/output_' TOI '_fixel_mask/' TOI '_fixel_mask_thr.mif ' derivdir '/groups/' period, '/diff_data/' groupname '/template/fdc_smooth/' PAR_NAME '_fdc.mif -output mean -output median -output std -output std_rv -output min -output max -output count >> FDC_' TOI '_TOI.txt']);
+        unix(['mrstats -mask template/SLF/output_' TOI '_fixel_mask/' TOI '_fixel_mask_thr.mif ' startdir '/derivatives/' period, '/diff_data/' groupname '/template/fdc_smooth/' PAR_NAME '_fdc.mif -output mean -output median -output std -output std_rv -output min -output max -output count >> FDC_' TOI '_TOI.txt']);
         fclose(fid11);
     end
     

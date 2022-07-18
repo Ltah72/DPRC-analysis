@@ -26,7 +26,7 @@ function RunEddySquad(participants, startdir, period)
 
 
 %go into the main dwiqc folder
-cd ([startdir '/derivatives/groups/' period '/diff_data/dwiqc']);
+cd ([startdir '/derivatives/' period '/diff_data/dwiqc']);
 
 fid = fopen('EddySQUADList.txt', 'a+');
 for i = 1:length(participants)
@@ -35,7 +35,7 @@ for i = 1:length(participants)
         disp('Error in opening the file.')
     else
         %print the file pathway to a textfile for each participant. 
-         fprintf(fid, '%s%s%s%s', startdir, '/derivatives/groups/', period, '/diff_data/', PAR_NAME, '/dwi/eddyqc/eddy_quad.qc');
+         fprintf(fid, '%s%s%s%s', startdir, '/derivatives/', period, '/diff_data/', PAR_NAME, '/dwi/eddyqc/eddy_quad.qc');
          fprintf(fid, '\n');
     end
     

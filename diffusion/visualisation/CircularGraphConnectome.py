@@ -17,10 +17,10 @@ import os
 import numpy as np
 import mne
 
-#define connectome data directory
-ConnectomeDir = 'V:/Vault/NECTAR_data/LENORE/test_extra/test/connectome_test/'
-#go into Connectome directory
-os.chdir(ConnectomeDir)
+#define connectome template directory
+ConnectomeTemplateDir = 'V:/Vault/NECTAR_data/LENORE/derivatives/groups/F0/diff_data/cross-sectional/connectome/template/'
+#go into directory
+os.chdir(ConnectomeTemplateDir)
 
 #Match atlas colours to the node names
 labels = []
@@ -38,9 +38,17 @@ with open('hcpmmp1_ordered_360nodes.txt') as f:
 #Also, divide and group the circle plot into the left and right hemisphere. 
 node_angles = mne.viz.circular_layout(labels, labels, group_boundaries=[0, len(labels) / 2])
 
+#define connectome data directory
+ConnectomeDir = 'V:/Vault/NECTAR_data/LENORE/derivatives/groups/F0/diff_data/cross-sectional/connectome/stats_results/weighted/ConnectomeWhole_linear_trend_stats/'
+#go into Connectome directory
+os.chdir(ConnectomeDir)
+
 #load in the connectome matrix. 
-connectome = np.loadtxt(os.path.join('outputWhole_connectome_linear_trend_fwe_1mpvalue_t2_360nodes.csv'), delimiter=',')
+connectome = np.loadtxt(os.path.join('outputWhole_360Nodes_connectome_linear_trend_fwe_1mpvalue_t2.csv'), delimiter=',')
 
 #plot the circle plot. Note that the number of label names need to match the number of node colours from the atlas.  
-#mne.viz.plot_connectivity_circle(connectome, labels, node_angles = node_angles, node_colors = node_colors)
-mne.viz.plot_connectivity_circle(connectome, labels, node_angles = node_angles, node_colors = node_colors, vmin = 0.94, vmax = 1, colorbar=False)
+mne.viz.plot_connectivity_circle(connectome, labels, node_angles = node_angles, node_colors = node_colors, vmin = 0, vmax = 10, colorbar=False)
+mne.viz.plot_connectivity_circle(connectome, labels, node_angles = node_angles, node_colors = node_colors, vmin = 0.949, vmax = 1, colorbar=False)
+
+
+#node_colors2[1]= [54,103,129,1]

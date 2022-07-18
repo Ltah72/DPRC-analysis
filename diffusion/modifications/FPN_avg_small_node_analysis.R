@@ -13,7 +13,7 @@
 # choose & set to your directory. This is where all of your participant 
 #whole-brain connectome files should be. 
 #setwd('/yourpathway/')
-setwd('V:/NECTAR_data/LENORE/test/connectome_test/')  
+setwd('V:/Vault/NECTAR_data/LENORE/derivatives/groups/F0/diff_data/cross-sectional/connectome/hcpmmpFiles/weighted/all_files/')  
 
 #define the 5 regions' nodes of interest
 nodes_LFront <- c(73,67,97,98,26,70,71,87,68,83,85,84,86)
@@ -40,9 +40,9 @@ files_all <- list.files()
 for(i in sequence(length(files_all))){
   
   #extract participant name
-  PAR_NAME = substr(files_all[i], 9, 23) 
+  PAR_NAME = substr(files_all[i], 10, 24) 
   fullname <- paste('FPN_SmallNodeData_', PAR_NAME, '.csv', sep='')
-  file_data <- read.csv(paste('hcpmmp1_', PAR_NAME, '.csv', sep=''),  header=FALSE)
+  file_data <- read.csv(paste('hcpmmp1w_', PAR_NAME, '.csv', sep=''),  header=FALSE)
   
   #create empty vectors and matrices to put values in
   Front_L_Front_R_vec <- vector()

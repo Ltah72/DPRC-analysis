@@ -48,39 +48,39 @@ sumClinicSite = 0;
 sumACE = 0;
 sumGroup = 0;
 NumParticipants = 0;
-for i = 2:length(txt)
-    sumAge = raw{i,7} + sumAge;
-    sumSex = raw{i,5} + sumSex;
-    sumGroup = raw{i,3} + sumGroup;
-    if contains(raw{i,1},Auckland)
+for i = 2:228
+    sumAge = raw{i,2} + sumAge;
+    sumSex = raw{i,7} + sumSex;
+    sumGroup = raw{i,5} + sumGroup;
+    if contains(raw{i,9},Auckland)
         sumClinicSite = 0 + sumClinicSite;
-    elseif contains(raw{i,1},Christchurch)
+    elseif contains(raw{i,9},Christchurch)
         sumClinicSite = 1 + sumClinicSite;
-    elseif contains(raw{i,1},Dunedin)
+    elseif contains(raw{i,9},Dunedin)
         sumClinicSite = 2 + sumClinicSite;
     end
-    if isnan(raw{i,6}) ~= 1
-        sumACE = raw{i,6} + sumACE;
-    end
+    %if isnan(raw{i,5}) ~= 1
+     %   sumACE = raw{i,6} + sumACE;
+    %end
     NumParticipants = NumParticipants + 1;
 end
 MeanAge = sumAge / NumParticipants;
 MeanSex = sumSex / NumParticipants;
 MeanClinicSite = sumClinicSite / NumParticipants;
-MeanACE = sumACE / (NumParticipants-7);
+%MeanACE = sumACE / (NumParticipants-7);
 MeanGroup = sumGroup / NumParticipants;
 
 %create your matrices for the study
 
 %Create design matrix with the covariates. Added covariates currently are:
 %age, sex, clinical site, and overall ACE-III score.
-fid = fopen('design_matrix.txt', 'w');
+fid = fopen('design_matrix_group_diff_cov-age_sex.txt', 'w');
 if (fid == -1)
     disp('Error in creating the text file')
 else
-    for i = 2:length(txt)
-        if raw{i,3} ~= 0 && raw{i,3} ~= -1 && raw{i,3} ~= 6
-            classification = raw{i,3};
+    for i = 2:228
+        if raw{i,5} ~= 0 && raw{i,5} ~= -1 && raw{i,5} ~= 6
+            classification = raw{i,5};
             if (classification == 1)
                 matrix_line = '1 0 0 0 0';
             elseif (classification == 2)
@@ -92,14 +92,14 @@ else
             elseif (classification == 5)
                 matrix_line = '0 0 0 0 1';
             end
-            Norm_Age = raw{i,7} - MeanAge;
-            Norm_Sex = raw{i,5} - MeanSex;
-            Norm_Group = raw{i,3} - MeanGroup;
-            if contains(raw{i,8},Auckland)
+            Norm_Age = raw{i,2} - MeanAge;
+            Norm_Sex = raw{i,7} - MeanSex;
+            Norm_Group = raw{i,5} - MeanGroup;
+            if contains(raw{i,9},Auckland)
                 Norm_ClinicSite = 0 - MeanClinicSite;
-            elseif contains(raw{i,8},Christchurch)
+            elseif contains(raw{i,9},Christchurch)
                 Norm_ClinicSite = 1 - MeanClinicSite;
-            elseif contains(raw{i,8},Dunedin)
+            elseif contains(raw{i,9},Dunedin)
                 Norm_ClinicSite = 2 - MeanClinicSite;
             end
             %if contains(raw{i,9},'F0')
@@ -108,10 +108,12 @@ else
              %   timepoint = '-1';
             %end 
             %Norm_ACE = raw{i,6} - MeanACE;
-            fprintf(fid, '%s', matrix_line);
+            %fprintf(fid, '%s', matrix_line);
+            fprintf(fid, '%s %.2f %.2f', matrix_line, Norm_Age, Norm_Sex);
             %fprintf(fid, '%.2f %.2f %.2f', Norm_Group, Norm_Age, Norm_Sex);
             %fprintf(fid, '%s %.2f %.2f %.2f', matrix_line, Norm_Age, Norm_Sex, Norm_ClinicSite);
             %fprintf(fid, '%s %s', timepoint, matrix_line);
+            %fprintf(fid, '%s %s %.2f %.2f', timepoint, matrix_line, Norm_Age, Norm_Sex);
             fprintf(fid, '\n');
         end
     end
@@ -261,13 +263,13 @@ fclose(fid);
 
 %Create design matrix with 3 groups (non-MCI, MCI, AD). Added covariates currently are:
 %age, sex, clinical site, and overall ACE-III score.
-fid = fopen('design_matrix_test_clinsite_diff_with-covars.txt', 'w');
+fid = fopen('design_matrix_3groups_group_diff.txt', 'w');
 if (fid == -1)
     disp('Error in creating the text file')
 else
     for i = 2:length(txt)
-        if raw{i,9} ~= 0 && raw{i,9} ~= -1 && raw{i,9} ~= 6
-            classification = raw{i,9};
+        if raw{i,5} ~= 0 && raw{i,5} ~= -1 && raw{i,5} ~= 6
+            classification = raw{i,5};
             if (classification == 1) || (classification == 2)
                 matrix_line = '1 0 0';
             elseif (classification == 3) || (classification == 4)
@@ -275,20 +277,20 @@ else
             elseif (classification == 5)
                 matrix_line = '0 0 1';
             end
-            Norm_Age = raw{i,5} - MeanAge;
-            Norm_Sex = raw{i,7} - MeanSex;
-            Norm_Group = raw{i,9} - MeanGroup;
-            if contains(raw{i,1},Auckland)
-                Norm_ClinicSite = 0 - MeanClinicSite;
-            elseif contains(raw{i,1},Christchurch)
-                Norm_ClinicSite = 1 - MeanClinicSite;
-            elseif contains(raw{i,1},Dunedin)
-                Norm_ClinicSite = 2 - MeanClinicSite;
-            end
+            %Norm_Age = raw{i,2} - MeanAge;
+            %Norm_Sex = raw{i,6} - MeanSex;
+            %Norm_Group = raw{i,5} - MeanGroup;
+            %if contains(raw{i,9},Auckland)
+             %   Norm_ClinicSite = 0 - MeanClinicSite;
+            %elseif contains(raw{i,9},Christchurch)
+            %    Norm_ClinicSite = 1 - MeanClinicSite;
+            %elseif contains(raw{i,9},Dunedin)
+             %   Norm_ClinicSite = 2 - MeanClinicSite;
+            %end
             %Norm_ACE = raw{i,10} - MeanACE;
-            %fprintf(fid, '%s', matrix_line);
+            fprintf(fid, '%s', matrix_line);
             %fprintf(fid, '%s %.2f', matrix_line, Norm_Age);
-            fprintf(fid, '%.2f %.2f %.2f', Norm_Group, Norm_Age, Norm_Sex);
+            %fprintf(fid, '%.2f %.2f %.2f', Norm_Group, Norm_Age, Norm_Sex);
             %fprintf(fid, '%s %.2f %.2f %.2f', matrix_line, Norm_Age, Norm_Sex, Norm_ClinicSite);
             fprintf(fid, '\n');
         end
@@ -297,7 +299,7 @@ else
 end
 
 %create your associated contrast matrix file (3 groups)
-fid2 = fopen('contrast_matrix_3-groups.txt', 'w');
+fid2 = fopen('contrast_matrix_3groups_group_diff.txt', 'w');
 if (fid2 == -1)
     disp('Error in creating the text file')
 else
