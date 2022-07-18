@@ -10,7 +10,7 @@
 
 
 #load libraries via pacman
-pacman::p_load(dplyr, ggplot2, psych, car, lsr, BayesFactor)
+pacman::p_load(dplyr, ggplot2, psych, car, lsr, BayesFactor, RColorBrewer)
 
 #add any necessary sources: 
 source("https://raw.githubusercontent.com/datavizpyr/data/master/half_flat_violinplot.R") #for raincloud graph
@@ -29,6 +29,8 @@ setwd('H:/ltah262/PhD/ExecutiveFunction/NeuroPsychAssessment/data/')
 
 #read in excel files (participant file) - choose cross-sectional or longitudinal analysis
 DPRC_demographics <- read.csv("cross-sectional_DPRC_neuropsych_data_lined_up_valid_participants.csv") #cross-sectional
+#for connectome data (n = 227)
+#DPRC_demographics <- read.csv("connectome_DPRC_neuropsych_data_lined_up_valid_participants.csv") #omit 2 participants from the dataset (DDPRC0025F0 (row 221) & DDPRC0029F0 (row 223))
 
 #rename first column 
 colnames(DPRC_demographics)[1] <-'ParticipantID'
@@ -477,7 +479,11 @@ shapiro.test(age_mod$residuals)
 # Clinical_site_FDC_mod <- lm(Mean_FDC ~ Clinical_site, data = covariates_data)
 # anova(Clinical_site_FDC_mod)
 
-
+#plot groups in a pie chart
+group_number <- c(35,60,55,52,27)
+myPalette <- brewer.pal(5,"Purples")
+#par(bg="transparent")
+pie(group_number, labels = c("C","SCD","aMCI","mMCI","AD"), border="white", col=myPalette)
 
 
 
@@ -511,15 +517,20 @@ age_descrip <- describeBy(DPRC_demographics$Age, list(DPRC_demographics$Group, D
 ACE_descrip <- describeBy(DPRC_demographics$ACE, list(DPRC_demographics$Group, DPRC_demographics$Timepoint))
 gender_descrip <- by(DPRC_demographics$Group, list(DPRC_demographics$Sex, DPRC_demographics$Timepoint), summary)
 clinsite_descrip <- by(DPRC_demographics$Group, list(DPRC_demographics$Clinical_site, DPRC_demographics$Timepoint), summary)
-#whole sample descriptives
-#Age
-mean(baseline_DPRC_demographics$Age)
-sd(baseline_DPRC_demographics$Age)
+
 
 ####---------------------plot & analyse the data to visualise-------------------------------####
 
 #take a subset of the DPRC data - only baseline data (F0) to display in graphs
 baseline_DPRC_demographics <- DPRC_demographics[ which(DPRC_demographics$Timepoint=='F0'), ]
+
+#whole sample descriptives
+#Age
+mean(baseline_DPRC_demographics$Age)
+sd(baseline_DPRC_demographics$Age)
+#ACE
+mean(baseline_DPRC_demographics$ACE)
+sd(baseline_DPRC_demographics$ACE)
 
 #plot age (violin plot) - only for baseline (F0)
 ggplot(baseline_DPRC_demographics, aes(x = Group, y = Age)) + 
