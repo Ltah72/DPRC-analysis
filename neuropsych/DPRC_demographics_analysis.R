@@ -485,11 +485,29 @@ myPalette <- brewer.pal(5,"Purples")
 #par(bg="transparent")
 pie(group_number, labels = c("C","SCD","aMCI","mMCI","AD"), border="white", col=myPalette)
 
+#plot groups in a circle plot (cross-sectional)
+group_names <- factor(group_names, levels = c("C","SCD","aMCI","mMCI","AD"))
+group_number <- c(35,60,55,52,27)
+df_circle_plot <- data.frame(group_names, group_number)
+ggplot(df_circle_plot, aes(x = group_names, y = group_number)) +
+  geom_col(aes(fill = group_names), color = NA) +
+  labs(x = "", y = "") +
+  coord_polar() +
+  guides(fill = FALSE)+
+  theme_classic()+
+  theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank())
 
-
-
-
-
+#plot groups in a circle plot (longitudinal)
+group_names <- factor(group_names, levels = c("C","SCD","aMCI","mMCI","AD"))
+group_number <- c(22,40,30,21,11)
+df_circle_plot <- data.frame(group_names, group_number)
+ggplot(df_circle_plot, aes(x = group_names, y = group_number)) +
+  geom_col(aes(fill = group_names), color = NA) +
+  labs(x = "", y = "") +
+  coord_polar() +
+  guides(fill = FALSE)+
+  theme_classic()+
+  theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank())
 
 
 
