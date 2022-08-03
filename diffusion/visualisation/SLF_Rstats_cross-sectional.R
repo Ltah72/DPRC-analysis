@@ -249,22 +249,222 @@ SLF1_FD_2covar_mod_R <- lm(mn_FD_SLF1_R ~ Group + Age + Sex, data = SLF_data)
 SLF2_FD_2covar_mod_R <- lm(mn_FD_SLF2_R ~ Group + Age + Sex, data = SLF_data)
 SLF3_FD_2covar_mod_R <- lm(mn_FD_SLF3_R ~ Group + Age + Sex, data = SLF_data)
 
-#test to see if the covariates and the treatment variable are independent from one another (assumption). 
-#for whole FD
-# ancova_sex_FD_check <- aov(mn_FD_SLF ~ Sex, data = SLF_data) 
-# summary(ancova_sex_FD_check)
-# ancova_age_FD_check <- aov(mn_FD_SLF ~ Age, data = SLF_data) 
-# summary(ancova_age_FD_check)
-# #for whole FC
-# ancova_sex_FC_check <- aov(mn_FC_SLF ~ Sex, data = SLF_data) 
-# summary(ancova_sex_FC_check)
-# ancova_age_FC_check <- aov(mn_FC_SLF ~ Age, data = SLF_data) 
-# summary(ancova_age_FC_check)
-# #for whole FDC
-# ancova_sex_FDC_check <- aov(mn_FDC_SLF ~ Sex, data = SLF_data) 
-# summary(ancova_sex_FDC_check)
-# ancova_age_FDC_check <- aov(mn_FDC_SLF ~ Age, data = SLF_data) 
-# summary(ancova_age_FDC_check)
+#test to see if the covariates (sex & age) and the treatment variable are independent from one another (assumption). 
+#for FD:
+  #whole FD
+  # sex_FD_check <- aov(mn_FD_SLF ~ Sex+Group, data = SLF_data)
+  # summary(sex_FD_check)
+  sex_whole_FD_check <- lm(mn_FD_SLF ~ Sex+Group, data = SLF_data)
+  anova(sex_whole_FD_check)
+  # t.test(SLF_data$mn_FD_SLF ~ SLF_data$Sex, var.equal = FALSE) #you wouldn't run t-test if you want to include a covariate (e.g., Group) into your model - run ANCOVA
+  age_whole_FD_check <- lm(mn_FD_SLF ~ Age+Group, data = SLF_data)
+  anova(age_whole_FD_check)
+  #left SLF
+  #sex
+  sex_L_FD_check <- lm(mn_FD_SLF_L ~ Sex+Group, data = SLF_data)
+  anova(sex_L_FD_check)
+  #age
+  age_L_FD_check <- lm(mn_FD_SLF_L ~ Age+Group, data = SLF_data)
+  anova(age_L_FD_check)
+  #right SLF
+  #sex
+  sex_R_FD_check <- lm(mn_FD_SLF_R ~ Sex+Group, data = SLF_data)
+  anova(sex_R_FD_check)
+  #age
+  age_R_FD_check <- lm(mn_FD_SLF_R ~ Age+Group, data = SLF_data)
+  anova(age_R_FD_check)
+  #left SLF 1
+  #sex
+  sex_L1_FD_check <- lm(mn_FD_SLF1_L ~ Sex+Group, data = SLF_data)
+  anova(sex_L1_FD_check) #not sig. - no sex diff
+  #age
+  age_L1_FD_check <- lm(mn_FD_SLF1_L ~ Age+Group, data = SLF_data)
+  anova(age_L1_FD_check) #not sig. - no age diff
+  #left SLF 2
+  #sex
+  sex_L2_FD_check <- lm(mn_FD_SLF2_L ~ Sex+Group, data = SLF_data)
+  anova(sex_L2_FD_check) 
+  #age
+  age_L2_FD_check <- lm(mn_FD_SLF2_L ~ Age+Group, data = SLF_data)
+  anova(age_L2_FD_check) 
+  #left SLF 3
+  #sex
+  sex_L3_FD_check <- lm(mn_FD_SLF3_L ~ Sex+Group, data = SLF_data)
+  anova(sex_L3_FD_check) 
+  #age
+  age_L3_FD_check <- lm(mn_FD_SLF3_L ~ Age+Group, data = SLF_data)
+  anova(age_L3_FD_check) 
+  #right SLF 1
+  #sex
+  sex_R1_FD_check <- lm(mn_FD_SLF1_R ~ Sex+Group, data = SLF_data)
+  anova(sex_R1_FD_check) 
+  #age
+  age_R1_FD_check <- lm(mn_FD_SLF1_R ~ Age+Group, data = SLF_data)
+  anova(age_R1_FD_check)
+  #right SLF 2
+  #sex
+  sex_R2_FD_check <- lm(mn_FD_SLF2_R ~ Sex+Group, data = SLF_data)
+  anova(sex_R2_FD_check) 
+  #age
+  age_R2_FD_check <- lm(mn_FD_SLF2_R ~ Age+Group, data = SLF_data)
+  anova(age_R2_FD_check) #not sig. - no age diff
+  #right SLF 3
+  #sex
+  sex_R3_FD_check <- lm(mn_FD_SLF3_R ~ Sex+Group, data = SLF_data)
+  anova(sex_R3_FD_check) 
+  #age
+  age_R3_FD_check <- lm(mn_FD_SLF3_R ~ Age+Group, data = SLF_data)
+  anova(age_R3_FD_check) #not sig. - no age diff
+  
+#for FC:
+  #whole FC
+  #sex
+  sex_whole_FC_check <- lm(mn_FC_SLF ~ Sex+Group, data = SLF_data)
+  anova(sex_whole_FC_check)
+  #age
+  age_whole_FC_check <- lm(mn_FC_SLF ~ Age+Group, data = SLF_data)
+  anova(age_whole_FC_check) #not sig. - no age diff
+  #left SLF
+  #sex
+  sex_L_FC_check <- lm(mn_FC_SLF_L ~ Sex+Group, data = SLF_data)
+  anova(sex_L_FC_check)
+  #age
+  age_L_FC_check <- lm(mn_FC_SLF_L ~ Age+Group, data = SLF_data)
+  anova(age_L_FC_check) #not sig. - no age diff
+  #right SLF
+  #sex
+  sex_R_FC_check <- lm(mn_FC_SLF_R ~ Sex+Group, data = SLF_data)
+  anova(sex_R_FC_check) 
+  #age
+  age_R_FC_check <- lm(mn_FC_SLF_R ~ Age+Group, data = SLF_data)
+  anova(age_R_FC_check) #not sig. - no age diff
+  #left SLF 1
+  #sex
+  sex_L1_FC_check <- lm(mn_FC_SLF1_L ~ Sex+Group, data = SLF_data)
+  anova(sex_L1_FC_check)
+  #age
+  age_L1_FC_check <- lm(mn_FC_SLF1_L ~ Age+Group, data = SLF_data)
+  anova(age_L1_FC_check) 
+  #left SLF 2
+  #sex
+  sex_L2_FC_check <- lm(mn_FC_SLF2_L ~ Sex+Group, data = SLF_data)
+  anova(sex_L2_FC_check) 
+  #age
+  age_L2_FC_check <- lm(mn_FC_SLF2_L ~ Age+Group, data = SLF_data)
+  anova(age_L2_FC_check) #not sig. - no age diff
+  #left SLF 3
+  #sex
+  sex_L3_FC_check <- lm(mn_FC_SLF3_L ~ Sex+Group, data = SLF_data)
+  anova(sex_L3_FC_check) 
+  #age
+  age_L3_FC_check <- lm(mn_FC_SLF3_L ~ Age+Group, data = SLF_data)
+  anova(age_L3_FC_check) #not sig. - no age diff
+  #right SLF 1
+  #sex
+  sex_R1_FC_check <- lm(mn_FC_SLF1_R ~ Sex+Group, data = SLF_data)
+  anova(sex_R1_FC_check) 
+  #age
+  age_R1_FC_check <- lm(mn_FC_SLF1_R ~ Age+Group, data = SLF_data)
+  anova(age_R1_FC_check)
+  #right SLF 2
+  #sex
+  sex_R2_FC_check <- lm(mn_FC_SLF2_R ~ Sex+Group, data = SLF_data)
+  anova(sex_R2_FC_check) 
+  #age
+  age_R2_FC_check <- lm(mn_FC_SLF2_R ~ Age+Group, data = SLF_data)
+  anova(age_R2_FC_check) #not sig. - no age diff
+  #right SLF 3
+  #sex
+  sex_R3_FC_check <- lm(mn_FC_SLF3_R ~ Sex+Group, data = SLF_data)
+  anova(sex_R3_FC_check) 
+  #age
+  age_R3_FC_check <- lm(mn_FC_SLF3_R ~ Age+Group, data = SLF_data)
+  anova(age_R3_FC_check) #not sig. - no age diff
+
+#for FDC:
+  #whole FDC
+  #sex
+  sex_whole_FDC_check <- lm(mn_FDC_SLF ~ Sex+Group, data = SLF_data)
+  anova(sex_whole_FDC_check) #not sig. - no sex diff
+  #age
+  age_whole_FDC_check <- lm(mn_FDC_SLF ~ Age+Group, data = SLF_data)
+  anova(age_whole_FDC_check)
+  #left SLF
+  #sex
+  sex_L_FDC_check <- lm(mn_FDC_SLF_L ~ Sex+Group, data = SLF_data)
+  anova(sex_L_FDC_check) #not sig. - no sex diff
+  #age
+  age_L_FDC_check <- lm(mn_FDC_SLF_L ~ Age+Group, data = SLF_data)
+  anova(age_L_FDC_check) 
+  #right SLF
+  #sex
+  sex_R_FDC_check <- lm(mn_FDC_SLF_R ~ Sex+Group, data = SLF_data)
+  anova(sex_R_FDC_check) #not sig. - no sex diff
+  #age
+  age_R_FDC_check <- lm(mn_FDC_SLF_R ~ Age+Group, data = SLF_data)
+  anova(age_R_FDC_check)
+  #left SLF 1
+  #sex
+  sex_L1_FDC_check <- lm(mn_FDC_SLF1_L ~ Sex+Group, data = SLF_data)
+  anova(sex_L1_FDC_check) 
+  #age
+  age_L1_FDC_check <- lm(mn_FDC_SLF1_L ~ Age+Group, data = SLF_data)
+  anova(age_L1_FDC_check) #not sig. - no age diff
+  #left SLF 2
+  #sex
+  sex_L2_FDC_check <- lm(mn_FDC_SLF2_L ~ Sex+Group, data = SLF_data)
+  anova(sex_L2_FDC_check) #not sig. - no sex diff
+  #age
+  age_L2_FDC_check <- lm(mn_FDC_SLF2_L ~ Age+Group, data = SLF_data)
+  anova(age_L2_FDC_check)
+  #left SLF 3
+  #sex
+  sex_L3_FDC_check <- lm(mn_FDC_SLF3_L ~ Sex+Group, data = SLF_data)
+  anova(sex_L3_FDC_check) #not sig. - no sex diff
+  #age
+  age_L3_FDC_check <- lm(mn_FDC_SLF3_L ~ Age+Group, data = SLF_data)
+  anova(age_L3_FDC_check)
+  #right SLF 1
+  #sex
+  sex_R1_FDC_check <- lm(mn_FDC_SLF1_R ~ Sex+Group, data = SLF_data)
+  anova(sex_R1_FDC_check) #not sig. - no sex diff
+  #age
+  age_R1_FDC_check <- lm(mn_FDC_SLF1_R ~ Age+Group, data = SLF_data)
+  anova(age_R1_FDC_check)
+  #right SLF 2
+  #sex
+  sex_R2_FDC_check <- lm(mn_FDC_SLF2_R ~ Sex+Group, data = SLF_data)
+  anova(sex_R2_FDC_check) 
+  #age
+  age_R2_FDC_check <- lm(mn_FDC_SLF2_R ~ Age+Group, data = SLF_data)
+  anova(age_R2_FDC_check) 
+  #right SLF 3
+  #sex
+  sex_R3_FDC_check <- lm(mn_FDC_SLF3_R ~ Sex+Group, data = SLF_data)
+  anova(sex_R3_FDC_check) #not sig. - no sex diff
+  #age
+  age_R3_FDC_check <- lm(mn_FDC_SLF3_R ~ Age+Group, data = SLF_data)
+  anova(age_R3_FDC_check) 
+  
+# #means examples
+#   SLF3_FD_L_descrip <- describeBy(SLF_data$mn_FD_SLF3_R, SLF_data$Sex)
+#   SLF_FD_whole_descrip <- describeBy(SLF_data$mn_FD_SLF, SLF_data$Sex)
+#   
+# #plotting example
+#   #whole SLF FD (raincloud plot)
+#   ggplot(SLF_data, aes(x = Group, y = mn_FDC_SLF, fill = Sex)) + 
+#     geom_flat_violin(position = position_nudge(x = .2, y = 0), alpha = .8) +
+#     geom_point(aes(y = mn_FDC_SLF, color = Sex), position = position_jitter(width = .15), size = .5, alpha = 0.8) +
+#     geom_boxplot(width = 0.1, fill = "white", outlier.size = 1, aes(colour = Sex)) + 
+#     stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Sex)) + 
+#     xlab("Sex") + 
+#     ylab("Fibre Density Cross-section (FDC)") +
+#     scale_x_discrete(labels = c("1" = "Control", "2" = "SCD", "3" = "aMCI", "4" = "mMCI", "5" = "AD")) + 
+#     theme_classic() +
+#     #theme(legend.position = "none") +
+#     coord_flip()
+#   
+
 
 #median
 #SLF_FD_mod <- lm(md_FD ~ Group, data = SLF_data)
@@ -470,14 +670,14 @@ summary(post_hoc_SLF_R_FD_ancova_mod)
 confint(post_hoc_SLF_R_FD_ancova_mod)
 #Left SLF 1, 2, and 3
 post_hoc_SLF2_L_FD_ancova_mod <- glht(SLF2_FD_2covar_mod_L, linfct = mcp(Group = "Tukey"))
-summary(post_hoc_SLF2_L_FD_ancova_mod)
+summary(post_hoc_SLF2_L_FD_ancova_mod) #not sig. 
 confint(post_hoc_SLF2_L_FD_ancova_mod)
 post_hoc_SLF3_L_FD_ancova_mod <- glht(SLF3_FD_2covar_mod_L, linfct = mcp(Group = "Tukey"))
 summary(post_hoc_SLF3_L_FD_ancova_mod)
 confint(post_hoc_SLF3_L_FD_ancova_mod)
 #Right SLF 1, 2, and 3
 post_hoc_SLF1_R_FD_ancova_mod <- glht(SLF1_FD_2covar_mod_R, linfct = mcp(Group = "Tukey"))
-summary(post_hoc_SLF1_R_FD_ancova_mod)
+summary(post_hoc_SLF1_R_FD_ancova_mod) #not sig.
 confint(post_hoc_SLF1_R_FD_ancova_mod)
 post_hoc_SLF2_R_FD_ancova_mod <- glht(SLF2_FD_2covar_mod_R, linfct = mcp(Group = "Tukey"))
 summary(post_hoc_SLF2_R_FD_ancova_mod)
@@ -563,6 +763,27 @@ ggplot(SLF_FD_95CI_2covar_data, aes(x=SLF_group_number, y=estimate_diff, colour=
     scale_x_discrete(labels = c("1" = "Whole SLF","3" = "Right SLF","5" = "Left SLF 3", "7" = "Right SLF 2", "8" = "Right SLF 3"))+
     theme_classic() 
     
+
+#plot 95% Confidence Interval (separated confidence intervals and separated SLF tracts only) (sex & age covariates)
+SLF_FD_95CI_data_no_combined_SLF <- data.frame(SLF_group_number = c('1','1','1','2','3','3'),
+                                               SLF_type = c('Left_SLF3','Left_SLF3','Left_SLF3','Right_SLF2','Right_SLF3', 'Right_SLF3'),
+                                               Group_contrast = c('C > SCD','C > mMCI','C > AD','C > mMCI','C > SCD','C > mMCI'),
+                                               estimate_diff = c(0.0131557,0.0157707,0.0173792,0.0201441,0.0141640,0.0189842),
+                                               lower = c(0.0257656,0.0289329,0.0332533,0.0396806,0.0278590,0.0332791), 
+                                               upper = c(0.0005459,0.0026086,0.0015050,0.0006075,0.0004690,0.0046894))  
+
+#plot data
+ggplot(SLF_FD_95CI_data_no_combined_SLF, aes(x=SLF_group_number, y=estimate_diff, colour=Group_contrast))+
+  geom_point(position = position_dodge(width=0.5))+
+  geom_errorbar(aes(ymin=lower, ymax=upper), position = position_dodge(width=0.5))+
+  xlab("SLF Tract") + 
+  ylab("95% Confidence Interval")+
+  scale_x_discrete(labels = c("1" = "Left SLF 3", "2" = "Right SLF 2", "3" = "Right SLF 3"))+
+  scale_color_manual(values = c("#FF00FF","#33CCFF","#999900"))+
+  labs(colour='Group Contrast')+   
+  theme_classic()+
+  theme(axis.title.x = element_text(size = 22),axis.title.y = element_text(size = 22),axis.text.x = element_text(size = 18),axis.text.y = element_text(size = 18))+
+  coord_flip()
 
 
 # #for ANCOVA 
@@ -1336,18 +1557,22 @@ ggplot(SLF_FDC_95CI_data, aes(x=SLF_group_number, y=estimate_diff, colour=Group_
 #Create dataset: 
 SLF_FDC_95CI_2covar_data <- data.frame(SLF_group_number = c('1','1'),
                                 SLF_type = c('Right_SLF3','Right_SLF3'),
-                                Group_contrast = c('CvSCD', 'CvaMCI'),
+                                Group_contrast = c('C > SCD', 'C > aMCI'),
                                 estimate_diff = c(0.0345616,0.0317537),
                                 lower = c(0.0647873,0.0630815), 
                                 upper = c(0.0043359,0.0004259)) 
 #plot data
 ggplot(SLF_FDC_95CI_2covar_data, aes(x=SLF_group_number, y=estimate_diff, colour=Group_contrast))+
-    geom_point()+
-    geom_errorbar(aes(ymin=lower, ymax=upper))+
+    geom_point(position = position_dodge(width=0.5))+
+    geom_errorbar(aes(ymin=lower, ymax=upper), position = position_dodge(width=0.5))+
     xlab("SLF Tract") + 
     ylab("95% Confidence Interval")+
     scale_x_discrete(labels = c("1" = "Right SLF 3"))+
-    theme_classic() 
+    scale_color_manual(values = c("#33CC66","#999900"))+
+    labs(colour='Group Contrast')+      
+    theme_classic()+
+    theme(axis.title.x = element_text(size = 22),axis.title.y = element_text(size = 22),axis.text.x = element_text(size = 18),axis.text.y = element_text(size = 18))+
+    coord_flip()
 
 #calculate the effect size (eta-squared)
 etaSquared(SLF_FDC_mod)
@@ -1993,6 +2218,33 @@ ggplot(SLF_data_FDC_long, aes(x = SLF_type, y = FDC_metric, fill = Group)) +
   theme(axis.title.x = element_text(size = 22),axis.title.y = element_text(size = 22),axis.text.x = element_text(size = 18),axis.text.y = element_text(size = 18))+
   coord_flip()
 
+#just for left SLF 2 right SLF 3 FDC (for sex and age covariates)
+#just right SLF3
+SLF_data_FDC <- dplyr::select(SLF_data, 
+                              ParticipantID,
+                              Group,
+                              mn_FDC_SLF2_L,
+                              mn_FDC_SLF3_R)
+
+SLF_data_FDC_long <- gather(SLF_data_FDC, 
+                            "SLF_type",
+                            "FDC_metric",
+                            mn_FDC_SLF2_L,
+                            mn_FDC_SLF3_R)
+#just for left SLF 2 right SLF 3 FDC (for sex and age covariates)
+ggplot(SLF_data_FDC_long, aes(x = SLF_type, y = FDC_metric, fill = Group)) + 
+  geom_flat_violin(scale="width", alpha = .8, position = position_dodge(width=0.8)) +
+  geom_boxplot(width = 0.1, fill = "white", outlier.size = 0, aes(colour = Group), position = position_dodge(width=0.8)) + 
+  stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Group), position = position_dodge(width=0.8)) + 
+  guides(colour=FALSE)+
+  guides(fill = guide_legend(override.aes = list(shape = NA)))+
+  xlab("SLF Tract") + 
+  ylab("Fibre Density Cross-section (FDC)") +
+  scale_x_discrete(labels = c("mn_FDC_SLF2_L" = "Left SLF 2", "mn_FDC_SLF3_R" = "Right SLF 3")) + 
+  scale_fill_discrete(labels=c("1" = "C", "2" = "SCD", "3"= "aMCI", "4"= "mMCI", "5" = "AD"))+
+  theme_classic()+
+  theme(axis.title.x = element_text(size = 22),axis.title.y = element_text(size = 22),axis.text.x = element_text(size = 18),axis.text.y = element_text(size = 18))+
+  coord_flip()
 
 
 ###--------------- Correlation tests(SLF vs. neuropsych) -------------------####

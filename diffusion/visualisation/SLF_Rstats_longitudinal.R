@@ -731,6 +731,19 @@ SLF_FC_95CI_data_no_combined_SLF <- data.frame(SLF_group_number = c('1','2','3')
                                                estimate_diff = c(-0.007329525,-0.00368148,-0.007308974)*-1,
                                                lower = c(-0.010635067,-0.0070563139,-0.010512332)*-1, 
                                                upper = c(-0.004023983,-0.0003066471,-0.004105617)*-1)  
+
+
+# #FC 95% CI (with sex and age as covariates)
+# #plot 95% Confidence Interval (separated confidence intervals and separated SLF tracts only)
+# SLF_FC_95CI_data_no_combined_SLF <- data.frame(SLF_group_number = c('1','2','3'),
+#                                                SLF_type = c('Left_SLF1','Left_SLF2','Right_SLF1'),
+#                                                Timepoint_contrast = c('F0 > F2','F0 > F2','F0 > F2'),
+#                                                estimate_diff = c(-0.007329525,-0.00368148,-0.007308974)*-1,#diff. between the means
+#                                                lower = c(-0.019460800,-0.0169412925,-0.0204636577)*-1, 
+#                                                upper = c(-0.0007652705,0.001953156,-0.002335503)*-1)  #why is the second one positive??? not sig. then
+# 
+
+
 #plot data
 ggplot(SLF_FC_95CI_data_no_combined_SLF, aes(x=SLF_group_number, y=estimate_diff, colour=Timepoint_contrast))+
   geom_point(position = position_dodge(width=0.5))+
@@ -741,6 +754,7 @@ ggplot(SLF_FC_95CI_data_no_combined_SLF, aes(x=SLF_group_number, y=estimate_diff
   scale_color_manual(values = ("#999999"))+
   labs(colour='Time Point Contrast')+   
   theme_classic()+
+  theme(axis.title.x = element_text(size = 22),axis.title.y = element_text(size = 22),axis.text.x = element_text(size = 18),axis.text.y = element_text(size = 18))+
   coord_flip()
 
 #FDC 95% CI
@@ -761,6 +775,7 @@ ggplot(SLF_FDC_95CI_data_no_combined_SLF, aes(x=SLF_group_number, y=estimate_dif
   scale_color_manual(values = ("#999999"))+
   labs(colour='Time Point Contrast')+   
   theme_classic()+
+  theme(axis.title.x = element_text(size = 22),axis.title.y = element_text(size = 22),axis.text.x = element_text(size = 18),axis.text.y = element_text(size = 18))+
   coord_flip()
 
 #Run ANCOVA With covariates (age)
@@ -930,6 +945,8 @@ aov_SLF1_L_FD_2covar_mod<- aov(mn_FD_SLF1_L ~ Group*Timepoint + Error(Individual
 summary(aov_SLF1_L_FD_2covar_mod)
 aov_SLF1_L_FC_2covar_mod<- aov(mn_FC_SLF1_L ~ Group*Timepoint + Error(Individual_number/Timepoint) + Age + Sex, data=SLF_data)
 summary(aov_SLF1_L_FC_2covar_mod)
+#95%CI
+confint(aov_SLF1_L_FC_2covar_mod$`Individual_number:Timepoint`)
 aov_SLF1_L_FDC_2covar_mod<- aov(mn_FDC_SLF1_L ~ Group*Timepoint + Error(Individual_number/Timepoint) + Age + Sex, data=SLF_data)
 summary(aov_SLF1_L_FDC_2covar_mod)
 #Left SLF 2
@@ -937,6 +954,8 @@ aov_SLF2_L_FD_2covar_mod<- aov(mn_FD_SLF2_L ~ Group*Timepoint + Error(Individual
 summary(aov_SLF2_L_FD_2covar_mod) 
 aov_SLF2_L_FC_2covar_mod<- aov(mn_FC_SLF2_L ~ Group*Timepoint + Error(Individual_number/Timepoint) + Age + Sex, data=SLF_data)
 summary(aov_SLF2_L_FC_2covar_mod)
+#95%CI
+confint(aov_SLF2_L_FC_2covar_mod$`Individual_number:Timepoint`)
 aov_SLF2_L_FDC_2covar_mod<- aov(mn_FDC_SLF2_L ~ Group*Timepoint + Error(Individual_number/Timepoint) + Age + Sex, data=SLF_data)
 summary(aov_SLF2_L_FDC_2covar_mod) 
 #Left SLF 3
@@ -951,6 +970,8 @@ aov_SLF1_R_FD_2covar_mod<- aov(mn_FD_SLF1_R ~ Group*Timepoint + Error(Individual
 summary(aov_SLF1_R_FD_2covar_mod)
 aov_SLF1_R_FC_2covar_mod<- aov(mn_FC_SLF1_R ~ Group*Timepoint + Error(Individual_number/Timepoint) + Age + Sex, data=SLF_data)
 summary(aov_SLF1_R_FC_2covar_mod)
+#95%CI
+confint(aov_SLF1_R_FC_2covar_mod$`Individual_number:Timepoint`)
 aov_SLF1_R_FDC_2covar_mod<- aov(mn_FDC_SLF1_R ~ Group*Timepoint + Error(Individual_number/Timepoint) + Age + Sex, data=SLF_data)
 summary(aov_SLF1_R_FDC_2covar_mod)
 #Right SLF 2
@@ -1031,7 +1052,7 @@ post_hoc_aov_SLF_R_FC_2covar_mod <- lme(mn_FC_SLF_R ~ Group*Timepoint+Age+Sex, r
 summary(glht(post_hoc_aov_SLF_R_FC_2covar_mod, linfct=mcp(Timepoint="Tukey")))
 #Left SLF1 FC
 post_hoc_aov_SLF1_L_FC_2covar_mod <- lme(mn_FC_SLF1_L ~ Group*Timepoint+Age+Sex, random = ~1 | Individual_number/Timepoint, data=SLF_data)
-summary(glht(post_hoc_aov_SLF1_L_FC_2covar_mod, linfct=mcp(Group="Tukey")))
+summary(glht(post_hoc_aov_SLF1_L_FC_2covar_mod, linfct=mcp(Group="Tukey"))) #not sig.
 summary(glht(post_hoc_aov_SLF1_L_FC_2covar_mod, linfct=mcp(Timepoint="Tukey")))
 #Left SLF1 FDC
 post_hoc_aov_SLF1_L_FDC_2covar_mod <- lme(mn_FDC_SLF1_L ~ Group*Timepoint+Age+Sex, random = ~1 | Individual_number/Timepoint, data=SLF_data)
@@ -1076,7 +1097,7 @@ a.tes(t=t_value_effect_size$test$tstat['2 - 1'],n.1=group_number['1','n'],n.2=gr
 
 #Right SLF2 FC
 post_hoc_aov_SLF2_R_FC_2covar_mod <- lme(mn_FC_SLF2_R ~ Group*Timepoint+Age+Sex, random = ~1 | Individual_number/Timepoint, data=SLF_data)
-summary(glht(post_hoc_aov_SLF2_R_FC_2covar_mod, linfct=mcp(Timepoint="Tukey")))
+summary(glht(post_hoc_aov_SLF2_R_FC_2covar_mod, linfct=mcp(Group="Tukey"))) #not sig.
 #Right SLF3 FD
 post_hoc_aov_SLF3_R_FD_2covar_mod <- lme(mn_FD_SLF3_R ~ Group*Timepoint+Age+Sex, random = ~1 | Individual_number/Timepoint, data=SLF_data)
 summary(glht(post_hoc_aov_SLF3_R_FD_2covar_mod, linfct=mcp(Group="Tukey")))

@@ -14,7 +14,7 @@ function QC_CreateFiles(startdir, period)
 %Date: 18/08/20
 
 
-cd ([startdir '/derivatives/' period '/diff_data/dwiqc/']);
+cd ([startdir '/derivatives/groups/' period '/diff_data/dwiqc/']);
 
 %create BestB0 text file with header line
 fid = fopen('BestB0.txt', 'w');
