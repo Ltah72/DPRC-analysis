@@ -8,7 +8,7 @@
 
 #------------------------------Setting up--------------------------------------#
 #install packages/open libraries
-pacman::p_load(ggplot2, ppcor, dplyr, tidyr)
+pacman::p_load(ggplot2, ppcor, dplyr, tidyr,corrplot)
 
 #first read in the neuropsych data file: 
 #setwd('/yourpathway/')
@@ -58,24 +58,88 @@ Connectome_data <- cbind(DPRC_neuropsych_data,small_node_data)
 
 #### ----------------------- PLS visualisation ---------------------------- ####
 
+# 
+# #for all 5 inhibition tests data (barplot):
+# neuropsych_test_names_PLS <- c('TMT-B/TMT-A','Interference Effect','Category Switching','HayTime2-HayTime1','HayTotError')
+# PLS_FD_bootstrap_corr_values<- c(0.16374236,
+#                                  0.19805148,
+#                                  0.19091377,
+#                                  0.040685397,
+#                                  0.059221849)*-1 
+# ulimit_PLS_FD_barplot <- c(0.303537055850029,
+#                            0.326308354735375,
+#                            0.301895633339882,
+#                            0.174151211977005,
+#                            0.168247200548649)*-1
+# llimit_PLS_FD_barplot <- c(0.0683764740824699,
+#                            0.0977761261165142,
+#                            0.110962077975273,
+#                            -0.0429181344807148,
+#                            -0.00895849987864494)*-1
+# 
+# significance_legend<-c('Reliably Contributes to Latent Variable','Reliably Contributes to Latent Variable','Reliably Contributes to Latent Variable','Does Not Reliably Contribute to Latent Variable','Does Not Reliably Contribute to Latent Variable')
+# df_PLS_FD_barplot <- data.frame(neuropsych_test_names_PLS,significance_legend,PLS_FD_bootstrap_corr_values,ulimit_PLS_FD_barplot,llimit_PLS_FD_barplot)
+# #convert to factor variables
+# df_PLS_FD_barplot$neuropsych_test_names_PLS <- factor(df_PLS_FD_barplot$neuropsych_test_names_PLS, levels=c('TMT-B/TMT-A','Interference Effect','Category Switching','HayTime2-HayTime1','HayTotError'))
+# df_PLS_FD_barplot$significance_legend <- factor(df_PLS_FD_barplot$significance_legend, levels=c('Reliably Contributes to Latent Variable','Does Not Reliably Contribute to Latent Variable'))
+# #barplot(PLS_FD_bootstrap_corr_values, xlab = "Neuropsychological Assessment", ylab = "Bootstrap Correlation Value")
+# ggplot(data=df_PLS_FD_barplot,(aes(x=neuropsych_test_names_PLS, y=PLS_FD_bootstrap_corr_values,fill=significance_legend)))+
+#   geom_bar(stat="identity")+
+#   geom_errorbar(aes(x=neuropsych_test_names_PLS,ymin=llimit_PLS_FD_barplot,ymax=ulimit_PLS_FD_barplot))+
+#   xlab("Neuropsychological Assessment") + 
+#   ylab("Correlation Values") +
+#   scale_fill_manual(values=c("steelblue","light grey"))+
+#   labs(fill=NULL)+
+#   theme_classic()+
+#   theme(axis.title.x = element_text(size = 22),axis.title.y = element_text(size = 22),axis.text.x = element_text(size = 18,angle = 45, vjust = 1, hjust=1),axis.text.y = element_text(size = 18))
+# 
+# 
+# 
+# #for inhibition 5 FD:
+# PLS_output_FD_inhib5_data <- c(-0.084862299,	0.093119934,	0.14467922,	0.051879663,	0.18415737,	  -0.040196970,	-0.047457095,	-0.068977371,	0.066325560,	0.045272447,
+#                                -0.074255034,	0.13599660,	  0.17942502,	0.050874077,	0.082799844,	-0.061809991,	-0.017830579,	-0.095650934,	0.13915233,	0.068397991,
+#                                -0.018515429,	0.11484726,	  0.18373598,	0.10852513,	  0.17443596,	  -0.0013519998, 0.050445873,	-0.055006236,	0.090899222,	0.067352593,
+#                                -0.084564656,	0.025944147,	0.056567095,-0.090561010,	-0.020252027,	-0.022282815,	-0.056460965,	-0.044417012,	-0.021510171,	-0.090607285,
+#                                -0.0060276738,	0.030635329,	0.051555585, 0.10613545,	0.091820262,	-0.050619118,	 0.034042846,	 0.086551219,	0.038677871,	-0.015485675)
+# #create correlation matrix
+# PLS_FD_inhib5_corr_matrix <- matrix(PLS_output_FD_inhib5_data,nrow=10,ncol=5)
+# #add in row and column names to the matrix
+# colnames(PLS_FD_inhib5_corr_matrix) <-c('TMT-B/TMT-A','Interference Effect','Category Switching','HayTime2-HayTime1','HayTotError')
+# rownames(PLS_FD_inhib5_corr_matrix) <-c("L-DLPFC--R-DLPFC","L-DLPFC--MidCing",
+#                                         "R-DLPFC--MidCing","L-DLPFC--L-Par",
+#                                         "R-DLPFC--R-Par","L-DLPFC--R-Par",
+#                                         "R-DLPFC--L-Par","L-Par--R-Par",
+#                                         "L-Par--MidCing","R-Par--MidCing")
+# #plot correlation heatmap
+# corrplot(PLS_FD_inhib5_corr_matrix, method = "color", tl.col = "black",tl.cex = 1.5, tl.srt = 45,col=colorRampPalette(c("blue","white","red"))(200),is.corr=FALSE)
+# 
+# 
+# #average correlation (effect size) for significant FBC:
+# #for R-DLPFC--MidCing (**)
+# RDLPFC_MidCing_avg_corr <- mean(c(0.14467922,0.17942502,0.18373598,0.056567095,0.051555585))
+# RDLPFC_MidCing_avg_corr 
+# 
+# 
 
+
+#with age residualisation in behavioural data: 
 #for all 5 inhibition tests data (barplot):
 neuropsych_test_names_PLS <- c('TMT-B/TMT-A','Interference Effect','Category Switching','HayTime2-HayTime1','HayTotError')
-PLS_FD_bootstrap_corr_values<- c(0.16374236,
-                                 0.19805148,
-                                 0.19091377,
-                                 0.040685397,
-                                 0.059221849)*-1 
-ulimit_PLS_FD_barplot <- c(0.303537055850029,
-                           0.326308354735375,
-                           0.301895633339882,
-                           0.174151211977005,
-                           0.168247200548649)*-1
-llimit_PLS_FD_barplot <- c(0.0683764740824699,
-                           0.0977761261165142,
-                           0.110962077975273,
-                           -0.0429181344807148,
-                           -0.00895849987864494)*-1
+PLS_FD_bootstrap_corr_values<- c(0.16250694,
+                                 0.19657433,
+                                 0.18980166,
+                                 0.040094685,
+                                 0.059033569)*-1 
+ulimit_PLS_FD_barplot <- c(0.294291988015175,
+                           0.326551437377930,
+                           0.299137398600578,
+                           0.177481994032860,
+                           0.169733658432961)*-1
+llimit_PLS_FD_barplot <- c(0.0749692283570766,
+                           0.0986757390201092,
+                           0.112035602331162,
+                           -0.0423301868140698,
+                           -0.00961493887007237)*-1
 
 significance_legend<-c('Reliably Contributes to Latent Variable','Reliably Contributes to Latent Variable','Reliably Contributes to Latent Variable','Does Not Reliably Contribute to Latent Variable','Does Not Reliably Contribute to Latent Variable')
 df_PLS_FD_barplot <- data.frame(neuropsych_test_names_PLS,significance_legend,PLS_FD_bootstrap_corr_values,ulimit_PLS_FD_barplot,llimit_PLS_FD_barplot)
@@ -91,26 +155,36 @@ ggplot(data=df_PLS_FD_barplot,(aes(x=neuropsych_test_names_PLS, y=PLS_FD_bootstr
   scale_fill_manual(values=c("steelblue","light grey"))+
   labs(fill=NULL)+
   theme_classic()+
-  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1)) #adjust x-labels
+  theme(axis.title.x = element_text(size = 22),axis.title.y = element_text(size = 22),axis.text.x = element_text(size = 18,angle = 45, vjust = 1, hjust=1),axis.text.y = element_text(size = 18))
+
 
 
 #for inhibition 5 FD:
-PLS_output_FD_inhib5_data <- c(-0.084862299,	0.093119934,	0.14467922,	0.051879663,	0.18415737,	  -0.040196970,	-0.047457095,	-0.068977371,	0.066325560,	0.045272447,
-                               -0.074255034,	0.13599660,	  0.17942502,	0.050874077,	0.082799844,	-0.061809991,	-0.017830579,	-0.095650934,	0.13915233,	0.068397991,
-                               -0.018515429,	0.11484726,	  0.18373598,	0.10852513,	  0.17443596,	  -0.0013519998, 0.050445873,	-0.055006236,	0.090899222,	0.067352593,
-                               -0.084564656,	0.025944147,	0.056567095,-0.090561010,	-0.020252027,	-0.022282815,	-0.056460965,	-0.044417012,	-0.021510171,	-0.090607285,
-                               -0.0060276738,	0.030635329,	0.051555585, 0.10613545,	0.091820262,	-0.050619118,	 0.034042846,	 0.086551219,	0.038677871,	-0.015485675)
+PLS_output_FD_inhib5_data <- c(-0.082314484,	0.092215650,	0.14467026,	0.051836453,	0.18410037,	  -0.038690999,	-0.046607252,	-0.065884151,	0.066306002,	0.045250036,
+                               -0.072025687,	0.13467592,	  0.17941384,	0.050831705,	0.082774237,	-0.059494279,	-0.017511284,	-0.091361575,	0.13911124,	0.068364114,
+                               -0.017959526,	0.11373197,	  0.18372458,	0.10843472,	 0.17438196,	  -0.0013013579, 0.049542539,	-0.052539531,	0.090872385,	0.067319244,
+                               -0.082025751,	0.025692208,	0.056563601,-0.090485543,-0.020245763,	-0.021448011,	-0.055449896,	-0.042425156,	-0.021503821,	-0.090562418,
+                               -0.0058466960,	0.030337829,	0.051552404,0.10604706,	 0.091791831,	  -0.048722662,	 0.033433210,	 0.082669921,	0.038666453,	-0.015478009)
 #create correlation matrix
 PLS_FD_inhib5_corr_matrix <- matrix(PLS_output_FD_inhib5_data,nrow=10,ncol=5)
 #add in row and column names to the matrix
 colnames(PLS_FD_inhib5_corr_matrix) <-c('TMT-B/TMT-A','Interference Effect','Category Switching','HayTime2-HayTime1','HayTotError')
 rownames(PLS_FD_inhib5_corr_matrix) <-c("L-DLPFC--R-DLPFC","L-DLPFC--MidCing",
-                                        "R-DLPFC--MidCing","L-DLPFC--L-Par",
-                                        "R-DLPFC--R-Par","L-DLPFC--R-Par",
-                                        "R-DLPFC--L-Par","L-Par--R-Par",
-                                        "L-Par--MidCing","R-Par--MidCing")
+                                        "R-DLPFC--MidCing","L-DLPFC--L-PPC",
+                                        "R-DLPFC--R-PPC","L-DLPFC--R-PPC",
+                                        "R-DLPFC--L-PPC","L-PPC--R-PPC",
+                                        "L-PPC--MidCing","R-PPC--MidCing")
 #plot correlation heatmap
-corrplot(PLS_FD_inhib5_corr_matrix, method = "color", tl.col = "black",col=colorRampPalette(c("blue","white","red"))(200),is.corr=FALSE)
+corrplot(PLS_FD_inhib5_corr_matrix, method = "color", tl.col = "black",tl.cex = 1.5, tl.srt = 45,col=colorRampPalette(c("blue","white","red"))(200),is.corr=FALSE)
+
+
+#average correlation (effect size) for significant FBC:
+#for R-DLPFC--MidCing (**)
+RDLPFC_MidCing_avg_corr <- mean(c(0.14467026,0.17941384,0.18372458,0.056563601,0.051552404))
+RDLPFC_MidCing_avg_corr 
+
+
+
 
 
 
