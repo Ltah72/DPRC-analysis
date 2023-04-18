@@ -24,7 +24,7 @@ import subprocess
 #define location of the denoiser script
 denoiserLocation = 'C:/Users/ltah262/Programs/denoiser-master/run_denoise.py'
 #define fmriprepped data directory
-fmriprepDir = 'V:/NECTAR_data/LENORE/derivatives/fmriprepped_data/derivatives/fmriprep/'
+fmriprepDir = 'V:/Vault/NECTAR_data/LENORE/derivatives/fmriprepped_data/derivatives/fmriprep/'
 #define output path
 out_path = 'V:/NECTAR_data/LENORE/derivatives/fMRI_denoised/'
 
@@ -46,6 +46,10 @@ for i in participants:
    
     img_file = fmriprepDir+PAR_NAME+'/func/'+PAR_NAME+'_task-rest_run-1_space-MNI152NLin6Asym_desc-smoothAROMAnonaggr_bold.nii.gz'
     tsv_file = fmriprepDir+PAR_NAME+'/func/'+PAR_NAME+'_task-rest_run-1_desc-confounds_timeseries.tsv'
+   
+    #for TH data 
+    #img_file = fmriprepDir+PAR_NAME+'_task-rest_run-1_space-MNI152NLin6Asym_desc-smoothAROMAnonaggr_bold.nii.gz'
+    #tsv_file = fmriprepDir+PAR_NAME+'_task-rest_run-1_desc-confounds_timeseries.tsv' 
    
     #run denoiser 
     # usage: run_denoise.py [-h] [--col_names COL_NAMES [COL_NAMES ...]] [--hp_filter HP_FILTER] [--lp_filter LP_FILTER] [--out_figure_path OUT_FIGURE_PATH] img_file tsv_file out_path

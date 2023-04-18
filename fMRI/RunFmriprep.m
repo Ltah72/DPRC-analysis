@@ -27,7 +27,7 @@ sourcedataDir = (['/data/sourcedata/' period]);
 
 %Define fmriprep directory, so that it may be used:
 %FmriprepDirectory = input('Please enter fmriprep directory:', 's');
-FmriprepDir = '/data/USERS/LENORE/derivatives/fmriprepped_data/';
+FmriprepDir = '/data/USERS/LENORE/fmriprep_test/';
 
 %go into fmriprep sourcedata directory
 cd([FmriprepDir 'sourcedata/']);
@@ -57,9 +57,9 @@ for i = 1:length(participants)
     
     %b) Run fmriprep to preprocess anat + func images
     %unix(['sudo /home/ubuntu/.local/bin/./fmriprep-docker ' FmriprepDir 'sourcedata ' FmriprepDir 'derivatives participant --participant-label ' PAR_NAME ' --output-spaces func --skull-strip-t1w force --fs-license-file /SOFTWARE/freesurfer/license.txt']); %using a native space (participant func)
-    %unix(['sudo /home/ubuntu/.local/bin/./fmriprep-docker ' FmriprepDir 'sourcedata ' FmriprepDir 'derivatives participant --participant-label ' PAR_NAME ' --output-spaces /SOFTWARE/fmriprep/templateflow/tpl-DPRCcustom --skull-strip-t1w force --fs-license-file /SOFTWARE/freesurfer/license.txt']); %using a custom template (DPRC template) 
-    %unix(['sudo /home/ubuntu/.local/bin/./fmriprep-docker ' FmriprepDir 'sourcedata ' FmriprepDir 'derivatives participant --participant-label ' PAR_NAME ' --output-spaces DPRCcustom --skull-strip-t1w force --fs-license-file /SOFTWARE/freesurfer/license.txt']); %using a custom template (DPRC template) 
+    unix(['sudo /home/ubuntu/.local/bin/./fmriprep-docker ' FmriprepDir 'sourcedata ' FmriprepDir 'derivatives participant --participant-label ' PAR_NAME ' --output-spaces /SOFTWARE/fmriprep/templateflow/tpl-DPRCcustom --skull-strip-t1w force --fs-license-file /SOFTWARE/freesurfer/license.txt']); %using a custom template (DPRC template) 
+    unix(['sudo /home/ubuntu/.local/bin/./fmriprep-docker ' FmriprepDir 'sourcedata ' FmriprepDir 'derivatives participant --participant-label ' PAR_NAME ' --output-spaces DPRCcustom --skull-strip-t1w force --fs-license-file /SOFTWARE/freesurfer/license.txt']); %using a custom template (DPRC template) 
 
-    unix(['sudo /home/ubuntu/.local/bin/./fmriprep-docker ' FmriprepDir 'sourcedata ' FmriprepDir 'derivatives participant --participant-label ' PAR_NAME ' --output-spaces MNI152NLin6Asym --use-aroma --skull-strip-t1w force --fs-license-file /SOFTWARE/freesurfer/license.txt']); %using a standard template
-    
+    %unix(['sudo /home/ubuntu/.local/bin/./fmriprep-docker ' FmriprepDir 'sourcedata ' FmriprepDir 'derivatives participant --participant-label ' PAR_NAME ' --output-spaces MNI152NLin2009cAsym --skull-strip-t1w force --fs-license-file /SOFTWARE/freesurfer/license.txt']); %using a standard template
+
 end
