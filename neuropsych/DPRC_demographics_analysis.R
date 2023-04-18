@@ -515,8 +515,11 @@ ggplot(df_circle_plot, aes(x = group_names, y = group_number)) +
 #######--------------- Longitudinal (F0 vs. F2) analysis ---------------########
 
 
-#read in excel files (participant file) - choose cross-sectional or longitudinal analysis
+#read in excel files (participant file) - choose cross-sectional or longitudinal analysis (n = 124)
 DPRC_demographics <- read.csv("longitudinal_DPRC_neuropsych_data_lined_up_valid_participants.csv") #longitudinal
+
+#for functional-diffusion connectome, longitudinal study (n = 119)
+#DPRC_demographics <- read.csv("fMRI_dMRI_longitudinal_DPRC_neuropsych_data_lined_up_valid_participants.csv")
 
 #rename first column
 colnames(DPRC_demographics)[1] <-'ParticipantID'
@@ -685,11 +688,15 @@ power_age_power<- power.anova.test(groups = length(ACE_group_means), between.var
 
 #check for significant difference in gender between groups 
 #reformat data for chi-square test
-gender_data_chisq <- rbind(c(18,25,13,13,3), c(4,15,17,8,8))
+gender_data_chisq <- rbind(c(18,25,14,13,3), c(4,15,16,8,8))
+#for dMRI-fMRI study (n = 119)
+#gender_data_chisq <- rbind(c(18,25,13,13,3), c(3,15,16,8,7))
 colnames(gender_data_chisq) <- c("C", "SCD", "aMCI", "mMCI", "AD")
 rownames(gender_data_chisq) <- c("F", "M")
 #run chi-square test
 gender_chi_test <- chisq.test(gender_data_chisq)
+gender_chi_test
+#Bayesian version:
 contingencyTableBF(gender_data_chisq, sampleType = "jointMulti")
 #a good resource on running Bayesian chi-squared tests: https://stats.libretexts.org/Bookshelves/Applied_Statistics/Book%3A_Learning_Statistics_with_R_-_A_tutorial_for_Psychology_Students_and_other_Beginners_(Navarro)/17%3A_Bayesian_Statistics/17.06%3A_Bayesian_Analysis_of_Contingency_Tables
 cramersV(gender_data_chisq)
@@ -697,11 +704,14 @@ cramersV(gender_data_chisq)
 
 #check for significant difference in clinical site between groups 
 #reformat data for chi-square test
-location_data_chisq <- rbind(c(21,36,21,18,10), c(1,3,4,3,0), c(0,1,5,0,1))
+#location_data_chisq <- rbind(c(21,36,21,18,10), c(1,3,4,3,0), c(0,1,5,0,1))
+#for dMRI-fMRI study (n = 119)
+location_data_chisq <- rbind(c(21,36,21,16,9), c(0,3,4,3,0), c(0,1,4,0,1))
 colnames(location_data_chisq) <- c("C", "SCD", "aMCI", "mMCI", "AD")
 rownames(location_data_chisq) <- c("Auckland", "Christchurch", "Dunedin")
 #run chi-square test
 location_chi_test <- chisq.test(location_data_chisq)
+location_chi_test
 contingencyTableBF(location_data_chisq, sampleType = "jointMulti")
 cramersV(location_data_chisq)
 #if expected values in cells are too small, simulate more p-values:

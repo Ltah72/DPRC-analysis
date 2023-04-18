@@ -10,7 +10,7 @@
 #Date: 20/06/21
 
 #load libraries via pacman
-pacman::p_load(dplyr, ggplot2, psych, car, multcomp, lsr, BayesFactor, tidyr, GPArotation, corrplot, lsmeans, TukeyC, lme4, lmerTest, emmeans, effectsize, nlme, rstatix, sjstats, EMAtools, phia, compute.es, Compositional)
+pacman::p_load(dplyr, ggplot2, psych, car, multcomp, lsr, BayesFactor, tidyr, GPArotation, corrplot, lsmeans, TukeyC, lme4, lmerTest, emmeans, effectsize, nlme, rstatix, sjstats, EMAtools, phia, compute.es, Compositional, MASS,ggforce)
 #add any necessary sources: 
 source("https://raw.githubusercontent.com/datavizpyr/data/master/half_flat_violinplot.R") #for raincloud graph
 
@@ -485,11 +485,45 @@ manova_proc_speed_z_mod <- manova(cbind(TrailsA.Z,
 
 
 #overall model
-summary(manova_proc_speed_z_mod)
+summary(manova_proc_speed_z_mod, 'Wilks')
 #anova outputs
 summary.aov(manova_proc_speed_z_mod)
+#effect size MANOVA
+effectsize::eta_squared(manova_proc_speed_z_mod)
+#posthoc for MANOVA
+#need to make separate vectors for this
+proc_speed_tests_combined <- cbind(DPRC_neuropsych_data$TrailsA.Z, DPRC_neuropsych_data$ColorNaming.Z, DPRC_neuropsych_data$WordReading.Z, DPRC_neuropsych_data$HayBTime1.z) 
+classification_group_var <- DPRC_neuropsych_data$Group
+df_lda_proc_speed <- na.omit(data.frame(DPRC_neuropsych_data$Group,DPRC_neuropsych_data$TrailsA.Z, DPRC_neuropsych_data$ColorNaming.Z, DPRC_neuropsych_data$WordReading.Z, DPRC_neuropsych_data$HayBTime1.z)) 
+#posthoc_manova_proc_speed_z_mod <- lda(df_lda_proc_speed$Group  ~ proc_speed_tests_combined, CV=F)
+posthoc_manova_proc_speed_z_mod <- lda(classification_group_var ~ proc_speed_tests_combined, CV=F)
+posthoc_manova_proc_speed_z_mod 
+#to evaluate whether there are sig. difference between groups, you must visualise it on a plot (no value for this)
+# plot 
+plot_lda_proc_speed <- data.frame(df_lda_proc_speed$DPRC_neuropsych_data.Group, lda = predict(posthoc_manova_proc_speed_z_mod)$x)
+ggplot(plot_lda_proc_speed) + 
+  geom_point(aes(x = lda.LD1, y = lda.LD2, colour = df_lda_proc_speed.DPRC_neuropsych_data.Group), size = 4)+
+  xlab("LD1") + 
+  ylab("LD2") +
+  labs(colour="Groups")+
+  theme_classic()+
+  theme(legend.position="none")+
+  theme(axis.title.x = element_text(size = 22),axis.title.y = element_text(size = 22),axis.text.x = element_text(size = 18),axis.text.y = element_text(size = 18))
+  
+#scale_x_discrete(labels = c("1" = "Control", "2" = "SCD", "3" = "aMCI", "4" = "mMCI", "5" = "AD")) + #don't work
+#scale_fill_discrete(labels = c("Control","SCD","aMCI","mMCI","AD")) #don't work
 
-
+#make LDA plot with outlined ellipses by groups for better visibility
+plot_lda_proc_speed <- data.frame(df_lda_proc_speed$DPRC_neuropsych_data.Group, lda = predict(posthoc_manova_proc_speed_z_mod)$x)
+ggplot(plot_lda_proc_speed) + 
+  geom_mark_ellipse(aes(x = lda.LD1, y = lda.LD2, fill=df_lda_proc_speed.DPRC_neuropsych_data.Group),expand=unit(0.5,"mm"),label.buffer=unit(-5,"mm"))+
+  geom_point(aes(x = lda.LD1, y = lda.LD2, colour = df_lda_proc_speed.DPRC_neuropsych_data.Group), size = 4)+
+  xlab("LD1") + 
+  ylab("LD2") +
+  labs(colour="Groups")+
+  theme_classic()+
+  theme(legend.position="none")+
+  theme(axis.title.x = element_text(size = 22),axis.title.y = element_text(size = 22),axis.text.x = element_text(size = 18),axis.text.y = element_text(size = 18))
 
 
 #plot the manova data using the z-scores of the variables, so that it is all on the same scale. 
@@ -522,6 +556,7 @@ ggplot(proc_speed_zscores_data_long, aes(x = Group, y = Z_scores, fill = Group))
   scale_x_discrete(labels = c("1" = "Control", "2" = "SCD", "3" = "aMCI", "4" = "mMCI", "5" = "AD")) + 
   theme_classic() +
   theme(legend.position = "none") +
+  theme(axis.text=element_text(size=18), axis.title=element_text(size=20))+
   coord_flip()
 
 #get descriptives of the collated z-scores - e.g. 'processing speeds score' mean beta values
@@ -556,9 +591,43 @@ manova_inhibition_z_mod <- manova(cbind(TrailsB.Z,
                                        HayBCatA.z, 
                                        HayBCatB.z) ~ Group, data = DPRC_neuropsych_data) 
 #overall model
-summary(manova_inhibition_z_mod)
+summary(manova_inhibition_z_mod,'Wilks')
 #anova outputs
 summary.aov(manova_inhibition_z_mod)
+#effect size MANOVA
+effectsize::eta_squared(manova_inhibition_z_mod)
+#posthoc for MANOVA
+#need to make separate vectors for this
+inhibition_tests_combined <- cbind(DPRC_neuropsych_data$TrailsB.Z, DPRC_neuropsych_data$Inhibition.Z, DPRC_neuropsych_data$Switching.z, DPRC_neuropsych_data$HayBTime2.z, DPRC_neuropsych_data$HayBCatA.z, DPRC_neuropsych_data$HayBCatB.z) 
+classification_group_var <- DPRC_neuropsych_data$Group
+df_lda_inhibition <- na.omit(data.frame(DPRC_neuropsych_data$Group,DPRC_neuropsych_data$TrailsB.Z, DPRC_neuropsych_data$Inhibition.Z, DPRC_neuropsych_data$Switching.z, DPRC_neuropsych_data$HayBTime2.z, DPRC_neuropsych_data$HayBCatA.z, DPRC_neuropsych_data$HayBCatB.z)) 
+#posthoc_manova_inhibition_z_mod <- lda(df_lda_proc_speed$Group  ~ inhibition_tests_combined, CV=F)
+posthoc_manova_inhibition_z_mod <- lda(classification_group_var ~ inhibition_tests_combined, CV=F)
+posthoc_manova_inhibition_z_mod 
+#to evaluate whether there are sig. difference between groups, you must visualise it on a plot (no value for this)
+# plot 
+plot_lda_inhibition <- data.frame(df_lda_inhibition$DPRC_neuropsych_data.Group, lda = predict(posthoc_manova_inhibition_z_mod)$x)
+ggplot(plot_lda_inhibition) + 
+  geom_point(aes(x = lda.LD1, y = lda.LD2, colour = df_lda_inhibition.DPRC_neuropsych_data.Group), size = 4)+
+  xlab("LD1") + 
+  ylab("LD2") +
+  labs(colour="Groups")+
+  theme_classic()+
+  theme(legend.position="none")+
+  theme(axis.title.x = element_text(size = 22),axis.title.y = element_text(size = 22),axis.text.x = element_text(size = 18),axis.text.y = element_text(size = 18))
+
+#make LDA plot with outlined ellipses by groups for better visibility
+plot_lda_inhibition <- data.frame(df_lda_inhibition$DPRC_neuropsych_data.Group, lda = predict(posthoc_manova_inhibition_z_mod)$x)
+ggplot(plot_lda_inhibition) + 
+  geom_mark_ellipse(aes(x = lda.LD1, y = lda.LD2, fill=df_lda_inhibition$DPRC_neuropsych_data.Group),expand=unit(0.5,"mm"),label.buffer=unit(-5,"mm"))+
+  geom_point(aes(x = lda.LD1, y = lda.LD2, colour = df_lda_inhibition.DPRC_neuropsych_data.Group), size = 4)+
+  xlab("LD1") + 
+  ylab("LD2") +
+  labs(colour="Groups")+
+  theme_classic()+
+  theme(legend.position="none")+
+  theme(axis.title.x = element_text(size = 22),axis.title.y = element_text(size = 22),axis.text.x = element_text(size = 18),axis.text.y = element_text(size = 18))
+
 
 #plot the manova data using the z-scores of the variables, so that it is all on the same scale. 
 #put exec func variable z-scores onto a new dataset, as long format
@@ -593,6 +662,7 @@ ggplot(inhibition_zscores_data_long, aes(x = Group, y = Z_scores, fill = Group))
   scale_x_discrete(labels = c("1" = "Control", "2" = "SCD", "3" = "aMCI", "4" = "mMCI", "5" = "AD")) + 
   theme_classic() +
   theme(legend.position = "none") +
+  theme(axis.text=element_text(size=18), axis.title=element_text(size=20))+
   coord_flip()
 
 #get descriptives of the collated z-scores - e.g. 'executive function score' mean beta values
@@ -909,7 +979,7 @@ HayBCatA.z_descrip <- describeBy(DPRC_neuropsych_data$HayBCatA.z, DPRC_neuropsyc
   cohensD(HayBCatA.z ~ Group, data = DPRC_neuropsych_data_CvAD_CatAZ ) #this looks like Hedges' g? 
   #for SCD vs. AD 
   DPRC_neuropsych_data_SCDvAD_CatAZ  <- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 2 | DPRC_neuropsych_data$Group == 5)
-  DPRC_neuropsych_data_SCDvAD_CatAZ$Group <- droplevels(DPRC_neuropsych_data_SCDvAD.Z$Group)
+  DPRC_neuropsych_data_SCDvAD_CatAZ$Group <- droplevels(DPRC_neuropsych_data_SCDvAD_CatAZ$Group)
   cohensD(HayBCatA.z ~ Group, data = DPRC_neuropsych_data_SCDvAD_CatAZ) #this looks like Hedges' g? 
   #for aMCI vs. AD 
   DPRC_neuropsych_data_aMCIvAD_CatAZ <- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 3 | DPRC_neuropsych_data$Group == 5)
@@ -957,6 +1027,10 @@ noNAsHayBCatBRaw <- na.omit(all_HayBCatBRaw)
 mean(noNAsHayBCatBRaw)
 sd(noNAsHayBCatBRaw)
 #effect size for sig. post hoc tests
+  #for C vs. AD 
+  DPRC_neuropsych_data_CvAD_CatBRaw <- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 1 | DPRC_neuropsych_data$Group == 5)
+  DPRC_neuropsych_data_CvAD_CatBRaw$Group <- droplevels(DPRC_neuropsych_data_CvAD_CatBRaw$Group)
+  cohensD(HayBCatB.Raw ~ Group, data = DPRC_neuropsych_data_CvAD_CatBRaw) #this looks like Hedges' g? 
   #for SCD vs. mMCI 
   DPRC_neuropsych_data_SCDvmMCI_CatBRaw <- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 2 | DPRC_neuropsych_data$Group == 4)
   DPRC_neuropsych_data_SCDvmMCI_CatBRaw$Group <- droplevels(DPRC_neuropsych_data_SCDvmMCI_CatBRaw$Group)
@@ -1002,6 +1076,11 @@ etaSquared(HayBCatB.Z_mod)
 post_hoc_HayBCatB.Z_mod <- glht(HayBCatB.Z_mod, linfct = mcp(Group = "Tukey"))
 summary(post_hoc_HayBCatB.Z_mod)
 confint(post_hoc_HayBCatB.Z_mod)
+#effect size for sig. post hoc tests
+  #for SCD vs. AD 
+  DPRC_neuropsych_data_SCDvAD_CatBZ  <- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 2 | DPRC_neuropsych_data$Group == 5)
+  DPRC_neuropsych_data_SCDvAD_CatBZ$Group <- droplevels(DPRC_neuropsych_data_SCDvAD_CatBZ$Group)
+  cohensD(HayBCatB.z ~ Group, data = DPRC_neuropsych_data_SCDvAD_CatBZ) #this looks like Hedges' g? 
 #run Bayesian ANOVA
 For_Bay_data_noNas_neuropsych_HayBCatB.Z <- dplyr::select(DPRC_neuropsych_data, ParticipantID, Group, HayBCatB.z)
 For_Bay_data_noNas_neuropsych_HayBCatB.Z <- na.omit(For_Bay_data_noNas_neuropsych_HayBCatB.Z)
@@ -1086,6 +1165,27 @@ etaSquared(HayCatTotalError.z_mod)
 post_hoc_HayCatTotalError.z_mod <- glht(HayCatTotalError.z_mod, linfct = mcp(Group = "Tukey"))
 summary(post_hoc_HayCatTotalError.z_mod)
 confint(post_hoc_HayCatTotalError.z_mod)
+#effect size for sig. post hoc tests
+  #for C vs. AD 
+  DPRC_neuropsych_data_CvAD_CatTotalError <- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 1 | DPRC_neuropsych_data$Group == 5)
+  DPRC_neuropsych_data_CvAD_CatTotalError$Group <- droplevels(DPRC_neuropsych_data_CvAD_CatTotalError$Group)
+  cohensD(HayCatTotalError.z ~ Group, data = DPRC_neuropsych_data_CvAD_CatTotalError) #this looks like Hedges' g?   
+  #for SCD vs. mMCI 
+  DPRC_neuropsych_data_SCDvmMCI_CatTotalError <- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 2 | DPRC_neuropsych_data$Group == 4)
+  DPRC_neuropsych_data_SCDvmMCI_CatTotalError$Group <- droplevels(DPRC_neuropsych_data_SCDvmMCI_CatTotalError$Group)
+  cohensD(HayCatTotalError.z ~ Group, data = DPRC_neuropsych_data_SCDvmMCI_CatTotalError) #this looks like Hedges' g? 
+  #for SCD vs. AD
+  DPRC_neuropsych_data_SCDvAD_CatTotalError <- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 2 | DPRC_neuropsych_data$Group == 5)
+  DPRC_neuropsych_data_SCDvAD_CatTotalError$Group <- droplevels(DPRC_neuropsych_data_SCDvAD_CatTotalError$Group)
+  cohensD(HayCatTotalError.z ~ Group, data = DPRC_neuropsych_data_SCDvAD_CatTotalError) #this looks like Hedges' g? 
+  #for aMCI vs. AD
+  DPRC_neuropsych_data_aMCIvAD_CatTotalError <- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 3 | DPRC_neuropsych_data$Group == 5)
+  DPRC_neuropsych_data_aMCIvAD_CatTotalError$Group <- droplevels(DPRC_neuropsych_data_aMCIvAD_CatTotalError$Group)
+  cohensD(HayCatTotalError.z ~ Group, data = DPRC_neuropsych_data_aMCIvAD_CatTotalError) #this looks like Hedges' g? 
+  #for mMCI vs. AD
+  DPRC_neuropsych_data_mMCIvAD_CatTotalError <- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 4 | DPRC_neuropsych_data$Group == 5)
+  DPRC_neuropsych_data_mMCIvAD_CatTotalError$Group <- droplevels(DPRC_neuropsych_data_mMCIvAD_CatTotalError$Group)
+  cohensD(HayCatTotalError.z ~ Group, data = DPRC_neuropsych_data_mMCIvAD_CatTotalError) #this looks like Hedges' g? 
 #check descriptive statistics per each group
 HayCatTotalError.z_descrip <- describeBy(DPRC_neuropsych_data$HayCatTotalError.z, DPRC_neuropsych_data$Group)
 #find mean & SD from total sample:
@@ -1097,7 +1197,6 @@ sd(noNAsHayCatTotalErrorz)
 HayCatTotalErrorz_LinTrend_mod <- lm(HayCatTotalError.z ~ Trend_Group + Group, data = DPRC_neuropsych_data)
 anova(HayCatTotalErrorz_LinTrend_mod)
 summary(HayCatTotalErrorz_LinTrend_mod) 
-
 
 #3.D-KEFS Stroop Task ---------------------------------------------------------#
 #plot ColorNaming.Raw (raincloud plot)
@@ -1145,6 +1244,10 @@ sd(noNAsColorNamingRaw)
   DPRC_neuropsych_data_SCDvAD_ColorNaming.Raw <- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 2 | DPRC_neuropsych_data$Group == 5)
   DPRC_neuropsych_data_SCDvAD_ColorNaming.Raw$Group <- droplevels(DPRC_neuropsych_data_SCDvAD_ColorNaming.Raw$Group)
   cohensD(ColorNaming.Raw ~ Group, data = DPRC_neuropsych_data_SCDvAD_ColorNaming.Raw) #this looks like Hedges' g? 
+  #for aMCI vs. AD 
+  DPRC_neuropsych_data_aMCIvAD_ColorNaming.Raw <- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 3 | DPRC_neuropsych_data$Group == 5)
+  DPRC_neuropsych_data_aMCIvAD_ColorNaming.Raw$Group <- droplevels(DPRC_neuropsych_data_aMCIvAD_ColorNaming.Raw$Group)
+  cohensD(ColorNaming.Raw ~ Group, data = DPRC_neuropsych_data_aMCIvAD_ColorNaming.Raw) #this looks like Hedges' g? 
 #run Bayesian ANOVA
 For_Bay_data_noNas_neuropsych_ColorNaming.Raw <- dplyr::select(DPRC_neuropsych_data, ParticipantID, Group, ColorNaming.Raw)
 For_Bay_data_noNas_neuropsych_ColorNaming.Raw <- na.omit(For_Bay_data_noNas_neuropsych_ColorNaming.Raw)
@@ -1191,6 +1294,14 @@ confint(post_hoc_ColorNaming.Z_mod)
   DPRC_neuropsych_data_CvAD_ColorNaming.Z <- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 1 | DPRC_neuropsych_data$Group == 5)
   DPRC_neuropsych_data_CvAD_ColorNaming.Z$Group <- droplevels(DPRC_neuropsych_data_CvAD_ColorNaming.Z$Group)
   cohensD(ColorNaming.Z ~ Group, data = DPRC_neuropsych_data_CvAD_ColorNaming.Z) #this looks like Hedges' g? 
+  #for SCD vs. mMCI 
+  DPRC_neuropsych_data_SCDvmMCI_ColorNaming.Z <- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 2 | DPRC_neuropsych_data$Group == 4)
+  DPRC_neuropsych_data_SCDvmMCI_ColorNaming.Z$Group <- droplevels(DPRC_neuropsych_data_SCDvmMCI_ColorNaming.Z$Group)
+  cohensD(ColorNaming.Z ~ Group, data = DPRC_neuropsych_data_SCDvmMCI_ColorNaming.Z) #this looks like Hedges' g? 
+  #for SCD vs. AD 
+  DPRC_neuropsych_data_SCDvAD_ColorNaming.Z <- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 2 | DPRC_neuropsych_data$Group == 5)
+  DPRC_neuropsych_data_SCDvAD_ColorNaming.Z$Group <- droplevels(DPRC_neuropsych_data_SCDvAD_ColorNaming.Z$Group)
+  cohensD(ColorNaming.Z ~ Group, data = DPRC_neuropsych_data_SCDvAD_ColorNaming.Z) #this looks like Hedges' g? 
 #run Bayesian ANOVA
 For_Bay_data_noNas_neuropsych_ColorNaming.Z <- dplyr::select(DPRC_neuropsych_data, ParticipantID, Group, ColorNaming.Z)
 For_Bay_data_noNas_neuropsych_ColorNaming.Z <- na.omit(For_Bay_data_noNas_neuropsych_ColorNaming.Z)
@@ -1293,22 +1404,22 @@ noNAsInhibitionRaw <- na.omit(all_InhibitionRaw)
 mean(noNAsInhibitionRaw)
 sd(noNAsInhibitionRaw)
 #effect size for sig. post hoc tests
-  #for C vs. AD 
-  DPRC_neuropsych_data_CvAD_Inhibition.Raw <- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 1 | DPRC_neuropsych_data$Group == 5)
-  DPRC_neuropsych_data_CvAD_Inhibition.Raw$Group <- droplevels(DPRC_neuropsych_data_CvAD_Inhibition.Raw$Group)
-  cohensD(Inhibition.Raw ~ Group, data = DPRC_neuropsych_data_CvAD_Inhibition.Raw) #this looks like Hedges' g? 
-  #for SCD vs. AD 
-  DPRC_neuropsych_data_SCDvAD_Inhibition.Raw  <- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 2 | DPRC_neuropsych_data$Group == 5)
-  DPRC_neuropsych_data_SCDvAD_Inhibition.Raw$Group <- droplevels(DPRC_neuropsych_data_SCDvAD_Inhibition.Raw$Group)
-  cohensD(Inhibition.Raw ~ Group, data = DPRC_neuropsych_data_SCDvAD_Inhibition.Raw) #this looks like Hedges' g? 
   #for C vs. mMCI
   DPRC_neuropsych_data_CvmMCI_Inhibition.Raw <- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 1 | DPRC_neuropsych_data$Group == 4)
   DPRC_neuropsych_data_CvmMCI_Inhibition.Raw$Group <- droplevels(DPRC_neuropsych_data_CvmMCI_Inhibition.Raw$Group)
   cohensD(Inhibition.Raw ~ Group, data = DPRC_neuropsych_data_CvmMCI_Inhibition.Raw) #this looks like Hedges' g? 
+  #for C vs. AD 
+  DPRC_neuropsych_data_CvAD_Inhibition.Raw <- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 1 | DPRC_neuropsych_data$Group == 5)
+  DPRC_neuropsych_data_CvAD_Inhibition.Raw$Group <- droplevels(DPRC_neuropsych_data_CvAD_Inhibition.Raw$Group)
+  cohensD(Inhibition.Raw ~ Group, data = DPRC_neuropsych_data_CvAD_Inhibition.Raw) #this looks like Hedges' g? 
   #for SCD vs. mMCI 
   DPRC_neuropsych_data_SCDvmMCI_Inhibition.Raw<- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 2 | DPRC_neuropsych_data$Group == 4)
   DPRC_neuropsych_data_SCDvmMCI_Inhibition.Raw$Group <- droplevels(DPRC_neuropsych_data_SCDvmMCI_Inhibition.Raw$Group)
   cohensD(Inhibition.Raw ~ Group, data = DPRC_neuropsych_data_SCDvmMCI_Inhibition.Raw) #this looks like Hedges' g?
+  #for SCD vs. AD 
+  DPRC_neuropsych_data_SCDvAD_Inhibition.Raw  <- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 2 | DPRC_neuropsych_data$Group == 5)
+  DPRC_neuropsych_data_SCDvAD_Inhibition.Raw$Group <- droplevels(DPRC_neuropsych_data_SCDvAD_Inhibition.Raw$Group)
+  cohensD(Inhibition.Raw ~ Group, data = DPRC_neuropsych_data_SCDvAD_Inhibition.Raw) #this looks like Hedges' g? 
   #for aMCI vs. AD 
   DPRC_neuropsych_data_aMCIvAD_Inhibition.Raw<- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 3 | DPRC_neuropsych_data$Group == 5)
   DPRC_neuropsych_data_aMCIvAD_Inhibition.Raw$Group <- droplevels(DPRC_neuropsych_data_aMCIvAD_Inhibition.Raw$Group)
@@ -1353,18 +1464,26 @@ confint(post_hoc_Inhibition.Z_mod)
 #check descriptive statistics per each group
 Inhibition.Z_descrip <- describeBy(DPRC_neuropsych_data$Inhibition.Z, DPRC_neuropsych_data$Group)
 #effect size for sig. post hoc tests
+  #for C vs. mMCI
+  DPRC_neuropsych_data_CvmMCI_Inhibition.Z <- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 1 | DPRC_neuropsych_data$Group == 4)
+  DPRC_neuropsych_data_CvmMCI_Inhibition.Z$Group <- droplevels(DPRC_neuropsych_data_CvmMCI_Inhibition.Z$Group)
+  cohensD(Inhibition.Z ~ Group, data = DPRC_neuropsych_data_CvmMCI_Inhibition.Z) #this looks like Hedges' g?   
   #for C vs. AD 
   DPRC_neuropsych_data_CvAD_Inhibition.Z <- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 1 | DPRC_neuropsych_data$Group == 5)
   DPRC_neuropsych_data_CvAD_Inhibition.Z$Group <- droplevels(DPRC_neuropsych_data_CvAD_Inhibition.Z$Group)
   cohensD(Inhibition.Z ~ Group, data = DPRC_neuropsych_data_CvAD_Inhibition.Z) #this looks like Hedges' g? 
-  #for C vs. mMCI
-  DPRC_neuropsych_data_CvmMCI_Inhibition.Z <- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 1 | DPRC_neuropsych_data$Group == 4)
-  DPRC_neuropsych_data_CvmMCI_Inhibition.Z$Group <- droplevels(DPRC_neuropsych_data_CvmMCI_Inhibition.Z$Group)
-  cohensD(Inhibition.Z ~ Group, data = DPRC_neuropsych_data_CvmMCI_Inhibition.Z) #this looks like Hedges' g? 
   #for SCD vs. mMCI 
   DPRC_neuropsych_data_SCDvmMCI_Inhibition.Z<- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 2 | DPRC_neuropsych_data$Group == 4)
   DPRC_neuropsych_data_SCDvmMCI_Inhibition.Z$Group <- droplevels(DPRC_neuropsych_data_SCDvmMCI_Inhibition.Z$Group)
   cohensD(Inhibition.Z ~ Group, data = DPRC_neuropsych_data_SCDvmMCI_Inhibition.Z) #this looks like Hedges' g?
+  #for SCD vs. AD 
+  DPRC_neuropsych_data_SCDvAD_Inhibition.Z<- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 2 | DPRC_neuropsych_data$Group == 5)
+  DPRC_neuropsych_data_SCDvAD_Inhibition.Z$Group <- droplevels(DPRC_neuropsych_data_SCDvAD_Inhibition.Z$Group)
+  cohensD(Inhibition.Z ~ Group, data = DPRC_neuropsych_data_SCDvAD_Inhibition.Z) #this looks like Hedges' g?
+  #for aMCI vs. AD 
+  DPRC_neuropsych_data_aMCIvAD_Inhibition.Z<- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 3 | DPRC_neuropsych_data$Group == 5)
+  DPRC_neuropsych_data_aMCIvAD_Inhibition.Z$Group <- droplevels(DPRC_neuropsych_data_aMCIvAD_Inhibition.Z$Group)
+  cohensD(Inhibition.Z ~ Group, data = DPRC_neuropsych_data_aMCIvAD_Inhibition.Z) #this looks like Hedges' g?
 #run Bayesian ANOVA
 For_Bay_data_noNas_neuropsych_Inhibition.Z <- dplyr::select(DPRC_neuropsych_data, ParticipantID, Group, Inhibition.Z)
 For_Bay_data_noNas_neuropsych_Inhibition.Z<- na.omit(For_Bay_data_noNas_neuropsych_Inhibition.Z)
@@ -1448,6 +1567,23 @@ Inhibition.Colour.NamingZ_mod <- lm(Inhibition.Colour.Naming.zscores.calc. ~ Gro
 anova(Inhibition.Colour.NamingZ_mod)
 #effect size omnibus ANOVA
 etaSquared(Inhibition.Colour.NamingZ_mod)
+#run pairwise comparisons (post-hoc Tukey), given that the F-test was significant. 
+post_hoc_Inhibition.Colour.NamingZ_mod <- glht(Inhibition.Colour.NamingZ_mod, linfct = mcp(Group = "Tukey"))
+summary(post_hoc_Inhibition.Colour.NamingZ_mod)
+confint(post_hoc_Inhibition.Colour.NamingZ_mod)
+#effect size for sig. post hoc tests
+  #for C vs. AD 
+  DPRC_neuropsych_data_CvAD_Inhibition.Colour.NamingZ <- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 1 | DPRC_neuropsych_data$Group == 5)
+  DPRC_neuropsych_data_CvAD_Inhibition.Colour.NamingZ$Group <- droplevels(DPRC_neuropsych_data_CvAD_Inhibition.Colour.NamingZ$Group)
+  cohensD(Inhibition.Colour.Naming.zscores.calc.~ Group, data = DPRC_neuropsych_data_CvAD_Inhibition.Colour.NamingZ) #this looks like Hedges' g? 
+  #for SCD vs. AD 
+  DPRC_neuropsych_data_SCDvAD_Inhibition.Colour.NamingZ  <- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 2 | DPRC_neuropsych_data$Group == 5)
+  DPRC_neuropsych_data_SCDvAD_Inhibition.Colour.NamingZ$Group <- droplevels(DPRC_neuropsych_data_SCDvAD_Inhibition.Colour.NamingZ$Group)
+  cohensD(Inhibition.Colour.Naming.zscores.calc. ~ Group, data = DPRC_neuropsych_data_SCDvAD_Inhibition.Colour.NamingZ) #this looks like Hedges' g? 
+  #for aMCI vs. AD 
+  DPRC_neuropsych_data_aMCIvAD_Inhibition.Colour.NamingZ<- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 3 | DPRC_neuropsych_data$Group == 5)
+  DPRC_neuropsych_data_aMCIvAD_Inhibition.Colour.NamingZ$Group <- droplevels(DPRC_neuropsych_data_aMCIvAD_Inhibition.Colour.NamingZ$Group)
+  cohensD(Inhibition.Colour.Naming.zscores.calc. ~ Group, data = DPRC_neuropsych_data_aMCIvAD_Inhibition.Colour.NamingZ) #this looks like Hedges' g? 
 #add in Linear Trend Analysis in Linear Regression
 Inhibition.Colour.Namingz_LinTrend_mod <- lm(Inhibition.Colour.Naming.zscores.calc. ~ Trend_Group + Group, data = DPRC_neuropsych_data)
 anova(Inhibition.Colour.Namingz_LinTrend_mod)
@@ -1482,26 +1618,30 @@ noNAsInhibitionWordReading <- na.omit(all_InhibitionWordReading)
 mean(noNAsInhibitionWordReading)
 sd(noNAsInhibitionWordReading)
 #effect size for sig. post hoc tests
+  #for C vs. mMCI
+  DPRC_neuropsych_data_CvmMCI_Inhibition.Word.Reading <- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 1 | DPRC_neuropsych_data$Group == 4)
+  DPRC_neuropsych_data_CvmMCI_Inhibition.Word.Reading$Group <- droplevels(DPRC_neuropsych_data_CvmMCI_Inhibition.Word.Reading$Group)
+  cohensD(Inhibition.Word.Reading ~ Group, data = DPRC_neuropsych_data_CvmMCI_Inhibition.Word.Reading) #this looks like Hedges' g?   
   #for C vs. AD 
   DPRC_neuropsych_data_CvAD_Inhibition.Word.Reading <- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 1 | DPRC_neuropsych_data$Group == 5)
   DPRC_neuropsych_data_CvAD_Inhibition.Word.Reading$Group <- droplevels(DPRC_neuropsych_data_CvAD_Inhibition.Word.Reading$Group)
   cohensD(Inhibition.Word.Reading ~ Group, data = DPRC_neuropsych_data_CvAD_Inhibition.Word.Reading) #this looks like Hedges' g? 
-  #for C vs. mMCI
-  DPRC_neuropsych_data_CvmMCI_Inhibition.Word.Reading <- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 1 | DPRC_neuropsych_data$Group == 4)
-  DPRC_neuropsych_data_CvmMCI_Inhibition.Word.Reading$Group <- droplevels(DPRC_neuropsych_data_CvmMCI_Inhibition.Word.Reading$Group)
-  cohensD(Inhibition.Word.Reading ~ Group, data = DPRC_neuropsych_data_CvmMCI_Inhibition.Word.Reading) #this looks like Hedges' g? 
+  # #for SCD vs. mMCI 
+  # DPRC_neuropsych_data_SCDvmMCI_Inhibition.Word.Reading<- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 2 | DPRC_neuropsych_data$Group == 4)
+  # DPRC_neuropsych_data_SCDvmMCI_Inhibition.Word.Reading$Group <- droplevels(DPRC_neuropsych_data_SCDvmMCI_Inhibition.Word.Reading$Group)
+  # cohensD(Inhibition.Word.Reading ~ Group, data = DPRC_neuropsych_data_SCDvmMCI_Inhibition.Word.Reading) #this looks like Hedges' g?
   #for SCD vs. AD 
   DPRC_neuropsych_data_SCDvAD_Inhibition.Word.Reading  <- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 2 | DPRC_neuropsych_data$Group == 5)
   DPRC_neuropsych_data_SCDvAD_Inhibition.Word.Reading$Group <- droplevels(DPRC_neuropsych_data_SCDvAD_Inhibition.Word.Reading$Group)
   cohensD(Inhibition.Word.Reading ~ Group, data = DPRC_neuropsych_data_SCDvAD_Inhibition.Word.Reading) #this looks like Hedges' g? 
-  #for SCD vs. mMCI 
-  DPRC_neuropsych_data_SCDvmMCI_Inhibition.Word.Reading<- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 2 | DPRC_neuropsych_data$Group == 4)
-  DPRC_neuropsych_data_SCDvmMCI_Inhibition.Word.Reading$Group <- droplevels(DPRC_neuropsych_data_SCDvmMCI_Inhibition.Word.Reading$Group)
-  cohensD(Inhibition.Word.Reading ~ Group, data = DPRC_neuropsych_data_SCDvmMCI_Inhibition.Word.Reading) #this looks like Hedges' g?
   #for aMCI vs. AD 
   DPRC_neuropsych_data_aMCIvAD_Inhibition.Word.Reading<- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 3 | DPRC_neuropsych_data$Group == 5)
   DPRC_neuropsych_data_aMCIvAD_Inhibition.Word.Reading$Group <- droplevels(DPRC_neuropsych_data_aMCIvAD_Inhibition.Word.Reading$Group)
   cohensD(Inhibition.Word.Reading ~ Group, data = DPRC_neuropsych_data_aMCIvAD_Inhibition.Word.Reading) #this looks like Hedges' g? 
+  #for mMCI vs. AD 
+  DPRC_neuropsych_data_mMCIvAD_Inhibition.Word.Reading<- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 4 | DPRC_neuropsych_data$Group == 5)
+  DPRC_neuropsych_data_mMCIvAD_Inhibition.Word.Reading$Group <- droplevels(DPRC_neuropsych_data_mMCIvAD_Inhibition.Word.Reading$Group)
+  cohensD(Inhibition.Word.Reading ~ Group, data = DPRC_neuropsych_data_mMCIvAD_Inhibition.Word.Reading) #this looks like Hedges' g? 
 #run Bayesian ANOVA
 For_Bay_data_noNas_neuropsych_Inhibition.Word.Reading <- dplyr::select(DPRC_neuropsych_data, ParticipantID, Group, Inhibition.Word.Reading)
 For_Bay_data_noNas_neuropsych_Inhibition.Word.Reading <- na.omit(For_Bay_data_noNas_neuropsych_Inhibition.Word.Reading)
@@ -1535,6 +1675,35 @@ Inhibition.Word.ReadingZ_mod <- lm(Inhibition.Word.Reading.zscores.calc. ~ Group
 anova(Inhibition.Word.ReadingZ_mod)
 #effect size omnibus ANOVA
 etaSquared(Inhibition.Word.ReadingZ_mod)
+#run pairwise comparisons (post-hoc Tukey), given that the F-test was significant. 
+post_hoc_Inhibition.Word.ReadingZ_mod <- glht(Inhibition.Word.ReadingZ_mod, linfct = mcp(Group = "Tukey"))
+summary(post_hoc_Inhibition.Word.ReadingZ_mod)
+confint(post_hoc_Inhibition.Word.ReadingZ_mod)
+#effect size for sig. post hoc tests
+  #for C vs. mMCI
+  DPRC_neuropsych_data_CvmMCI_Inhibition.Word.ReadingZ <- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 1 | DPRC_neuropsych_data$Group == 4)
+  DPRC_neuropsych_data_CvmMCI_Inhibition.Word.ReadingZ$Group <- droplevels(DPRC_neuropsych_data_CvmMCI_Inhibition.Word.ReadingZ$Group)
+  cohensD(Inhibition.Word.Reading.zscores.calc. ~ Group, data = DPRC_neuropsych_data_CvmMCI_Inhibition.Word.ReadingZ) #this looks like Hedges' g? 
+  #for C vs. AD 
+  DPRC_neuropsych_data_CvAD_Inhibition.Word.ReadingZ <- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 1 | DPRC_neuropsych_data$Group == 5)
+  DPRC_neuropsych_data_CvAD_Inhibition.Word.ReadingZ$Group <- droplevels(DPRC_neuropsych_data_CvAD_Inhibition.Word.ReadingZ$Group)
+  cohensD(Inhibition.Word.Reading.zscores.calc. ~ Group, data = DPRC_neuropsych_data_CvAD_Inhibition.Word.ReadingZ) #this looks like Hedges' g? 
+  # #for SCD vs. mMCI 
+  # DPRC_neuropsych_data_SCDvmMCI_Inhibition.Word.ReadingZ<- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 2 | DPRC_neuropsych_data$Group == 4)
+  # DPRC_neuropsych_data_SCDvmMCI_Inhibition.Word.ReadingZ$Group <- droplevels(DPRC_neuropsych_data_SCDvmMCI_Inhibition.Word.ReadingZ$Group)
+  # cohensD(Inhibition.Word.Reading.zscores.calc. ~ Group, data = DPRC_neuropsych_data_SCDvmMCI_Inhibition.Word.ReadingZ) #this looks like Hedges' g?
+  #for SCD vs. AD 
+  DPRC_neuropsych_data_SCDvAD_Inhibition.Word.ReadingZ  <- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 2 | DPRC_neuropsych_data$Group == 5)
+  DPRC_neuropsych_data_SCDvAD_Inhibition.Word.ReadingZ$Group <- droplevels(DPRC_neuropsych_data_SCDvAD_Inhibition.Word.ReadingZ$Group)
+  cohensD(Inhibition.Word.Reading.zscores.calc. ~ Group, data = DPRC_neuropsych_data_SCDvAD_Inhibition.Word.ReadingZ) #this looks like Hedges' g? 
+  #for aMCI vs. AD 
+  DPRC_neuropsych_data_aMCIvAD_Inhibition.Word.ReadingZ<- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 3 | DPRC_neuropsych_data$Group == 5)
+  DPRC_neuropsych_data_aMCIvAD_Inhibition.Word.ReadingZ$Group <- droplevels(DPRC_neuropsych_data_aMCIvAD_Inhibition.Word.ReadingZ$Group)
+  cohensD(Inhibition.Word.Reading.zscores.calc. ~ Group, data = DPRC_neuropsych_data_aMCIvAD_Inhibition.Word.ReadingZ) #this looks like Hedges' g? 
+  #for mMCI vs. AD 
+  DPRC_neuropsych_data_mMCIvAD_Inhibition.Word.ReadingZ<- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 4 | DPRC_neuropsych_data$Group == 5)
+  DPRC_neuropsych_data_mMCIvAD_Inhibition.Word.ReadingZ$Group <- droplevels(DPRC_neuropsych_data_mMCIvAD_Inhibition.Word.ReadingZ$Group)
+  cohensD(Inhibition.Word.Reading.zscores.calc. ~ Group, data = DPRC_neuropsych_data_mMCIvAD_Inhibition.Word.ReadingZ) #this looks like Hedges' g? 
 #add in Linear Trend Analysis in Linear Regression
 Inhibition.Word.Reading.zscores.calc._LinTrend_mod <- lm(Inhibition.Word.Reading.zscores.calc. ~ Trend_Group + Group, data = DPRC_neuropsych_data)
 anova(Inhibition.Word.Reading.zscores.calc._LinTrend_mod)
@@ -1637,6 +1806,10 @@ confint(post_hoc_Interference_score_Caffarra_2002_mod)
   DPRC_neuropsych_data_aMCIvAD_Interference_score_Caffarra_2002<- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 3 | DPRC_neuropsych_data$Group == 5)
   DPRC_neuropsych_data_aMCIvAD_Interference_score_Caffarra_2002$Group <- droplevels(DPRC_neuropsych_data_aMCIvAD_Interference_score_Caffarra_2002$Group)
   cohensD(Interference_score_Caffarra_2002 ~ Group, data = DPRC_neuropsych_data_aMCIvAD_Interference_score_Caffarra_2002) #this looks like Hedges' g? 
+  #for mMCI vs. AD 
+  DPRC_neuropsych_data_mMCIvAD_Interference_score_Caffarra_2002<- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 4 | DPRC_neuropsych_data$Group == 5)
+  DPRC_neuropsych_data_mMCIvAD_Interference_score_Caffarra_2002$Group <- droplevels(DPRC_neuropsych_data_mMCIvAD_Interference_score_Caffarra_2002$Group)
+  cohensD(Interference_score_Caffarra_2002 ~ Group, data = DPRC_neuropsych_data_mMCIvAD_Interference_score_Caffarra_2002) #this looks like Hedges' g? 
 #check descriptive statistics per each group
 Interference_score_Caffarra_2002_descrip <- describeBy(DPRC_neuropsych_data$Interference_score_Caffarra_2002, DPRC_neuropsych_data$Group)
 #find mean & SD from total sample:
@@ -1662,6 +1835,35 @@ Interference_zscore_Caffarra_2002_mod <- lm(Interference_zscore_Caffarra_2002 ~ 
 anova(Interference_zscore_Caffarra_2002_mod)
 #effect size omnibus ANOVA
 etaSquared(Interference_zscore_Caffarra_2002_mod)
+#run pairwise comparisons (post-hoc Tukey), given that the F-test was significant. 
+post_hoc_Interference_zscore_Caffarra_2002_mod <- glht(Interference_zscore_Caffarra_2002_mod, linfct = mcp(Group = "Tukey"))
+summary(post_hoc_Interference_zscore_Caffarra_2002_mod)
+confint(post_hoc_Interference_zscore_Caffarra_2002_mod)
+#effect size for sig. post hoc tests
+  #for C vs. mMCI
+  DPRC_neuropsych_data_CvmMCI_Interference_zscore_Caffarra_2002 <- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 1 | DPRC_neuropsych_data$Group == 4)
+  DPRC_neuropsych_data_CvmMCI_Interference_zscore_Caffarra_2002$Group <- droplevels(DPRC_neuropsych_data_CvmMCI_Interference_zscore_Caffarra_2002$Group)
+  cohensD(Interference_zscore_Caffarra_2002 ~ Group, data = DPRC_neuropsych_data_CvmMCI_Interference_zscore_Caffarra_2002) #this looks like Hedges' g? 
+  #for C vs. AD 
+  DPRC_neuropsych_data_CvAD_Interference_zscore_Caffarra_2002 <- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 1 | DPRC_neuropsych_data$Group == 5)
+  DPRC_neuropsych_data_CvAD_Interference_zscore_Caffarra_2002$Group <- droplevels(DPRC_neuropsych_data_CvAD_Interference_zscore_Caffarra_2002$Group)
+  cohensD(Interference_zscore_Caffarra_2002 ~ Group, data = DPRC_neuropsych_data_CvAD_Interference_zscore_Caffarra_2002) #this looks like Hedges' g? 
+  #for SCD vs. mMCI 
+  DPRC_neuropsych_data_SCDvmMCI_Interference_zscore_Caffarra_2002<- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 2 | DPRC_neuropsych_data$Group == 4)
+  DPRC_neuropsych_data_SCDvmMCI_Interference_zscore_Caffarra_2002$Group <- droplevels(DPRC_neuropsych_data_SCDvmMCI_Interference_zscore_Caffarra_2002$Group)
+  cohensD(Interference_zscore_Caffarra_2002 ~ Group, data = DPRC_neuropsych_data_SCDvmMCI_Interference_zscore_Caffarra_2002) #this looks like Hedges' g?
+  #for SCD vs. AD 
+  DPRC_neuropsych_data_SCDvAD_Interference_zscore_Caffarra_2002  <- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 2 | DPRC_neuropsych_data$Group == 5)
+  DPRC_neuropsych_data_SCDvAD_Interference_zscore_Caffarra_2002$Group <- droplevels(DPRC_neuropsych_data_SCDvAD_Interference_zscore_Caffarra_2002$Group)
+  cohensD(Interference_zscore_Caffarra_2002 ~ Group, data = DPRC_neuropsych_data_SCDvAD_Interference_zscore_Caffarra_2002) #this looks like Hedges' g? 
+  #for aMCI vs. AD 
+  DPRC_neuropsych_data_aMCIvAD_Interference_zscore_Caffarra_2002<- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 3 | DPRC_neuropsych_data$Group == 5)
+  DPRC_neuropsych_data_aMCIvAD_Interference_zscore_Caffarra_2002$Group <- droplevels(DPRC_neuropsych_data_aMCIvAD_Interference_zscore_Caffarra_2002$Group)
+  cohensD(Interference_zscore_Caffarra_2002 ~ Group, data = DPRC_neuropsych_data_aMCIvAD_Interference_zscore_Caffarra_2002) #this looks like Hedges' g? 
+  #for mMCI vs. AD 
+  DPRC_neuropsych_data_mMCIvAD_Interference_zscore_Caffarra_2002<- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 4 | DPRC_neuropsych_data$Group == 5)
+  DPRC_neuropsych_data_mMCIvAD_Interference_zscore_Caffarra_2002$Group <- droplevels(DPRC_neuropsych_data_mMCIvAD_Interference_zscore_Caffarra_2002$Group)
+  cohensD(Interference_zscore_Caffarra_2002 ~ Group, data = DPRC_neuropsych_data_mMCIvAD_Interference_zscore_Caffarra_2002) #this looks like Hedges' g? 
 #check descriptive statistics per each group
 Interference_zscore_Caffarra_2002_descrip <- describeBy(DPRC_neuropsych_data$Interference_zscore_Caffarra_2002, DPRC_neuropsych_data$Group)
 #find mean & SD from total sample:
@@ -1766,6 +1968,10 @@ confint(post_hoc_LetFluency.Z_mod)
   DPRC_neuropsych_data_CvmMCI_LetFluency.Z<- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 1 | DPRC_neuropsych_data$Group == 4)
   DPRC_neuropsych_data_CvmMCI_LetFluency.Z$Group <- droplevels(DPRC_neuropsych_data_CvmMCI_LetFluency.Z$Group)
   cohensD(LetFluency.Z ~ Group, data = DPRC_neuropsych_data_CvmMCI_LetFluency.Z) #this looks like Hedges' g?
+  #for C vs. AD
+  DPRC_neuropsych_data_CvAD_LetFluency.Z<- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 1 | DPRC_neuropsych_data$Group == 5)
+  DPRC_neuropsych_data_CvAD_LetFluency.Z$Group <- droplevels(DPRC_neuropsych_data_CvAD_LetFluency.Z$Group)
+  cohensD(LetFluency.Z ~ Group, data = DPRC_neuropsych_data_CvAD_LetFluency.Z) #this looks like Hedges' g?
 #run Bayesian ANOVA
 For_Bay_data_noNas_neuropsych_LetFluency.Z <- dplyr::select(DPRC_neuropsych_data, ParticipantID, Group, LetFluency.Z)
 For_Bay_data_noNas_neuropsych_LetFluency.Z<- na.omit(For_Bay_data_noNas_neuropsych_LetFluency.Z)
@@ -2073,10 +2279,10 @@ sd(noNAsTrailsARaw)
   DPRC_neuropsych_data_CvAD_TrailsA.Raw <- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 1 | DPRC_neuropsych_data$Group == 5)
   DPRC_neuropsych_data_CvAD_TrailsA.Raw$Group <- droplevels(DPRC_neuropsych_data_CvAD_TrailsA.Raw$Group)
   cohensD(TrailsA.Raw ~ Group, data = DPRC_neuropsych_data_CvAD_TrailsA.Raw) #this looks like Hedges' g?
-  #for SCD vs. mMCI 
-  DPRC_neuropsych_data_SCDvmMCI_TrailsA.Raw <- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 2 | DPRC_neuropsych_data$Group == 4)
-  DPRC_neuropsych_data_SCDvmMCI_TrailsA.Raw$Group <- droplevels(DPRC_neuropsych_data_SCDvmMCI_TrailsA.Raw$Group)
-  cohensD(TrailsA.Raw ~ Group, data = DPRC_neuropsych_data_SCDvmMCI_TrailsA.Raw) #this looks like Hedges' g?
+  # #for SCD vs. mMCI 
+  # DPRC_neuropsych_data_SCDvmMCI_TrailsA.Raw <- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 2 | DPRC_neuropsych_data$Group == 4)
+  # DPRC_neuropsych_data_SCDvmMCI_TrailsA.Raw$Group <- droplevels(DPRC_neuropsych_data_SCDvmMCI_TrailsA.Raw$Group)
+  # cohensD(TrailsA.Raw ~ Group, data = DPRC_neuropsych_data_SCDvmMCI_TrailsA.Raw) #this looks like Hedges' g?
   #for SCD vs. AD 
   DPRC_neuropsych_data_SCDvAD_TrailsA.Raw <- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 2 | DPRC_neuropsych_data$Group == 5)
   DPRC_neuropsych_data_SCDvAD_TrailsA.Raw$Group <- droplevels(DPRC_neuropsych_data_SCDvAD_TrailsA.Raw$Group)
@@ -2131,6 +2337,14 @@ confint(post_hoc_TrailsA.Z_mod)
   DPRC_neuropsych_data_CvAD_TrailsA.Z <- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 1 | DPRC_neuropsych_data$Group == 5)
   DPRC_neuropsych_data_CvAD_TrailsA.Z$Group <- droplevels(DPRC_neuropsych_data_CvAD_TrailsA.Z$Group)
   cohensD(TrailsA.Z ~ Group, data = DPRC_neuropsych_data_CvAD_TrailsA.Z) #this looks like Hedges' g?
+  #for SCD vs. AD 
+  DPRC_neuropsych_data_SCDvAD_TrailsA.Z <- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 2 | DPRC_neuropsych_data$Group == 5)
+  DPRC_neuropsych_data_SCDvAD_TrailsA.Z$Group <- droplevels(DPRC_neuropsych_data_SCDvAD_TrailsA.Z$Group)
+  cohensD(TrailsA.Z ~ Group, data = DPRC_neuropsych_data_SCDvAD_TrailsA.Z) #this looks like Hedges' g?
+  #for aMCI vs. AD 
+  DPRC_neuropsych_data_aMCIvAD_TrailsA.Z <- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 3 | DPRC_neuropsych_data$Group == 5)
+  DPRC_neuropsych_data_aMCIvAD_TrailsA.Z$Group <- droplevels(DPRC_neuropsych_data_aMCIvAD_TrailsA.Z$Group)
+  cohensD(TrailsA.Z ~ Group, data = DPRC_neuropsych_data_aMCIvAD_TrailsA.Z) #this looks like Hedges' g?
 #run Bayesian ANOVA
 For_Bay_data_noNas_neuropsych_TrailsA.Z <- dplyr::select(DPRC_neuropsych_data, ParticipantID, Group, TrailsA.Z)
 For_Bay_data_noNas_neuropsych_TrailsA.Z <- na.omit(For_Bay_data_noNas_neuropsych_TrailsA.Z)
@@ -2391,6 +2605,23 @@ etaSquared(TMT.B.TMT.Az_mod)
 post_hoc_TMT.B.TMT.Az_mod <- glht(TMT.B.TMT.Az_mod, linfct = mcp(Group = "Tukey"))
 summary(post_hoc_TMT.B.TMT.Az_mod)
 confint(post_hoc_TMT.B.TMT.Az_mod)
+#effect size for sig. post hoc tests
+  #for C vs. mMCI 
+  DPRC_neuropsych_data_CvmMCI_TMT.B.TMT.Az<- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 1 | DPRC_neuropsych_data$Group == 4)
+  DPRC_neuropsych_data_CvmMCI_TMT.B.TMT.Az$Group <- droplevels(DPRC_neuropsych_data_CvmMCI_TMT.B.TMT.Az$Group)
+  cohensD(TMT.B.TMT.A.zscores.calc. ~ Group, data = DPRC_neuropsych_data_CvmMCI_TMT.B.TMT.Az) #this looks like Hedges' g?
+  #for C vs. AD 
+  DPRC_neuropsych_data_CvAD_TMT.B.TMT.Az <- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 1 | DPRC_neuropsych_data$Group == 5)
+  DPRC_neuropsych_data_CvAD_TMT.B.TMT.Az$Group <- droplevels(DPRC_neuropsych_data_CvAD_TMT.B.TMT.Az$Group)
+  cohensD(TMT.B.TMT.A.zscores.calc. ~ Group, data = DPRC_neuropsych_data_CvAD_TMT.B.TMT.Az) #this looks like Hedges' g?
+  #for SCD vs. mMCI 
+  DPRC_neuropsych_data_SCDvmMCI_TMT.B.TMT.Az <- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 2 | DPRC_neuropsych_data$Group == 4)
+  DPRC_neuropsych_data_SCDvmMCI_TMT.B.TMT.Az$Group <- droplevels(DPRC_neuropsych_data_SCDvmMCI_TMT.B.TMT.Az$Group)
+  cohensD(TMT.B.TMT.A.zscores.calc. ~ Group, data = DPRC_neuropsych_data_SCDvmMCI_TMT.B.TMT.Az) #this looks like Hedges' g?
+  #for SCD vs. AD 
+  DPRC_neuropsych_data_SCDvAD_TMT.B.TMT.Az <- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 2 | DPRC_neuropsych_data$Group == 5)
+  DPRC_neuropsych_data_SCDvAD_TMT.B.TMT.Az$Group <- droplevels(DPRC_neuropsych_data_SCDvAD_TMT.B.TMT.Az$Group)
+  cohensD(TMT.B.TMT.A.zscores.calc. ~ Group, data = DPRC_neuropsych_data_SCDvAD_TMT.B.TMT.Az) #this looks like Hedges' g?
 #check descriptive statistics per each group
 TMT.B.TMT.Az_descrip <- describeBy(DPRC_neuropsych_data$TMT.B.TMT.A.zscores.calc., DPRC_neuropsych_data$Group)
 #find mean & SD from total sample:
@@ -2696,7 +2927,7 @@ t_value_effect_size <- summary(post_hoc_Inhibition.Word.Reading_covar_mod)
   DPRC_neuropsych_data_aMCIvAD_Inhibition.Word.Reading <- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 3 | DPRC_neuropsych_data$Group == 5)
   DPRC_neuropsych_data_aMCIvAD_Inhibition.Word.Reading$Group <- droplevels(DPRC_neuropsych_data_aMCIvAD_Inhibition.Word.Reading$Group)
   group_number <-dplyr::count(DPRC_neuropsych_data_aMCIvAD_Inhibition.Word.Reading, Group) #count number of participants per group
-  r_value <- cor.test(DPRC_neuropsych_data_aMCIvAD_Inhibition$Inhibition.Word.Reading,DPRC_neuropsych_data_aMCIvAD_Inhibition.Word.Reading$Age) #find correlation value (r) between dependent variable
+  r_value <- cor.test(DPRC_neuropsych_data_aMCIvAD_Inhibition.Word.Reading$Inhibition.Word.Reading,DPRC_neuropsych_data_aMCIvAD_Inhibition.Word.Reading$Age) #find correlation value (r) between dependent variable
   a.tes(t=t_value_effect_size$test$tstat['5 - 3'],n.1=group_number['1','n'],n.2=group_number['2','n'],R=r_value$estimate,q=1) #calculate Cohen's D with the covariate of age
 #add in Linear Trend Analysis in Linear Regression
 Inhibition.Word.Reading_LinTrend_covar_mod <- lm(Inhibition.Word.Reading ~ Trend_Group + Group + Age, data = DPRC_neuropsych_data)
@@ -2788,7 +3019,7 @@ t_value_effect_size <- summary(post_hoc_Interference_score_Caffarra_2002_covar_m
   DPRC_neuropsych_data_aMCIvAD_Interference_score_Caffarra_2002 <- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 3 | DPRC_neuropsych_data$Group == 5)
   DPRC_neuropsych_data_aMCIvAD_Interference_score_Caffarra_2002$Group <- droplevels(DPRC_neuropsych_data_aMCIvAD_Interference_score_Caffarra_2002$Group)
   group_number <-dplyr::count(DPRC_neuropsych_data_aMCIvAD_Interference_score_Caffarra_2002, Group) #count number of participants per group
-  r_value <- cor.test(DPRC_neuropsych_data_aMCIvAD_Inhibition$Interference_score_Caffarra_2002,DPRC_neuropsych_data_aMCIvAD_Interference_score_Caffarra_2002$Age) #find correlation value (r) between dependent variable
+  r_value <- cor.test(DPRC_neuropsych_data_aMCIvAD_Interference_score_Caffarra_2002$Interference_score_Caffarra_2002,DPRC_neuropsych_data_aMCIvAD_Interference_score_Caffarra_2002$Age) #find correlation value (r) between dependent variable
   a.tes(t=t_value_effect_size$test$tstat['5 - 3'],n.1=group_number['1','n'],n.2=group_number['2','n'],R=r_value$estimate,q=1) #calculate Cohen's D with the covariate of age
 #add in Linear Trend Analysis in Linear Regression
 Interference_score_Caffarra_2002_LinTrend_covar_mod <- lm(Interference_score_Caffarra_2002 ~ Trend_Group + Group + Age, data = DPRC_neuropsych_data)
@@ -2916,6 +3147,12 @@ t_value_effect_size <- summary(post_hoc_TMT.B.TMT.A_covar_mod)
   group_number <-dplyr::count(DPRC_neuropsych_data_CvmMCI_TMT.B.TMT.A, Group) #count number of participants per group
   r_value <- cor.test(DPRC_neuropsych_data_CvmMCI_TMT.B.TMT.A$TMT.B.TMT.A,DPRC_neuropsych_data_CvmMCI_TMT.B.TMT.A$Age) #find correlation value (r) between dependent variable
   a.tes(t=t_value_effect_size$test$tstat['4 - 1'],n.1=group_number['1','n'],n.2=group_number['2','n'],R=r_value$estimate,q=1) #calculate Cohen's D with the covariate of age
+  #for C vs. AD
+  DPRC_neuropsych_data_CvAD_TMT.B.TMT.A <- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 1 | DPRC_neuropsych_data$Group == 5)
+  DPRC_neuropsych_data_CvAD_TMT.B.TMT.A$Group <- droplevels(DPRC_neuropsych_data_CvAD_TMT.B.TMT.A$Group)
+  group_number <-dplyr::count(DPRC_neuropsych_data_CvAD_TMT.B.TMT.A, Group) #count number of participants per group
+  r_value <- cor.test(DPRC_neuropsych_data_CvAD_TMT.B.TMT.A$TMT.B.TMT.A,DPRC_neuropsych_data_CvAD_TMT.B.TMT.A$Age) #find correlation value (r) between dependent variable
+  a.tes(t=t_value_effect_size$test$tstat['5 - 1'],n.1=group_number['1','n'],n.2=group_number['2','n'],R=r_value$estimate,q=1) #calculate Cohen's D with the covariate of age
   #for SCD vs. mMCI
   DPRC_neuropsych_data_SCDvmMCI_TMT.B.TMT.A <- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 2 | DPRC_neuropsych_data$Group == 4)
   DPRC_neuropsych_data_SCDvmMCI_TMT.B.TMT.A$Group <- droplevels(DPRC_neuropsych_data_SCDvmMCI_TMT.B.TMT.A$Group)
@@ -3175,7 +3412,7 @@ t_value_effect_size <- summary(post_hoc_ColourNaming.Raw_2covar_mod)
   DPRC_neuropsych_data_SCDvAD_ColourNaming.Raw <- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 2 | DPRC_neuropsych_data$Group == 5)
   DPRC_neuropsych_data_SCDvAD_ColourNaming.Raw$Group <- droplevels(DPRC_neuropsych_data_SCDvAD_ColourNaming.Raw$Group)
   group_number <-dplyr::count(DPRC_neuropsych_data_SCDvAD_ColourNaming.Raw, Group) #count number of participants per group
-  mult.r_value_2covar_mod<-summary(lm(ColourNaming.Raw ~ Age + Sex, data = DPRC_neuropsych_data_SCDvAD_ColourNaming.Raw)) #create multiple regression between age, sex, and y-var, and get square root of mult-r squared as the r-value
+  mult.r_value_2covar_mod<-summary(lm(ColorNaming.Raw ~ Age + Sex, data = DPRC_neuropsych_data_SCDvAD_ColourNaming.Raw)) #create multiple regression between age, sex, and y-var, and get square root of mult-r squared as the r-value
   r_value <- sqrt(mult.r_value_2covar_mod$r.squared) #find correlation value (r) between dependent variable
   a.tes(t=t_value_effect_size$test$tstat['5 - 2'],n.1=group_number['1','n'],n.2=group_number['2','n'],R=r_value,q=2) #calculate Cohen's D with the covariate of age & sex
 #add in Linear Trend Analysis in Linear Regression
@@ -3489,6 +3726,13 @@ t_value_effect_size <- summary(post_hoc_TMT.B.TMT.A_2covar_mod)
   mult.r_value_2covar_mod<-summary(lm(TMT.B.TMT.A ~ Age + Sex, data = DPRC_neuropsych_data_CvmMCI_TMT.B.TMT.A)) #create multiple regression between age, sex, and y-var, and get square root of mult-r squared as the r-value
   r_value <- sqrt(mult.r_value_2covar_mod$r.squared) #find correlation value (r) between dependent variable
   a.tes(t=t_value_effect_size$test$tstat['4 - 1'],n.1=group_number['1','n'],n.2=group_number['2','n'],R=r_value,q=2) #calculate Cohen's D with the covariate of age & sex
+  #for C vs. AD
+  DPRC_neuropsych_data_CvAD_TMT.B.TMT.A <- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 1 | DPRC_neuropsych_data$Group == 5)
+  DPRC_neuropsych_data_CvAD_TMT.B.TMT.A$Group <- droplevels(DPRC_neuropsych_data_CvAD_TMT.B.TMT.A$Group)
+  group_number <-dplyr::count(DPRC_neuropsych_data_CvAD_TMT.B.TMT.A, Group) #count number of participants per group
+  mult.r_value_2covar_mod<-summary(lm(TMT.B.TMT.A ~ Age + Sex, data = DPRC_neuropsych_data_CvAD_TMT.B.TMT.A)) #create multiple regression between age, sex, and y-var, and get square root of mult-r squared as the r-value
+  r_value <- sqrt(mult.r_value_2covar_mod$r.squared) #find correlation value (r) between dependent variable
+  a.tes(t=t_value_effect_size$test$tstat['5 - 1'],n.1=group_number['1','n'],n.2=group_number['2','n'],R=r_value,q=2) #calculate Cohen's D with the covariate of age & sex
   #for SCD vs. mMCI
   DPRC_neuropsych_data_SCDvmMCI_TMT.B.TMT.A <- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 2 | DPRC_neuropsych_data$Group == 4)
   DPRC_neuropsych_data_SCDvmMCI_TMT.B.TMT.A$Group <- droplevels(DPRC_neuropsych_data_SCDvmMCI_TMT.B.TMT.A$Group)
@@ -3687,14 +3931,19 @@ summary(Switching.Raw_LinTrend_2covar_mod)
 
 #######----------------- Longitudinal (F0 vs. F2) analysis -----------------########
 
-#read in csv files (participant file)
+#read in csv files (participant file) (n = 124)
 DPRC_neuropsych_data <- read.csv("longitudinal_DPRC_neuropsych_data_lined_up_valid_participants.csv")
+
+#for functional-diffusion connectome, longitudinal study (n = 119)
+#DPRC_neuropsych_data <- read.csv("fMRI_dMRI_longitudinal_DPRC_neuropsych_data_lined_up_valid_participants.csv")
+
 
 #rename first column 
 colnames(DPRC_neuropsych_data)[1] <-'ParticipantID'
 
 #Add in longitudinal values for participants
 Individual_number <- c(1:124, 1:124)
+#Individual_number <- c(1:119, 1:119)
 DPRC_neuropsych_data$Individual_number <- Individual_number
 
 #convert variables
@@ -3828,11 +4077,42 @@ manova_proc_speed_z_mod <- manova(cbind(TrailsA.Z,
 
 
 #overall model
-summary(manova_proc_speed_z_mod)
+summary(manova_proc_speed_z_mod, 'Wilks')
 #anova outputs
 summary.aov(manova_proc_speed_z_mod)
+#effect size MANOVA
+effectsize::eta_squared(manova_proc_speed_z_mod)
+#posthoc for MANOVA
+#need to make separate vectors for this
+proc_speed_tests_combined <- cbind(DPRC_neuropsych_data$TrailsA.Z, DPRC_neuropsych_data$ColorNaming.Z, DPRC_neuropsych_data$WordReading.Z, DPRC_neuropsych_data$HayBTime1.z) 
+classification_group_var <- DPRC_neuropsych_data$Group
+df_lda_proc_speed <- na.omit(data.frame(DPRC_neuropsych_data$Group,DPRC_neuropsych_data$TrailsA.Z, DPRC_neuropsych_data$ColorNaming.Z, DPRC_neuropsych_data$WordReading.Z, DPRC_neuropsych_data$HayBTime1.z)) 
+#posthoc_manova_proc_speed_z_mod <- lda(df_lda_proc_speed$Group  ~ proc_speed_tests_combined, CV=F)
+posthoc_manova_proc_speed_z_mod <- lda(classification_group_var ~ proc_speed_tests_combined, CV=F)
+posthoc_manova_proc_speed_z_mod 
+#to evaluate whether there are sig. difference between groups, you must visualise it on a plot (no value for this)
+# plot 
+plot_lda_proc_speed <- data.frame(df_lda_proc_speed$DPRC_neuropsych_data.Group, lda = predict(posthoc_manova_proc_speed_z_mod)$x)
+ggplot(plot_lda_proc_speed) + 
+  geom_point(aes(x = lda.LD1, y = lda.LD2, colour = df_lda_proc_speed.DPRC_neuropsych_data.Group), size = 4)+
+  xlab("LD1") + 
+  ylab("LD2") +
+  labs(colour="Groups")+
+  theme_classic()+
+  theme(legend.position="none")+
+  theme(axis.title.x = element_text(size = 22),axis.title.y = element_text(size = 22),axis.text.x = element_text(size = 18),axis.text.y = element_text(size = 18))
 
-
+#make LDA plot with outlined ellipses by groups for better visibility
+plot_lda_proc_speed <- data.frame(df_lda_proc_speed$DPRC_neuropsych_data.Group, lda = predict(posthoc_manova_proc_speed_z_mod)$x)
+ggplot(plot_lda_proc_speed) + 
+  geom_mark_ellipse(aes(x = lda.LD1, y = lda.LD2, fill=df_lda_proc_speed.DPRC_neuropsych_data.Group),expand=unit(0.5,"mm"),label.buffer=unit(-5,"mm"))+
+  geom_point(aes(x = lda.LD1, y = lda.LD2, colour = df_lda_proc_speed.DPRC_neuropsych_data.Group), size = 4)+
+  xlab("LD1") + 
+  ylab("LD2") +
+  labs(colour="Groups")+
+  theme_classic()+
+  theme(legend.position="none")+
+  theme(axis.title.x = element_text(size = 22),axis.title.y = element_text(size = 22),axis.text.x = element_text(size = 18),axis.text.y = element_text(size = 18))
 
 #plot the manova data using the z-scores of the variables, so that it is all on the same scale. 
 #put proc speed variable z-scores onto a new dataset, as long format
@@ -3851,7 +4131,6 @@ proc_speed_zscores_data_long <- gather(exec_func_zscores_data,
                                        ColorNaming.Z, 
                                        WordReading.Z, 
                                        HayBTime1.z)
-
 #plot data - z-score for processing speeds 
 ggplot(proc_speed_zscores_data_long, aes(x = Group, y = Z_scores, fill = Group)) + 
   geom_flat_violin(position = position_nudge(x = .2, y = 0), alpha = .8) +
@@ -3863,6 +4142,7 @@ ggplot(proc_speed_zscores_data_long, aes(x = Group, y = Z_scores, fill = Group))
   scale_x_discrete(labels = c("1" = "Control", "2" = "SCD", "3" = "aMCI", "4" = "mMCI", "5" = "AD")) + 
   theme_classic() +
   theme(legend.position = "none") +
+  theme(axis.text=element_text(size=18), axis.title=element_text(size=20))+
   coord_flip()
 
 #get descriptives of the collated z-scores - e.g. 'processing speeds score' mean beta values
@@ -3896,9 +4176,43 @@ manova_inhibition_z_mod <- manova(cbind(TrailsB.Z,
                                         HayBCatA.z, 
                                         HayBCatB.z) ~ Group, data = baseline_DPRC_neuropsych) 
 #overall model
-summary(manova_inhibition_z_mod)
+summary(manova_inhibition_z_mod,'Wilks')
 #anova outputs
 summary.aov(manova_inhibition_z_mod)
+#effect size MANOVA
+effectsize::eta_squared(manova_inhibition_z_mod)
+#posthoc for MANOVA
+#need to make separate vectors for this
+inhibition_tests_combined <- cbind(DPRC_neuropsych_data$TrailsB.Z, DPRC_neuropsych_data$Inhibition.Z, DPRC_neuropsych_data$Switching.z, DPRC_neuropsych_data$HayBTime2.z, DPRC_neuropsych_data$HayBCatA.z, DPRC_neuropsych_data$HayBCatB.z) 
+classification_group_var <- DPRC_neuropsych_data$Group
+df_lda_inhibition <- na.omit(data.frame(DPRC_neuropsych_data$Group,DPRC_neuropsych_data$TrailsB.Z, DPRC_neuropsych_data$Inhibition.Z, DPRC_neuropsych_data$Switching.z, DPRC_neuropsych_data$HayBTime2.z, DPRC_neuropsych_data$HayBCatA.z, DPRC_neuropsych_data$HayBCatB.z)) 
+#posthoc_manova_inhibition_z_mod <- lda(df_lda_proc_speed$Group  ~ inhibition_tests_combined, CV=F)
+posthoc_manova_inhibition_z_mod <- lda(classification_group_var ~ inhibition_tests_combined, CV=F)
+posthoc_manova_inhibition_z_mod 
+#to evaluate whether there are sig. difference between groups, you must visualise it on a plot (no value for this)
+# plot 
+plot_lda_inhibition <- data.frame(df_lda_inhibition$DPRC_neuropsych_data.Group, lda = predict(posthoc_manova_inhibition_z_mod)$x)
+ggplot(plot_lda_inhibition) + 
+  geom_point(aes(x = lda.LD1, y = lda.LD2, colour = df_lda_inhibition.DPRC_neuropsych_data.Group), size = 4)+
+  xlab("LD1") + 
+  ylab("LD2") +
+  labs(colour="Groups")+
+  theme_classic()+
+  theme(legend.position="none")+
+  theme(axis.title.x = element_text(size = 22),axis.title.y = element_text(size = 22),axis.text.x = element_text(size = 18),axis.text.y = element_text(size = 18))
+
+#make LDA plot with outlined ellipses by groups for better visibility
+plot_lda_inhibition <- data.frame(df_lda_inhibition$DPRC_neuropsych_data.Group, lda = predict(posthoc_manova_inhibition_z_mod)$x)
+ggplot(plot_lda_inhibition) + 
+  geom_mark_ellipse(aes(x = lda.LD1, y = lda.LD2, fill=df_lda_inhibition$DPRC_neuropsych_data.Group),expand=unit(0.5,"mm"),label.buffer=unit(-5,"mm"))+
+  geom_point(aes(x = lda.LD1, y = lda.LD2, colour = df_lda_inhibition.DPRC_neuropsych_data.Group), size = 4)+
+  xlab("LD1") + 
+  ylab("LD2") +
+  labs(colour="Groups")+
+  theme_classic()+
+  theme(legend.position="none")+
+  theme(axis.title.x = element_text(size = 22),axis.title.y = element_text(size = 22),axis.text.x = element_text(size = 18),axis.text.y = element_text(size = 18))
+
 
 #plot the manova data using the z-scores of the variables, so that it is all on the same scale. 
 #put exec func variable z-scores onto a new dataset, as long format
@@ -3933,8 +4247,8 @@ ggplot(inhibition_zscores_data_long, aes(x = Group, y = Z_scores, fill = Group))
   scale_x_discrete(labels = c("1" = "Control", "2" = "SCD", "3" = "aMCI", "4" = "mMCI", "5" = "AD")) + 
   theme_classic() +
   theme(legend.position = "none") +
+  theme(axis.text=element_text(size=18), axis.title=element_text(size=20))+
   coord_flip()
-
 #get descriptives of the collated z-scores - e.g. 'executive function score' mean beta values
 inhibition_z_descrip <- describeBy((inhibition_zscores_data$TrailsB.Z + 
                                       inhibition_zscores_data$Inhibition.Z +
@@ -4178,6 +4492,10 @@ F2_HayBTime1z <- DPRC_neuropsych_data[DPRC_neuropsych_data[, "Timepoint"] == "F2
 noNAsF2_HayBTime1z <- na.omit(F2_HayBTime1z$HayBTime1.z)
 mean(noNAsF2_HayBTime1z)
 sd(noNAsF2_HayBTime1z)
+#non-sig. interaction & Timepoint, Test by Group (Tukey test)
+aov(HayBTime1.z ~ Group, data = DPRC_neuropsych_data) %>% tukey_hsd()
+#effect size for Groups
+DPRC_neuropsych_data%>%cohens_d(HayBTime1.z~Group)
 
 #plot HayBTime2.Raw (raincloud plot)
 ggplot(DPRC_neuropsych_data, aes(x = Group, y = HayBTime2.Raw, fill = Timepoint)) + 
@@ -4232,6 +4550,31 @@ noNAs_HayBTime2.Raw %>%
   scale_color_discrete(labels = c("1" = "C", "2" = "SCD", "3" = "aMCI", "4" = "mMCI", "5" = "AD")) + 
   ylab("Hayling Incongruent Sentence Set 2 Time Raw (seconds)") +
   theme_classic()
+#note that if these interaction plots are not working, just try restarting R (just exit and open again)
+#interaction f/u tests -- HayBTime2
+#subtract differences in F2 - F0 for HayBTime2 
+HayBTime2.Raw_diff_data<-DPRC_neuropsych_data[,c("ParticipantID","Individual_number","Group","Timepoint","Age","Sex","HayBTime2.Raw")]
+F0_HayBTime2.Raw_data<-HayBTime2.Raw_diff_data[HayBTime2.Raw_diff_data$Timepoint=='F0', ]
+F2_HayBTime2.Raw_data<-HayBTime2.Raw_diff_data[HayBTime2.Raw_diff_data$Timepoint=='F2', ]
+HayBTime2.RawDiff<-F2_HayBTime2.Raw_data$HayBTime2.Raw - F0_HayBTime2.Raw_data$HayBTime2.Raw
+F0_HayBTime2.Raw_data$HayBTime2.RawDiff<-HayBTime2.RawDiff
+#run one-way ANOVA on the F2-F0 differences in HayTime2.HayTime1_minus between groups
+HayBTime2.RawDiff_mod <- lm(HayBTime2.RawDiff ~ Group, data = F0_HayBTime2.Raw_data)
+anova(HayBTime2.RawDiff_mod) #sig. difference
+#effect size omnibus ANOVA
+etaSquared(HayBTime2.RawDiff_mod)
+#post hoc f/u test
+#run pairwise comparisons (post-hoc Tukey), given that the F-test was significant. 
+post_hoc_HayBTime2.RawDiff_mod <- glht(HayBTime2.RawDiff_mod, linfct = mcp(Group = "Tukey"))
+summary(post_hoc_HayBTime2.RawDiff_mod)
+confint(post_hoc_HayBTime2.RawDiff_mod)
+#effect size for Interaction
+  #create dataframe
+  #HayBTime2.Raw_diff_data_124 <- DPRC_neuropsych_data[1:124,c("ParticipantID","Individual_number","Group","Timepoint","Age","Sex","HayBTime2.Raw")]
+  HayBTime2.Raw_diff_data_124 <- DPRC_neuropsych_data[1:119,c("ParticipantID","Individual_number","Group","Timepoint","Age","Sex","HayBTime2.Raw")]
+  HayBTime2.Raw_diff_data_124$HayBTime2.RawDiff <- HayBTime2.RawDiff 
+  #calculate effect size
+  HayBTime2.Raw_diff_data_124%>%cohens_d(HayBTime2.RawDiff~Group)
 
 #plot HayBTime2.z (raincloud plot)
 ggplot(DPRC_neuropsych_data, aes(x = Group, y = HayBTime2.z, fill = Timepoint)) + 
@@ -4259,6 +4602,34 @@ F2_HayBTime2z <- DPRC_neuropsych_data[DPRC_neuropsych_data[, "Timepoint"] == "F2
 noNAsF2_HayBTime2z <- na.omit(F2_HayBTime2z$HayBTime2.z)
 mean(noNAsF2_HayBTime2z)
 sd(noNAsF2_HayBTime2z)
+#non-sig. interaction & Timepoint, Test by Group (Tukey test)
+aov(HayBTime2.z ~ Group, data = DPRC_neuropsych_data) %>% tukey_hsd()
+#effect size for Groups
+DPRC_neuropsych_data%>%cohens_d(HayBTime2.z~Group)
+#interaction f/u tests -- HayBTime2
+#subtract differences in F2 - F0 for HayBTime2
+HayBTime2.z_diff_data<-DPRC_neuropsych_data[,c("ParticipantID","Individual_number","Group","Timepoint","Age","Sex","HayBTime2.z")]
+F0_HayBTime2.z_data<-HayBTime2.z_diff_data[HayBTime2.z_diff_data$Timepoint=='F0', ]
+F2_HayBTime2.z_data<-HayBTime2.z_diff_data[HayBTime2.z_diff_data$Timepoint=='F2', ]
+HayBTime2.zDiff<-F2_HayBTime2.z_data$HayBTime2.z - F0_HayBTime2.z_data$HayBTime2.z
+F0_HayBTime2.z_data$HayBTime2.zDiff<-HayBTime2.zDiff
+#run one-way ANOVA on the F2-F0 differences in HayTime2.HayTime1_minus between groups
+HayBTime2.zDiff_mod <- lm(HayBTime2.zDiff ~ Group, data = F0_HayBTime2.z_data)
+anova(HayBTime2.zDiff_mod) #sig. difference
+#effect size omnibus ANOVA
+etaSquared(HayBTime2.zDiff_mod)
+#post hoc f/u test
+#run pairwise comparisons (post-hoc Tukey), given that the F-test was significant.
+post_hoc_HayBTime2.zDiff_mod <- glht(HayBTime2.zDiff_mod, linfct = mcp(Group = "Tukey"))
+summary(post_hoc_HayBTime2.zDiff_mod)
+confint(post_hoc_HayBTime2.zDiff_mod)
+#effect size for Interaction
+  #create dataframe
+  #HayBTime2.z_diff_data_124 <- DPRC_neuropsych_data[1:124,c("ParticipantID","Individual_number","Group","Timepoint","Age","Sex","HayBTime2.z")]
+  HayBTime2.z_diff_data_124 <- DPRC_neuropsych_data[1:119,c("ParticipantID","Individual_number","Group","Timepoint","Age","Sex","HayBTime2.z")]
+  HayBTime2.z_diff_data_124$HayBTime2.zDiff <- HayBTime2.zDiff
+  #calculate effect size
+  HayBTime2.z_diff_data_124%>%cohens_d(HayBTime2.zDiff~Group)
 
 #plot HayTime2.HayTime1_minus (raincloud plot)
 ggplot(DPRC_neuropsych_data, aes(x = Group, y = HayTime2.HayTime1_minus, fill = Timepoint)) + 
@@ -4286,6 +4657,11 @@ F2_HayTime2.HayTime1_minus <- DPRC_neuropsych_data[DPRC_neuropsych_data[, "Timep
 noNAsF2_HayTime2.HayTime1_minus <- na.omit(F2_HayTime2.HayTime1_minus$HayTime2.HayTime1_minus)
 mean(noNAsF2_HayTime2.HayTime1_minus)
 sd(noNAsF2_HayTime2.HayTime1_minus)
+#Post hoc tests
+#non-sig. interaction & Timepoint, Test by Group (Tukey test)
+aov(HayTime2.HayTime1_minus ~ Group, data = DPRC_neuropsych_data) %>% tukey_hsd()
+#effect size for Groups
+DPRC_neuropsych_data%>%cohens_d(HayTime2.HayTime1_minus~Group)
 #plot interaction 
 #remove NAs for HayTime2.HayTime1_minus variable
 noNAs_HayTime2.HayTime1_minus <- DPRC_neuropsych_data[,c("ParticipantID","Individual_number","Group","Timepoint","Age","Sex","HayTime2.HayTime1_minus")]
@@ -4308,6 +4684,30 @@ noNAs_HayTime2.HayTime1_minus %>%
   scale_color_discrete(labels = c("1" = "C", "2" = "SCD", "3" = "aMCI", "4" = "mMCI", "5" = "AD")) + 
   ylab("Hayling Sentence 2 Minus Hayling Sentence 1 (seconds)") +
   theme_classic()
+#interaction f/u tests -- HayBTime2
+#subtract differences in F2 - F0 for HayBTime2 
+HayTime2.HayTime1_minus_diff_data<-DPRC_neuropsych_data[,c("ParticipantID","Individual_number","Group","Timepoint","Age","Sex","HayTime2.HayTime1_minus")]
+F0_HayTime2.HayTime1_minus_data<-HayTime2.HayTime1_minus_diff_data[HayTime2.HayTime1_minus_diff_data$Timepoint=='F0', ]
+F2_HayTime2.HayTime1_minus_data<-HayTime2.HayTime1_minus_diff_data[HayTime2.HayTime1_minus_diff_data$Timepoint=='F2', ]
+HayTime2.HayTime1_minusDiff<-F2_HayTime2.HayTime1_minus_data$HayTime2.HayTime1_minus - F0_HayTime2.HayTime1_minus_data$HayTime2.HayTime1_minus
+F0_HayTime2.HayTime1_minus_data$HayTime2.HayTime1_minusDiff<-HayTime2.HayTime1_minusDiff
+#run one-way ANOVA on the F2-F0 differences in HayTime2.HayTime1_minus between groups
+HayTime2.HayTime1_minusDiff_mod <- lm(HayTime2.HayTime1_minusDiff ~ Group, data = F0_HayTime2.HayTime1_minus_data)
+anova(HayTime2.HayTime1_minusDiff_mod) #sig. difference
+#effect size omnibus ANOVA
+etaSquared(HayTime2.HayTime1_minusDiff_mod)
+#post hoc f/u test
+#run pairwise comparisons (post-hoc Tukey), given that the F-test was significant. 
+post_hoc_HayTime2.HayTime1_minusDiff_mod <- glht(HayTime2.HayTime1_minusDiff_mod, linfct = mcp(Group = "Tukey"))
+summary(post_hoc_HayTime2.HayTime1_minusDiff_mod)
+confint(post_hoc_HayTime2.HayTime1_minusDiff_mod)
+#effect size for Interaction
+  #create dataframe
+  #HayTime2.HayTime1_minus_diff_data_124 <- DPRC_neuropsych_data[1:124,c("ParticipantID","Individual_number","Group","Timepoint","Age","Sex","HayTime2.HayTime1_minus")]
+  HayTime2.HayTime1_minus_diff_data_124 <- DPRC_neuropsych_data[1:119,c("ParticipantID","Individual_number","Group","Timepoint","Age","Sex","HayTime2.HayTime1_minus")]
+  HayTime2.HayTime1_minus_diff_data_124$HayTime2.HayTime1_minusDiff <- HayTime2.HayTime1_minusDiff 
+  #calculate effect size
+  HayTime2.HayTime1_minus_diff_data_124%>%cohens_d(HayTime2.HayTime1_minusDiff~Group)
 
 #plot HayTime2.HayTime1.z_minus.calc. (raincloud plot)
 ggplot(DPRC_neuropsych_data, aes(x = Group, y = HayTime2.HayTime1.z_minus.calc., fill = Timepoint)) + 
@@ -4335,6 +4735,35 @@ F2_HayTime2.HayTime1.z_minus.calc. <- DPRC_neuropsych_data[DPRC_neuropsych_data[
 noNAsF2_HayTime2.HayTime1.z_minus.calc. <- na.omit(F2_HayTime2.HayTime1.z_minus.calc.$HayTime2.HayTime1.z_minus.calc.)
 mean(noNAsF2_HayTime2.HayTime1.z_minus.calc.)
 sd(noNAsF2_HayTime2.HayTime1.z_minus.calc.)
+#Post hoc tests
+#non-sig. interaction & Timepoint, Test by Group (Tukey test)
+aov(HayTime2.HayTime1.z_minus.calc. ~ Group, data = DPRC_neuropsych_data) %>% tukey_hsd()
+#effect size for Groups
+DPRC_neuropsych_data%>%cohens_d(HayTime2.HayTime1.z_minus.calc.~Group)
+#interaction f/u tests -- HayTime2.HayTime1_minus (z-scores)
+#subtract differences in F2 - F0 for HayTime2.HayTime1_minus (z-scores)
+HayTime2.HayTime1.z_minus.calc._diff_data<-DPRC_neuropsych_data[,c("ParticipantID","Individual_number","Group","Timepoint","Age","Sex","HayTime2.HayTime1.z_minus.calc.")]
+F0_HayTime2.HayTime1.z_minus.calc._data<-HayTime2.HayTime1.z_minus.calc._diff_data[HayTime2.HayTime1.z_minus.calc._diff_data$Timepoint=='F0', ]
+F2_HayTime2.HayTime1.z_minus.calc._data<-HayTime2.HayTime1.z_minus.calc._diff_data[HayTime2.HayTime1.z_minus.calc._diff_data$Timepoint=='F2', ]
+HayTime2.HayTime1.z_minus.calc.Diff<-F2_HayTime2.HayTime1.z_minus.calc._data$HayTime2.HayTime1.z_minus.calc. - F0_HayTime2.HayTime1.z_minus.calc._data$HayTime2.HayTime1.z_minus.calc.
+F0_HayTime2.HayTime1.z_minus.calc._data$HayTime2.HayTime1.z_minus.calc.Diff<-HayTime2.HayTime1.z_minus.calc.Diff
+#run one-way ANOVA on the F2-F0 differences in HayTime2.HayTime1.z_minus.calc. between groups
+HayTime2.HayTime1.z_minus.calc.Diff_mod <- lm(HayTime2.HayTime1.z_minus.calc.Diff ~ Group, data = F0_HayTime2.HayTime1.z_minus.calc._data)
+anova(HayTime2.HayTime1.z_minus.calc.Diff_mod) #sig. difference
+#effect size omnibus ANOVA
+etaSquared(HayTime2.HayTime1.z_minus.calc.Diff_mod)
+#post hoc f/u test
+#run pairwise comparisons (post-hoc Tukey), given that the F-test was significant. 
+post_hoc_HayTime2.HayTime1.z_minus.calc.Diff_mod <- glht(HayTime2.HayTime1.z_minus.calc.Diff_mod, linfct = mcp(Group = "Tukey"))
+summary(post_hoc_HayTime2.HayTime1.z_minus.calc.Diff_mod)
+confint(post_hoc_HayTime2.HayTime1.z_minus.calc.Diff_mod)
+#effect size for Interaction
+  #create dataframe
+  #HayTime2.HayTime1.z_minus.calc._diff_data_124 <- DPRC_neuropsych_data[1:124,c("ParticipantID","Individual_number","Group","Timepoint","Age","Sex","HayTime2.HayTime1.z_minus.calc.")]
+  HayTime2.HayTime1.z_minus.calc._diff_data_124 <- DPRC_neuropsych_data[1:119,c("ParticipantID","Individual_number","Group","Timepoint","Age","Sex","HayTime2.HayTime1.z_minus.calc.")]
+  HayTime2.HayTime1.z_minus.calc._diff_data_124$HayTime2.HayTime1.z_minus.calc.Diff <- HayTime2.HayTime1.z_minus.calc.Diff 
+  #calculate effect size
+  HayTime2.HayTime1.z_minus.calc._diff_data_124%>%cohens_d(HayTime2.HayTime1.z_minus.calc.Diff~Group)
 
 #plot HayBCatA.Raw (raincloud plot)
 ggplot(DPRC_neuropsych_data, aes(x = Group, y = HayBCatA.Raw, fill = Timepoint)) + 
@@ -4394,6 +4823,11 @@ F2_HayBCatAz <- DPRC_neuropsych_data[DPRC_neuropsych_data[, "Timepoint"] == "F2"
 noNAsF2_HayBCatAz <- na.omit(F2_HayBCatAz$HayBCatA.z)
 mean(noNAsF2_HayBCatAz)
 sd(noNAsF2_HayBCatAz)
+#Post hoc tests
+#non-sig. interaction & Timepoint, Test by Group (Tukey test)
+aov(HayBCatA.z ~ Group, data = DPRC_neuropsych_data) %>% tukey_hsd()
+#effect size for Groups
+DPRC_neuropsych_data%>%cohens_d(HayBCatA.z~Group)
 
 #plot HayBCatB.Raw (raincloud plot)
 ggplot(DPRC_neuropsych_data, aes(x = Group, y = HayBCatB.Raw, fill = Timepoint)) + 
@@ -4453,6 +4887,35 @@ F2_HayBCatBz <- DPRC_neuropsych_data[DPRC_neuropsych_data[, "Timepoint"] == "F2"
 noNAsF2_HayBCatBz <- na.omit(F2_HayBCatBz$HayBCatB.z)
 mean(noNAsF2_HayBCatBz)
 sd(noNAsF2_HayBCatBz)
+#Post hoc tests
+#non-sig. interaction & Timepoint, Test by Group (Tukey test)
+aov(HayBCatB.z ~ Group, data = DPRC_neuropsych_data) %>% tukey_hsd()
+#effect size for Groups
+DPRC_neuropsych_data%>%cohens_d(HayBCatB.z~Group)
+#interaction f/u tests -- HayTime2.HayTime1_minus (z-scores)
+#subtract differences in F2 - F0 for HayTime2.HayTime1_minus (z-scores)
+HayBCatB.z_diff_data<-DPRC_neuropsych_data[,c("ParticipantID","Individual_number","Group","Timepoint","Age","Sex","HayBCatB.z")]
+F0_HayBCatB.z_data<-HayBCatB.z_diff_data[HayBCatB.z_diff_data$Timepoint=='F0', ]
+F2_HayBCatB.z_data<-HayBCatB.z_diff_data[HayBCatB.z_diff_data$Timepoint=='F2', ]
+HayBCatB.zDiff<-F2_HayBCatB.z_data$HayBCatB.z - F0_HayBCatB.z_data$HayBCatB.z
+F0_HayBCatB.z_data$HayBCatB.zDiff<-HayBCatB.zDiff
+#run one-way ANOVA on the F2-F0 differences in HayTime2.HayTime1.z_minus.calc. between groups
+HayBCatB.zDiff_mod <- lm(HayBCatB.zDiff ~ Group, data = F0_HayBCatB.z_data)
+anova(HayBCatB.zDiff_mod) #sig. difference
+#effect size omnibus ANOVA
+etaSquared(HayBCatB.zDiff_mod)
+#post hoc f/u test
+#run pairwise comparisons (post-hoc Tukey), given that the F-test was significant. 
+post_hoc_HayBCatB.zDiff_mod <- glht(HayBCatB.zDiff_mod, linfct = mcp(Group = "Tukey"))
+summary(post_hoc_HayBCatB.zDiff_mod)
+confint(post_hoc_HayBCatB.zDiff_mod)
+#effect size for Interaction
+#create dataframe
+#HayBCatB.z_diff_data_124 <- DPRC_neuropsych_data[1:124,c("ParticipantID","Individual_number","Group","Timepoint","Age","Sex","HayBCatB.z")]
+HayBCatB.z_diff_data_124 <- DPRC_neuropsych_data[1:119,c("ParticipantID","Individual_number","Group","Timepoint","Age","Sex","HayBCatB.z")]
+HayBCatB.z_diff_data_124$HayBCatB.zDiff <- HayBCatB.zDiff 
+#calculate effect size
+HayBCatB.z_diff_data_124%>%cohens_d(HayBCatB.zDiff~Group)
 
 #plot HayCatTotalError.Raw (raincloud plot)
 ggplot(DPRC_neuropsych_data, aes(x = Group, y = HayCatTotalError.Raw, fill = Timepoint)) + 
@@ -4480,6 +4943,11 @@ F2_HayCatTotalError.Raw <- DPRC_neuropsych_data[DPRC_neuropsych_data[, "Timepoin
 noNAsF2_HayCatTotalError.Raw <- na.omit(F2_HayCatTotalError.Raw$HayCatTotalError.Raw)
 mean(noNAsF2_HayCatTotalError.Raw)
 sd(noNAsF2_HayCatTotalError.Raw)
+#Post hoc tests
+#non-sig. interaction & Timepoint, Test by Group (Tukey test)
+aov(HayCatTotalError.Raw ~ Group, data = DPRC_neuropsych_data) %>% tukey_hsd()
+#effect size for Groups
+DPRC_neuropsych_data%>%cohens_d(HayCatTotalError.Raw~Group)
 
 #plot HayCatTotalError.z (raincloud plot)
 ggplot(DPRC_neuropsych_data, aes(x = Group, y = HayCatTotalError.z, fill = Timepoint)) + 
@@ -4507,6 +4975,11 @@ F2_HayCatTotalError.z <- DPRC_neuropsych_data[DPRC_neuropsych_data[, "Timepoint"
 noNAsF2_HayCatTotalError.z <- na.omit(F2_HayCatTotalError.z$HayCatTotalError.z)
 mean(noNAsF2_HayCatTotalError.z)
 sd(noNAsF2_HayCatTotalError.z)
+#Post hoc tests
+#non-sig. interaction & Timepoint, Test by Group (Tukey test)
+aov(HayCatTotalError.z ~ Group, data = DPRC_neuropsych_data) %>% tukey_hsd()
+#effect size for Groups
+DPRC_neuropsych_data%>%cohens_d(HayCatTotalError.z~Group)
 
 #3.D-KEFS Stroop Task ---------------------------------------------------------#
 #plot ColorNaming.Raw (raincloud plot)
@@ -4596,8 +5069,6 @@ posthoc_pairwise_Timepoint_ColorNaming ##examines all Timepoint contrasts betwee
 #     p.adjust.methods = "fdr") %>%
 #   select(-df, -statistic, -p) # Remove details
 # posthoc_pairwise_Timepoint_ColorNaming  ##examines all Timepoint contrasts between each Group (1,2,3,4,5) ##
-
-
 #all pairwise comparisons, Tukey test - from: https://online.stat.psu.edu/stat485/lesson/12/12.7
 summary(lm(ColorNaming.Raw~Group+Timepoint+Group:Timepoint,data=DPRC_neuropsych_data)) 
 TukeyHSD(aov(ColorNaming.Raw~Group+Timepoint+Group:Timepoint,data=DPRC_neuropsych_data)) 
@@ -4605,7 +5076,6 @@ TukeyHSD(aov(ColorNaming.Raw~Group+Timepoint+Group:Timepoint,data=DPRC_neuropsyc
 DPRC_neuropsych_data_aMCI_ColorNaming_long <- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 3)
 DPRC_neuropsych_data_aMCI_ColorNaming_long$Group <- droplevels(DPRC_neuropsych_data_aMCI_ColorNaming_long$Group)
 DPRC_neuropsych_data_aMCI_ColorNaming_long%>%cohens_d(ColorNaming.Raw~Timepoint, paired=TRUE)
-
 #plot interaction 
 #remove NAs for ColorNaming variable
 noNAs_ColorNamingRaw <- DPRC_neuropsych_data[,c("ParticipantID","Individual_number","Group","Timepoint","Age","Sex","ColorNaming.Raw")]
@@ -4628,7 +5098,30 @@ noNAs_ColorNamingRaw %>%
   scale_color_discrete(labels = c("1" = "C", "2" = "SCD", "3" = "aMCI", "4" = "mMCI", "5" = "AD")) + 
   ylab("Stroop - Colour Naming Raw (seconds)") +
   theme_classic()
-
+#interaction f/u tests -- Colour Naming
+#subtract differences in F2 - F0 for Colour Naming 
+ColorNaming.Raw_diff_data<-DPRC_neuropsych_data[,c("ParticipantID","Individual_number","Group","Timepoint","Age","Sex","ColorNaming.Raw")]
+F0_ColorNaming.Raw_data<-ColorNaming.Raw_diff_data[ColorNaming.Raw_diff_data$Timepoint=='F0', ]
+F2_ColorNaming.Raw_data<-ColorNaming.Raw_diff_data[ColorNaming.Raw_diff_data$Timepoint=='F2', ]
+ColorNaming.RawDiff<-F2_ColorNaming.Raw_data$ColorNaming.Raw - F0_ColorNaming.Raw_data$ColorNaming.Raw
+F0_ColorNaming.Raw_data$ColorNaming.RawDiff<-ColorNaming.RawDiff
+#run one-way ANOVA on the F2-F0 differences in ColorNaming.Raw between groups
+ColorNaming.RawDiff_mod <- lm(ColorNaming.RawDiff ~ Group, data = F0_ColorNaming.Raw_data)
+anova(ColorNaming.RawDiff_mod) #sig. difference
+#effect size omnibus ANOVA
+etaSquared(ColorNaming.RawDiff_mod)
+#post hoc f/u test
+#run pairwise comparisons (post-hoc Tukey), given that the F-test was significant. 
+post_hoc_ColorNaming.RawDiff_mod <- glht(ColorNaming.RawDiff_mod, linfct = mcp(Group = "Tukey"))
+summary(post_hoc_ColorNaming.RawDiff_mod)
+confint(post_hoc_ColorNaming.RawDiff_mod)
+#effect size for Interaction
+#create dataframe
+  #ColorNaming.Raw_diff_data_124 <- DPRC_neuropsych_data[1:124,c("ParticipantID","Individual_number","Group","Timepoint","Age","Sex","ColorNaming.Raw")]
+  ColorNaming.Raw_diff_data_124 <- DPRC_neuropsych_data[1:119,c("ParticipantID","Individual_number","Group","Timepoint","Age","Sex","ColorNaming.Raw")]
+  ColorNaming.Raw_diff_data_124$ColorNaming.RawDiff <- ColorNaming.RawDiff 
+  #calculate effect size
+  ColorNaming.Raw_diff_data_124%>%cohens_d(ColorNaming.RawDiff~Group)
 #test if there is a difference among differences (e.g., is the aMCI group difference for color naming between the time points 
 #(F0 - F2) sig. greater compared to the other groups?)
 #subtract differences in F2 - F0 for color naming
@@ -4691,6 +5184,35 @@ F2_ColorNamingZ <- DPRC_neuropsych_data[DPRC_neuropsych_data[, "Timepoint"] == "
 noNAsF2_ColorNamingZ <- na.omit(F2_ColorNamingZ$ColorNaming.Z)
 mean(noNAsF2_ColorNamingZ)
 sd(noNAsF2_ColorNamingZ)
+#Post hoc tests
+#Main Effect Test by Group (Tukey test)
+aov(ColorNaming.Z ~ Group, data = DPRC_neuropsych_data) %>% tukey_hsd()
+#effect size for Groups
+DPRC_neuropsych_data%>%cohens_d(ColorNaming.Z~Group)
+#interaction f/u tests -- Colour Naming (z-scores)
+#subtract differences in F2 - F0 for Colour Naming 
+ColorNaming.Z_diff_data<-DPRC_neuropsych_data[,c("ParticipantID","Individual_number","Group","Timepoint","Age","Sex","ColorNaming.Z")]
+F0_ColorNaming.Z_data<-ColorNaming.Z_diff_data[ColorNaming.Z_diff_data$Timepoint=='F0', ]
+F2_ColorNaming.Z_data<-ColorNaming.Z_diff_data[ColorNaming.Z_diff_data$Timepoint=='F2', ]
+ColorNaming.ZDiff<-F2_ColorNaming.Z_data$ColorNaming.Z - F0_ColorNaming.Z_data$ColorNaming.Z
+F0_ColorNaming.Z_data$ColorNaming.ZDiff<-ColorNaming.ZDiff
+#run one-way ANOVA on the F2-F0 differences in ColorNaming.Z between groups
+ColorNaming.ZDiff_mod <- lm(ColorNaming.ZDiff ~ Group, data = F0_ColorNaming.Z_data)
+anova(ColorNaming.ZDiff_mod) #sig. difference
+#effect size omnibus ANOVA
+etaSquared(ColorNaming.ZDiff_mod)
+#post hoc f/u test
+#run pairwise comparisons (post-hoc Tukey), given that the F-test was significant. 
+post_hoc_ColorNaming.ZDiff_mod <- glht(ColorNaming.ZDiff_mod, linfct = mcp(Group = "Tukey"))
+summary(post_hoc_ColorNaming.ZDiff_mod)
+confint(post_hoc_ColorNaming.ZDiff_mod)
+#effect size for Interaction
+  #create dataframe
+  #ColorNaming.Z_diff_data_124 <- DPRC_neuropsych_data[1:124,c("ParticipantID","Individual_number","Group","Timepoint","Age","Sex","ColorNaming.Z")]
+  ColorNaming.Z_diff_data_124 <- DPRC_neuropsych_data[1:119,c("ParticipantID","Individual_number","Group","Timepoint","Age","Sex","ColorNaming.Z")]
+  ColorNaming.Z_diff_data_124$ColorNaming.ZDiff <- ColorNaming.ZDiff 
+  #calculate effect size
+  ColorNaming.Z_diff_data_124%>%cohens_d(ColorNaming.ZDiff~Group)
 
 #plot WordReading.Raw (raincloud plot)
 ggplot(DPRC_neuropsych_data, aes(x = Group, y = WordReading.Raw, fill = Timepoint)) + 
@@ -4754,6 +5276,11 @@ F2_WordReadingZ <- DPRC_neuropsych_data[DPRC_neuropsych_data[, "Timepoint"] == "
 noNAsF2_WordReadingZ <- na.omit(F2_WordReadingZ$WordReading.Z)
 mean(noNAsF2_WordReadingZ)
 sd(noNAsF2_WordReadingZ)
+#Post hoc tests
+#non-sig. interaction - test by Group
+aov(WordReading.Z ~ Group, data = DPRC_neuropsych_data) %>% tukey_hsd()
+#effect size for Groups
+DPRC_neuropsych_data%>%cohens_d(WordReading.Z~Group)
 
 #plot Inhibition.Raw (raincloud plot)
 ggplot(DPRC_neuropsych_data, aes(x = Group, y = Inhibition.Raw, fill = Timepoint)) + 
@@ -4817,6 +5344,35 @@ F2_InhibitionZ <- DPRC_neuropsych_data[DPRC_neuropsych_data[, "Timepoint"] == "F
 noNAsF2_InhibitionZ <- na.omit(F2_InhibitionZ$Inhibition.Z)
 mean(noNAsF2_InhibitionZ)
 sd(noNAsF2_InhibitionZ)
+#Post hoc tests
+#non-sig. interaction - test by Group
+aov(Inhibition.Z ~ Group, data = DPRC_neuropsych_data) %>% tukey_hsd()
+#effect size for Groups
+DPRC_neuropsych_data%>%cohens_d(Inhibition.Z~Group)
+#interaction f/u tests -- Inhibition (z-scores)
+#subtract differences in F2 - F0 for Inhibition 
+Inhibition.Z_diff_data<-DPRC_neuropsych_data[,c("ParticipantID","Individual_number","Group","Timepoint","Age","Sex","Inhibition.Z")]
+F0_Inhibition.Z_data<-Inhibition.Z_diff_data[Inhibition.Z_diff_data$Timepoint=='F0', ]
+F2_Inhibition.Z_data<-Inhibition.Z_diff_data[Inhibition.Z_diff_data$Timepoint=='F2', ]
+Inhibition.ZDiff<-F2_Inhibition.Z_data$Inhibition.Z - F0_Inhibition.Z_data$Inhibition.Z
+F0_Inhibition.Z_data$Inhibition.ZDiff<-Inhibition.ZDiff
+#run one-way ANOVA on the F2-F0 differences in Inhibition.Z between groups
+Inhibition.ZDiff_mod <- lm(Inhibition.ZDiff ~ Group, data = F0_Inhibition.Z_data)
+anova(Inhibition.ZDiff_mod) #sig. difference
+#effect size omnibus ANOVA
+etaSquared(Inhibition.ZDiff_mod)
+#post hoc f/u test
+#run pairwise comparisons (post-hoc Tukey), given that the F-test was significant. 
+post_hoc_Inhibition.ZDiff_mod <- glht(Inhibition.ZDiff_mod, linfct = mcp(Group = "Tukey"))
+summary(post_hoc_Inhibition.ZDiff_mod)
+confint(post_hoc_Inhibition.ZDiff_mod)
+#effect size for Interaction
+  #create dataframe
+  #Inhibition.Z_diff_data_124 <- DPRC_neuropsych_data[1:124,c("ParticipantID","Individual_number","Group","Timepoint","Age","Sex","Inhibition.Z")]
+  Inhibition.Z_diff_data_124 <- DPRC_neuropsych_data[1:119,c("ParticipantID","Individual_number","Group","Timepoint","Age","Sex","Inhibition.Z")]
+  Inhibition.Z_diff_data_124$Inhibition.ZDiff <- Inhibition.ZDiff 
+  #calculate effect size
+  Inhibition.Z_diff_data_124%>%cohens_d(Inhibition.ZDiff~Group)
 
 #plot Inhibition.Colour.Naming (Inhibition / Colour Naming) (raincloud plot)
 ggplot(DPRC_neuropsych_data, aes(x = Group, y = Inhibition.Colour.Naming, fill = Timepoint)) + 
@@ -4898,6 +5454,11 @@ F2_InhibitionWordReading <- DPRC_neuropsych_data[DPRC_neuropsych_data[, "Timepoi
 noNAsF2_InhibitionWordReading <- na.omit(F2_InhibitionWordReading$Inhibition.Word.Reading)
 mean(noNAsF2_InhibitionWordReading)
 sd(noNAsF2_InhibitionWordReading)
+#Post hoc tests
+#non-sig. interaction - test by Group
+aov(Inhibition.Word.Reading ~ Group, data = DPRC_neuropsych_data) %>% tukey_hsd()
+#effect size for Groups
+DPRC_neuropsych_data%>%cohens_d(Inhibition.Word.Reading~Group)
 
 #plot Inhibition.Word.Reading Z-scores (Inhibition / Colour Naming.zscores.calc) (raincloud plot)
 ggplot(DPRC_neuropsych_data, aes(x = Group, y = Inhibition.Word.Reading.zscores.calc., fill = Timepoint)) + 
@@ -4925,6 +5486,11 @@ F2_InhibitionWordReadingZ <- DPRC_neuropsych_data[DPRC_neuropsych_data[, "Timepo
 noNAsF2_InhibitionWordReadingZ <- na.omit(F2_InhibitionWordReadingZ$Inhibition.Word.Reading.zscores.calc.)
 mean(noNAsF2_InhibitionWordReadingZ)
 sd(noNAsF2_InhibitionWordReadingZ)
+#Post hoc tests
+#non-sig. interaction - test by Group
+aov(Inhibition.Word.Reading.zscores.calc. ~ Group, data = DPRC_neuropsych_data) %>% tukey_hsd()
+#effect size for Groups
+DPRC_neuropsych_data%>%cohens_d(Inhibition.Word.Reading.zscores.calc.~Group)
 
 # #plot Golden_Stroop_interference_score (raincloud plot)
 # ggplot(DPRC_neuropsych_data, aes(x = Group, y = Golden_Stroop_interference_score, fill = Timepoint)) + 
@@ -5006,6 +5572,11 @@ F2_Interference_score_Caffarra_2002 <- DPRC_neuropsych_data[DPRC_neuropsych_data
 noNAsF2_Interference_score_Caffarra_2002 <- na.omit(F2_Interference_score_Caffarra_2002$Interference_score_Caffarra_2002)
 mean(noNAsF2_Interference_score_Caffarra_2002)
 sd(noNAsF2_Interference_score_Caffarra_2002)
+#Post hoc tests
+#non-sig. interaction - test by Group
+aov(Interference_score_Caffarra_2002 ~ Group, data = DPRC_neuropsych_data) %>% tukey_hsd()
+#effect size for Groups
+DPRC_neuropsych_data%>%cohens_d(Interference_score_Caffarra_2002~Group)
 
 #plot Interference_zscore_Caffarra_2002 (raincloud plot)
 ggplot(DPRC_neuropsych_data, aes(x = Group, y = Interference_zscore_Caffarra_2002, fill = Timepoint)) + 
@@ -5033,7 +5604,11 @@ F2_Interference_zscore_Caffarra_2002 <- DPRC_neuropsych_data[DPRC_neuropsych_dat
 noNAsF2_Interference_zscore_Caffarra_2002 <- na.omit(F2_Interference_zscore_Caffarra_2002$Interference_zscore_Caffarra_2002)
 mean(noNAsF2_Interference_zscore_Caffarra_2002)
 sd(noNAsF2_Interference_zscore_Caffarra_2002)
-
+#Post hoc tests
+#non-sig. interaction - test by Group
+aov(Interference_zscore_Caffarra_2002 ~ Group, data = DPRC_neuropsych_data) %>% tukey_hsd()
+#effect size for Groups
+DPRC_neuropsych_data%>%cohens_d(Interference_zscore_Caffarra_2002~Group)
 
 #4.D-KEFS Verbal Fluency + Category Fluency Task ------------------------------#
 #plot LetFluency.Raw (raincloud plot)
@@ -5089,6 +5664,30 @@ noNAs_LetFluency.Raw %>%
   scale_color_discrete(labels = c("1" = "C", "2" = "SCD", "3" = "aMCI", "4" = "mMCI", "5" = "AD")) + 
   ylab("Letter Fluency (total correct responses)") +
   theme_classic()
+#interaction f/u tests -- Letter Fluency
+#subtract differences in F2 - F0 for Letter Fluency
+LetFluency.Raw_diff_data<-DPRC_neuropsych_data[,c("ParticipantID","Individual_number","Group","Timepoint","Age","Sex","LetFluency.Raw")]
+F0_LetFluency.Raw_data<-LetFluency.Raw_diff_data[LetFluency.Raw_diff_data$Timepoint=='F0', ]
+F2_LetFluency.Raw_data<-LetFluency.Raw_diff_data[LetFluency.Raw_diff_data$Timepoint=='F2', ]
+LetFluency.RawDiff<-F2_LetFluency.Raw_data$LetFluency.Raw - F0_LetFluency.Raw_data$LetFluency.Raw
+F0_LetFluency.Raw_data$LetFluency.RawDiff<-LetFluency.RawDiff
+#run one-way ANOVA on the F2-F0 differences in LetFluency.Raw between groups
+LetFluency.RawDiff_mod <- lm(LetFluency.RawDiff ~ Group, data = F0_LetFluency.Raw_data)
+anova(LetFluency.RawDiff_mod) #sig. difference
+#effect size omnibus ANOVA
+etaSquared(LetFluency.RawDiff_mod)
+#post hoc f/u test
+#run pairwise comparisons (post-hoc Tukey), given that the F-test was significant. 
+post_hoc_LetFluency.RawDiff_mod <- glht(LetFluency.RawDiff_mod, linfct = mcp(Group = "Tukey"))
+summary(post_hoc_LetFluency.RawDiff_mod)
+confint(post_hoc_LetFluency.RawDiff_mod)
+#effect size for Interaction
+  #create dataframe
+  #LetFluency.Raw_diff_data_124 <- DPRC_neuropsych_data[1:124,c("ParticipantID","Individual_number","Group","Timepoint","Age","Sex","LetFluency.Raw")]
+  LetFluency.Raw_diff_data_124 <- DPRC_neuropsych_data[1:119,c("ParticipantID","Individual_number","Group","Timepoint","Age","Sex","LetFluency.Raw")]
+  LetFluency.Raw_diff_data_124$LetFluency.RawDiff <- LetFluency.RawDiff 
+  #calculate effect size
+  LetFluency.Raw_diff_data_124%>%cohens_d(LetFluency.RawDiff~Group)
 
 #plot LetFluency.Z (raincloud plot)
 ggplot(DPRC_neuropsych_data, aes(x = Group, y = LetFluency.Z, fill = Timepoint)) + 
@@ -5116,6 +5715,34 @@ F2_LetFluencyZ <- DPRC_neuropsych_data[DPRC_neuropsych_data[, "Timepoint"] == "F
 noNAsF2_LetFluencyZ <- na.omit(F2_LetFluencyZ$LetFluency.Z)
 mean(noNAsF2_LetFluencyZ)
 sd(noNAsF2_LetFluencyZ)
+#Post hoc tests
+#non-sig. interaction - test by Group
+aov(LetFluency.Z ~ Group, data = DPRC_neuropsych_data) %>% tukey_hsd()
+#effect size for Groups
+DPRC_neuropsych_data%>%cohens_d(LetFluency.Z~Group)
+#interaction f/u tests -- Letter Fluency (z-scores)
+#subtract differences in F2 - F0 for Letter Fluency (z-scores)
+LetFluency.Z_diff_data<-DPRC_neuropsych_data[,c("ParticipantID","Individual_number","Group","Timepoint","Age","Sex","LetFluency.Z")]
+F0_LetFluency.Z_data<-LetFluency.Z_diff_data[LetFluency.Z_diff_data$Timepoint=='F0', ]
+F2_LetFluency.Z_data<-LetFluency.Z_diff_data[LetFluency.Z_diff_data$Timepoint=='F2', ]
+LetFluency.ZDiff<-F2_LetFluency.Z_data$LetFluency.Z - F0_LetFluency.Z_data$LetFluency.Z
+F0_LetFluency.Z_data$LetFluency.ZDiff<-LetFluency.ZDiff
+#run one-way ANOVA on the F2-F0 differences in LetFluency.Z between groups
+LetFluency.ZDiff_mod <- lm(LetFluency.ZDiff ~ Group, data = F0_LetFluency.Z_data)
+anova(LetFluency.ZDiff_mod) #sig. difference
+#effect size omnibus ANOVA
+etaSquared(LetFluency.ZDiff_mod)
+#post hoc f/u test
+#run pairwise comparisons (post-hoc Tukey), given that the F-test was significant. 
+post_hoc_LetFluency.ZDiff_mod <- glht(LetFluency.ZDiff_mod, linfct = mcp(Group = "Tukey"))
+summary(post_hoc_LetFluency.ZDiff_mod)
+confint(post_hoc_LetFluency.ZDiff_mod)
+#effect size for Interaction
+  #create dataframe
+  LetFluency.Z_diff_data_124 <- DPRC_neuropsych_data[1:124,c("ParticipantID","Individual_number","Group","Timepoint","Age","Sex","LetFluency.Z")]
+  LetFluency.Z_diff_data_124$LetFluency.ZDiff <- LetFluency.ZDiff 
+  #calculate effect size
+  LetFluency.Z_diff_data_124%>%cohens_d(LetFluency.ZDiff~Group)
 
 #plot CatFluency.Raw (raincloud plot)
 ggplot(DPRC_neuropsych_data, aes(x = Group, y = CatFluency.Raw, fill = Timepoint)) + 
@@ -5175,6 +5802,11 @@ F2_CatFluencyZ <- DPRC_neuropsych_data[DPRC_neuropsych_data[, "Timepoint"] == "F
 noNAsF2_CatFluencyZ <- na.omit(F2_CatFluencyZ$CatFluency.Z)
 mean(noNAsF2_CatFluencyZ)
 sd(noNAsF2_CatFluencyZ)
+#Post hoc tests
+#non-sig. interaction - test by Group
+aov(CatFluency.Z ~ Group, data = DPRC_neuropsych_data) %>% tukey_hsd()
+#effect size for Groups
+DPRC_neuropsych_data%>%cohens_d(CatFluency.Z~Group)
 
 #plot Switching.Raw (raincloud plot)
 ggplot(DPRC_neuropsych_data, aes(x = Group, y = Switching.Raw, fill = Timepoint)) + 
@@ -5238,6 +5870,11 @@ F2_Switchingz <- DPRC_neuropsych_data[DPRC_neuropsych_data[, "Timepoint"] == "F2
 noNAsF2_Switchingz <- na.omit(F2_Switchingz$Switching.z)
 mean(noNAsF2_Switchingz)
 sd(noNAsF2_Switchingz)
+#Post hoc tests
+#non-sig. interaction - test by Group
+aov(Switching.z ~ Group, data = DPRC_neuropsych_data) %>% tukey_hsd()
+#effect size for Groups
+DPRC_neuropsych_data%>%cohens_d(Switching.z~Group)
 
 #5.Trail Making Test (TMT) A & B ----------------------------------------------#
 #plot TrailsA.Raw (raincloud plot)
@@ -5298,6 +5935,11 @@ F2_TrailsAZ <- DPRC_neuropsych_data[DPRC_neuropsych_data[, "Timepoint"] == "F2",
 noNAsF2_TrailsAZ <- na.omit(F2_TrailsAZ$TrailsA.Z)
 mean(noNAsF2_TrailsAZ)
 sd(noNAsF2_TrailsAZ)
+#Post hoc tests
+#non-sig. interaction - test by Group
+aov(TrailsA.Z~ Group, data = DPRC_neuropsych_data) %>% tukey_hsd()
+#effect size for Groups
+DPRC_neuropsych_data%>%cohens_d(TrailsA.Z~Group)
 
 #plot TrailsB.Raw (raincloud plot)
 ggplot(DPRC_neuropsych_data, aes(x = Group, y = TrailsB.Raw, fill = Timepoint)) + 
@@ -5387,7 +6029,30 @@ noNAs_TrailsBRaw %>%
   scale_color_discrete(labels = c("1" = "C", "2" = "SCD", "3" = "aMCI", "4" = "mMCI", "5" = "AD")) + 
   ylab("Trail Making Test B Raw (seconds)") +
   theme_classic()
-
+#interaction f/u tests -- Trails B
+#subtract differences in F2 - F0 for Trails B
+TrailsB.Raw_diff_data<-DPRC_neuropsych_data[,c("ParticipantID","Individual_number","Group","Timepoint","Age","Sex","TrailsB.Raw")]
+F0_TrailsB.Raw_data<-TrailsB.Raw_diff_data[TrailsB.Raw_diff_data$Timepoint=='F0', ]
+F2_TrailsB.Raw_data<-TrailsB.Raw_diff_data[TrailsB.Raw_diff_data$Timepoint=='F2', ]
+TrailsB.RawDiff<-F2_TrailsB.Raw_data$TrailsB.Raw - F0_TrailsB.Raw_data$TrailsB.Raw
+F0_TrailsB.Raw_data$TrailsB.RawDiff<-TrailsB.RawDiff
+#run one-way ANOVA on the F2-F0 differences in TrailsB.Raw between groups
+TrailsB.RawDiff_mod <- lm(TrailsB.RawDiff ~ Group, data = F0_TrailsB.Raw_data)
+anova(TrailsB.RawDiff_mod) #sig. difference
+#effect size omnibus ANOVA
+etaSquared(TrailsB.RawDiff_mod)
+#post hoc f/u test
+#run pairwise comparisons (post-hoc Tukey), given that the F-test was significant. 
+post_hoc_TrailsB.RawDiff_mod <- glht(TrailsB.RawDiff_mod, linfct = mcp(Group = "Tukey"))
+summary(post_hoc_TrailsB.RawDiff_mod)
+confint(post_hoc_TrailsB.RawDiff_mod)
+#effect size for Interaction
+#create dataframe
+#TrailsB.Raw_diff_data_124 <- DPRC_neuropsych_data[1:124,c("ParticipantID","Individual_number","Group","Timepoint","Age","Sex","TrailsB.Raw")]
+TrailsB.Raw_diff_data_124 <- DPRC_neuropsych_data[1:119,c("ParticipantID","Individual_number","Group","Timepoint","Age","Sex","TrailsB.Raw")]
+TrailsB.Raw_diff_data_124$TrailsB.RawDiff <- TrailsB.RawDiff 
+#calculate effect size
+TrailsB.Raw_diff_data_124%>%cohens_d(TrailsB.RawDiff~Group)
 #test if there is a difference among differences (e.g., is the aMCI group difference for TMT-B between the time points 
 #(F0 - F2) sig. greater compared to the other groups?)
 #subtract differences in F2 - F0 for TMT-B
@@ -5411,7 +6076,7 @@ confint(post_hoc_TrailsBDiff_mod)
 SCDvaMCI_TrailsBDiff <- subset(F0_TrailsB_data, F0_TrailsB_data$Group == 2 | F0_TrailsB_data$Group == 3)
 SCDvaMCI_TrailsBDiff$Group <- droplevels(SCDvaMCI_TrailsBDiff$Group)
 cohensD(TrailsBDiff ~ Group, data = SCDvaMCI_TrailsBDiff) #this looks like Hedges' g? 
-#plot Color Naming differences (raincloud plot)
+#plot Trails B differences (raincloud plot)
 ggplot(F0_TrailsB_data, aes(x = Group, y = TrailsBDiff, fill = Group)) + 
   geom_flat_violin(position = position_nudge(x = .2, y = 0), alpha = .8) +
   geom_point(aes(y = TrailsBDiff, color = Group), position = position_jitter(width = .15), size = .5, alpha = 0.8) +
@@ -5450,6 +6115,34 @@ F2_TrailsBZ <- DPRC_neuropsych_data[DPRC_neuropsych_data[, "Timepoint"] == "F2",
 noNAsF2_TrailsBZ <- na.omit(F2_TrailsBZ$TrailsB.Z)
 mean(noNAsF2_TrailsBZ)
 sd(noNAsF2_TrailsBZ)
+#Post hoc tests
+#Test by Group
+aov(TrailsB.Z ~ Group, data = DPRC_neuropsych_data) %>% tukey_hsd()
+#effect size for Groups
+DPRC_neuropsych_data%>%cohens_d(TrailsB.Z~Group)
+#interaction f/u tests -- Trails B (z-scores)
+#subtract differences in F2 - F0 for Trails B (z-scores)
+TrailsB.Z_diff_data<-DPRC_neuropsych_data[,c("ParticipantID","Individual_number","Group","Timepoint","Age","Sex","TrailsB.Z")]
+F0_TrailsB.Z_data<-TrailsB.Z_diff_data[TrailsB.Z_diff_data$Timepoint=='F0', ]
+F2_TrailsB.Z_data<-TrailsB.Z_diff_data[TrailsB.Z_diff_data$Timepoint=='F2', ]
+TrailsB.ZDiff<-F2_TrailsB.Z_data$TrailsB.Z - F0_TrailsB.Z_data$TrailsB.Z
+F0_TrailsB.Z_data$TrailsB.ZDiff<-TrailsB.ZDiff
+#run one-way ANOVA on the F2-F0 differences in TrailsB.Z between groups
+TrailsB.ZDiff_mod <- lm(TrailsB.ZDiff ~ Group, data = F0_TrailsB.Z_data)
+anova(TrailsB.ZDiff_mod) #sig. difference
+#effect size omnibus ANOVA
+etaSquared(TrailsB.ZDiff_mod)
+#post hoc f/u test
+#run pairwise comparisons (post-hoc Tukey), given that the F-test was significant. 
+post_hoc_TrailsB.ZDiff_mod <- glht(TrailsB.ZDiff_mod, linfct = mcp(Group = "Tukey"))
+summary(post_hoc_TrailsB.ZDiff_mod)
+confint(post_hoc_TrailsB.ZDiff_mod)
+#effect size for Interaction
+  #create dataframe
+  TrailsB.Z_diff_data_124 <- DPRC_neuropsych_data[1:124,c("ParticipantID","Individual_number","Group","Timepoint","Age","Sex","TrailsB.Z")]
+  TrailsB.Z_diff_data_124$TrailsB.ZDiff <- TrailsB.ZDiff 
+  #calculate effect size
+  TrailsB.Z_diff_data_124%>%cohens_d(TrailsB.ZDiff~Group)
 
 #plot TMT.B.TMT.A (TMT-B / TMT-A) (raincloud plot)
 ggplot(DPRC_neuropsych_data, aes(x = Group, y = TMT.B.TMT.A, fill = Timepoint)) + 
@@ -5621,7 +6314,7 @@ HayBTime2.RawDiff<-F2_HayBTime2.Raw_data$HayBTime2.Raw - F0_HayBTime2.Raw_data$H
 F0_HayBTime2.Raw_data$HayBTime2.RawDiff<-HayBTime2.RawDiff
 #run one-way ANOVA on the F2-F0 differences in HayTime2.HayTime1_minus between groups
 HayBTime2.RawDiff_covar_mod <- lm(HayBTime2.RawDiff ~ Group+Age, data = F0_HayBTime2.Raw_data)
-anova(HayBTime2.RawDiff_covar_mod) #sig. difference
+anova(HayBTime2.RawDiff_covar_mod) #no sig. difference
 #effect size omnibus ANOVA
 etaSquared(HayBTime2.RawDiff_covar_mod)
 #post hoc f/u test
@@ -5862,11 +6555,11 @@ noNAs_InhibitionWordReading <- noNAs_InhibitionWordReading[complete.cases(noNAs_
 post_hoc_aov_InhibitionWordReading_covar_mod <- lme(Inhibition.Word.Reading ~ Group*Timepoint + Age,  random = ~1 | Individual_number/Timepoint, data=noNAs_InhibitionWordReading)
 summary(glht(post_hoc_aov_InhibitionWordReading_covar_mod, linfct=mcp(Group="Tukey")))
 #Interference score (Golden Stroop)
-#remove NAs from dataset for given variable
-noNAs_Golden_Stroop_interference_score <- DPRC_neuropsych_data[,c("ParticipantID","Individual_number","Group","Timepoint","Age","Sex","Golden_Stroop_interference_score")]
-noNAs_Golden_Stroop_interference_score <- noNAs_Golden_Stroop_interference_score[complete.cases(noNAs_Golden_Stroop_interference_score), ]
-post_hoc_aov_Golden_Stroop_interference_score_covar_mod <- lme(Golden_Stroop_interference_score ~ Group*Timepoint + Age,  random = ~1 | Individual_number/Timepoint, data=noNAs_Golden_Stroop_interference_score)
-summary(glht(post_hoc_aov_Golden_Stroop_interference_score_covar_mod, linfct=mcp(Group="Tukey")))
+# #remove NAs from dataset for given variable
+# noNAs_Golden_Stroop_interference_score <- DPRC_neuropsych_data[,c("ParticipantID","Individual_number","Group","Timepoint","Age","Sex","Golden_Stroop_interference_score")]
+# noNAs_Golden_Stroop_interference_score <- noNAs_Golden_Stroop_interference_score[complete.cases(noNAs_Golden_Stroop_interference_score), ]
+# post_hoc_aov_Golden_Stroop_interference_score_covar_mod <- lme(Golden_Stroop_interference_score ~ Group*Timepoint + Age,  random = ~1 | Individual_number/Timepoint, data=noNAs_Golden_Stroop_interference_score)
+# summary(glht(post_hoc_aov_Golden_Stroop_interference_score_covar_mod, linfct=mcp(Group="Tukey")))
 #Interference score (Caffarra 2002)
 #remove NAs from dataset for given variable
 noNAs_Interference_score_Caffarra_2002 <- DPRC_neuropsych_data[,c("ParticipantID","Individual_number","Group","Timepoint","Age","Sex","Interference_score_Caffarra_2002")]
@@ -5914,6 +6607,12 @@ t_value_effect_size <- summary(glht(TrailsBDiff_covar_mod, linfct = mcp(Group = 
   group_number <-dplyr::count(DPRC_neuropsych_data_CvmMCI_TrailsBDiff, Group) #count number of participants per group
   r_value <- cor.test(DPRC_neuropsych_data_CvmMCI_TrailsBDiff$TrailsB.Raw,DPRC_neuropsych_data_CvmMCI_TrailsBDiff$Age) #find correlation value (r) between dependent variable
   a.tes(t=t_value_effect_size$test$tstat['4 - 1'],n.1=group_number['1','n'],n.2=group_number['2','n'],R=r_value$estimate,q=1) #calculate Cohen's D with the covariate of age
+  #for SCD vs. mMCI
+  DPRC_neuropsych_data_SCDvmMCI_TrailsBDiff <- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 2 | DPRC_neuropsych_data$Group == 4)
+  DPRC_neuropsych_data_SCDvmMCI_TrailsBDiff$Group <- droplevels(DPRC_neuropsych_data_SCDvmMCI_TrailsBDiff$Group)
+  group_number <-dplyr::count(DPRC_neuropsych_data_SCDvmMCI_TrailsBDiff, Group) #count number of participants per group
+  r_value <- cor.test(DPRC_neuropsych_data_SCDvmMCI_TrailsBDiff$TrailsB.Raw,DPRC_neuropsych_data_SCDvmMCI_TrailsBDiff$Age) #find correlation value (r) between dependent variable
+  a.tes(t=t_value_effect_size$test$tstat['4 - 2'],n.1=group_number['1','n'],n.2=group_number['2','n'],R=r_value$estimate,q=1) #calculate Cohen's D with the covariate of age
 #TrailsB/TrailsA
 noNAs_TMTBTMTA <- DPRC_neuropsych_data[,c("ParticipantID","Individual_number","Group","Timepoint","Age","Sex","TMT.B.TMT.A")]
 noNAs_TMTBTMTA <- noNAs_TMTBTMTA[complete.cases(noNAs_TMTBTMTA), ]
@@ -5974,6 +6673,13 @@ t_value_effect_size <- summary(glht(LetFluency.RawDiff_covar_mod, linfct = mcp(G
   group_number <-dplyr::count(DPRC_neuropsych_data_SCDvAD_LetFluency.RawDiff, Group) #count number of participants per group
   r_value <- cor.test(DPRC_neuropsych_data_SCDvAD_LetFluency.RawDiff$LetFluency.Raw,DPRC_neuropsych_data_SCDvAD_LetFluency.RawDiff$Age) #find correlation value (r) between dependent variable
   a.tes(t=t_value_effect_size$test$tstat['5 - 2'],n.1=group_number['1','n'],n.2=group_number['2','n'],R=r_value$estimate,q=1) #calculate Cohen's D with the covariate of age  
+  #for aMCI vs. AD
+  DPRC_neuropsych_data_aMCIvAD_LetFluency.RawDiff <- subset(DPRC_neuropsych_data, DPRC_neuropsych_data$Group == 3 | DPRC_neuropsych_data$Group == 5)
+  DPRC_neuropsych_data_aMCIvAD_LetFluency.RawDiff$Group <- droplevels(DPRC_neuropsych_data_aMCIvAD_LetFluency.RawDiff$Group)
+  group_number <-dplyr::count(DPRC_neuropsych_data_aMCIvAD_LetFluency.RawDiff, Group) #count number of participants per group
+  r_value <- cor.test(DPRC_neuropsych_data_aMCIvAD_LetFluency.RawDiff$LetFluency.Raw,DPRC_neuropsych_data_aMCIvAD_LetFluency.RawDiff$Age) #find correlation value (r) between dependent variable
+  a.tes(t=t_value_effect_size$test$tstat['5 - 2'],n.1=group_number['1','n'],n.2=group_number['2','n'],R=r_value$estimate,q=1) #calculate Cohen's D with the covariate of age  
+
 #CatFluency
 #remove NAs from dataset for given variable
 noNAs_CatFluencyRaw <- DPRC_neuropsych_data[,c("ParticipantID","Individual_number","Group","Timepoint","Age","Sex","CatFluency.Raw")]
@@ -6414,6 +7120,12 @@ noNAs_InhibitionWordReading <- DPRC_neuropsych_data[,c("ParticipantID","Individu
 noNAs_InhibitionWordReading <- noNAs_InhibitionWordReading[complete.cases(noNAs_InhibitionWordReading), ]
 post_hoc_aov_InhibitionWordReading_2covar_mod <- lme(Inhibition.Word.Reading ~ Group*Timepoint + Age + Sex, random = ~1 | Individual_number/Timepoint, data=noNAs_InhibitionWordReading)
 summary(glht(post_hoc_aov_InhibitionWordReading_2covar_mod, linfct=mcp(Group="Tukey")))
+#Interference Effect
+#remove NAs from dataset for given variable
+noNAs_Interference_score_Caffarra_2002 <- DPRC_neuropsych_data[,c("ParticipantID","Individual_number","Group","Timepoint","Age","Sex","Interference_score_Caffarra_2002")]
+noNAs_Interference_score_Caffarra_2002 <- noNAs_Interference_score_Caffarra_2002[complete.cases(noNAs_Interference_score_Caffarra_2002), ]
+post_hoc_aov_Interference_score_Caffarra_2002_2covar_mod <- lme(Interference_score_Caffarra_2002 ~ Group*Timepoint + Age + Sex, random = ~1 | Individual_number/Timepoint, data=noNAs_Interference_score_Caffarra_2002)
+summary(glht(post_hoc_aov_Interference_score_Caffarra_2002_2covar_mod, linfct=mcp(Group="Tukey")))
 
 #TrailsA
 #remove NAs from dataset for given variable
@@ -6593,18 +7305,6 @@ t_value_effect_size <- summary(glht(post_hoc_aov_Switching_2covar_mod, linfct=mc
   r_value <- sqrt(mult.r_value_2covar_mod$r.squared) #find correlation value (r) between dependent variable
   a.tes(t=t_value_effect_size$test$tstat['5 - 2'],n.1=group_number['1','n'],n.2=group_number['2','n'],R=r_value,q=2) #calculate Cohen's D with the covariate of age & sex
 
-
-
-
-
-
-
-
-  
-  
-  
-  
-  
   
   
 
