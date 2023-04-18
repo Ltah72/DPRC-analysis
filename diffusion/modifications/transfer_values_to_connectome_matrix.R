@@ -11,14 +11,15 @@
 #Date: 21/01/21
 
 
-# choose & set to your directory. This is where each of your participant's 
+#choose & set to your directory. This is where each of your participant's 
 #values for the interested connectome network files should be. 
 #setwd("/Connectome_test/FPN_connectome_csv_files/done/output")  
 
-setwd('V:/Vault/NECTAR_data/LENORE/derivatives/groups/F0/diff_data/cross-sectional/connectome/stats_results/weighted/FPN_stats/bigNode_covar-age')
+#setwd("V:/Archive/NECTAR_data/LENORE/derivatives/groups/F0/diff_data/cross-sectional/connectome/stats_results/weighted/thresholded/C_SCD_threshold/FPN_stats/bigNode_group_diff_cov-age_sex")
+setwd('V:/Archive/NECTAR_data/LENORE/derivatives/groups/F2/diff_data/longitudinal/connectome/stats_results/weighted/thresholded/C_SCD_threshold/FPN_stats/bigNode_linear_trend_cov-age_sex')
 
 #read in the family-wise error (fwe) stat files
-FPN_stats_connectome_fwe0 <- read.csv('big-node_covar-age_FPN_stats-fwe_1mpvalue_t3.csv', header = FALSE)
+FPN_stats_connectome_fwe0 <- read.csv('big-node_linear_trend_cov-age_sex_fwe_1mpvalue_t2.csv', header = FALSE)
 #FPN_stats_connectome_fwe0 <- read.csv('big-node_linear_trend_FPN_stats-Zstat_t1.csv', header = TRUE) 
 #FPN_stats_connectome_fwe0 <- read.csv('output_FPN_2tail_stats-fwe_1mpvalue.csv', header = FALSE) #two-tailed (C != AD)
 #FPN_stats_connectome_fwe1 <- read.csv('output_FPN_stats-fwe_1mpvalue_t1.csv', header = FALSE) #one-tailed (C > AD)
@@ -65,7 +66,7 @@ for (i in 1:(length(node_combos)/2)) {
 }
 
 #write matrices as a .csv file. 
-write.table(format(connectome_matrix0, digits=20), 'transferred_values_big-node_covar-age_FPN_stats-fwe_1mpvalue_t3.csv', row.names=FALSE, col.names=FALSE, quote=FALSE)
+write.table(format(connectome_matrix0, digits=20), 'transferred_big-node_linear_trend_cov-age_sex_fwe_1mpvalue_t2.csv', row.names=FALSE, col.names=FALSE, quote=FALSE)
 #write.table(connectome_matrix0, 'transferred_values_FPN_connectome_2tailed_fwe_1mpvalue.csv', row.names=FALSE, col.names=FALSE, quote=FALSE) #two-tailed (C != AD)
 #write.table(connectome_matrix1, 'transferred_values_FPN_connectome_stats_fwe_1mpvalue_t1.csv', row.names=FALSE, col.names=FALSE, quote=FALSE) #one-tailed (C > AD)
 #write.table(connectome_matrix2, 'transferred_values_FPN_connectome_stats_fwe_1mpvalue_t2.csv', row.names=FALSE, col.names=FALSE, quote=FALSE) #one-tailed (AD > C)

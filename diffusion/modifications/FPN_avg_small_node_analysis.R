@@ -13,7 +13,9 @@
 # choose & set to your directory. This is where all of your participant 
 #whole-brain connectome files should be. 
 #setwd('/yourpathway/')
-setwd('V:/Vault/NECTAR_data/LENORE/derivatives/groups/F0/diff_data/cross-sectional/connectome/hcpmmpFiles/weighted/all_files/')  
+#setwd('V:/Vault/NECTAR_data/LENORE/derivatives/groups/F2/diff_data/longitudinal/connectome/hcpmmpFiles/weighted/all_files/')  #dMRI data
+setwd('V:/Vault/NECTAR_data/LENORE/derivatives/groups/F2/fMRI_data/conn_analysis/connectome/data/hcpmmpFiles/volumetric-space/Condition3_post/')  #fMRI data
+
 
 #define the 5 regions' nodes of interest
 nodes_LFront <- c(73,67,97,98,26,70,71,87,68,83,85,84,86)
@@ -40,9 +42,13 @@ files_all <- list.files()
 for(i in sequence(length(files_all))){
   
   #extract participant name
-  PAR_NAME = substr(files_all[i], 10, 24) 
-  fullname <- paste('FPN_SmallNodeData_', PAR_NAME, '.csv', sep='')
-  file_data <- read.csv(paste('hcpmmp1w_', PAR_NAME, '.csv', sep=''),  header=FALSE)
+  #PAR_NAME = substr(files_all[i], 10, 24) 
+  PAR_NAME = substr(files_all[i], 10, 22) 
+  #fullname <- paste('FPN_SmallNodeData_', PAR_NAME, '.csv', sep='')
+  fullname <- paste('FPN_SmallNodeData_', PAR_NAME, 'C3.csv', sep='') #_F2-F0diff.csv
+  #file_data <- read.csv(paste('hcpmmp1w_', PAR_NAME, '.csv', sep=''),  header=FALSE)
+  #file_data <- read.csv(paste('hcpmmp1w_', PAR_NAME, '.csv', sep=''),  sep=' ', header=FALSE)
+  file_data <- read.csv(paste('hcpmmp1w_', PAR_NAME, 'C3.csv', sep=''),  header=FALSE)
   
   #create empty vectors and matrices to put values in
   Front_L_Front_R_vec <- vector()

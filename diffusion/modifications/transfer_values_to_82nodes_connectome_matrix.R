@@ -11,7 +11,7 @@ pacman::p_load(ggplot2, corrplot, viridis)
 setwd('V:/Vault/NECTAR_data/LENORE/derivatives/groups/F0/diff_data/cross-sectional/connectome/stats_results/weighted/FPN_stats/bigNode_linear_trend')
 
 #read in the family-wise error (fwe) stat files
-FPN_stats_connectome_fwe0 <- read.csv('transferred_values_big-node_linear_trend_FPN_stats-Zstat_t1.csv', sep = "", header = FALSE)
+FPN_stats_connectome_fwe0 <- read.csv('transferred_values_big-node_linear_trend_FPN_stats-fwe_1mpvalue_t2.csv', sep = "", header = FALSE)
 
 #remove the rows and columns if they contain all zeros in them.
 #z<-y[rowSums(y[])>0,colSums(y[])>0]
@@ -43,5 +43,5 @@ corrplot(FPN_stats_sig_82nodes_connectome_by_network,method = "color", tl.col = 
 
 
 #write matrices as a .csv file. 
-write.table(format(FPN_stats_82nodes_connectome_fwe0, digits=20), 'transferred_values_big-node_linear_trend_82_nodes_FPN_stats-fwe_1mpvalue_t1.csv', row.names=FALSE, col.names=FALSE, quote=FALSE)
+write.table(format(FPN_stats_82nodes_connectome_node_order_fwe0, digits=20), 'transferred_values_big-node_linear_trend_82_nodes_FPN_stats-fwe_1mpvalue_t2.csv', row.names=FALSE, col.names=FALSE, quote=FALSE)
 
