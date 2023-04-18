@@ -18,7 +18,7 @@ import numpy as np
 import mne
 
 #define connectome template directory
-ConnectomeTemplateDir = 'V:/Vault/NECTAR_data/LENORE/derivatives/groups/F0/diff_data/cross-sectional/connectome/template/'
+ConnectomeTemplateDir = 'V:/Archive/NECTAR_data/LENORE/derivatives/groups/F0/diff_data/cross-sectional/connectome/template/'
 #go into directory
 os.chdir(ConnectomeTemplateDir)
 
@@ -26,7 +26,7 @@ os.chdir(ConnectomeTemplateDir)
 labels = []
 node_colors = []
 unknown_found = None
-with open('hcpmmp1_ordered_360nodes.txt') as f:
+with open('fs_default_ordered.txt') as f:
         for x in f.readlines():
             if unknown_found and x.split():
                 labels.append(x.split()[1]) 
@@ -39,12 +39,13 @@ with open('hcpmmp1_ordered_360nodes.txt') as f:
 node_angles = mne.viz.circular_layout(labels, labels, group_boundaries=[0, len(labels) / 2])
 
 #define connectome data directory
-ConnectomeDir = 'V:/Vault/NECTAR_data/LENORE/derivatives/groups/F0/diff_data/cross-sectional/connectome/stats_results/weighted/ConnectomeWhole_linear_trend_stats/'
+ConnectomeDir = 'V:/Archive/NECTAR_data/LENORE/derivatives/groups/F0/diff_data/cross-sectional/connectome/stats_results/weighted/thresholded/C_SCD_threshold/ConnectomeWhole_stats_dk_linear_trend/'
 #go into Connectome directory
 os.chdir(ConnectomeDir)
 
 #load in the connectome matrix. 
-connectome = np.loadtxt(os.path.join('outputWhole_360Nodes_connectome_linear_trend_fwe_1mpvalue_t2.csv'), delimiter=',')
+#connectome = np.loadtxt(os.path.join('transferred_values_big-node_linear_trend_82_nodes_for_circle_plot_FPN_stats-fwe_1mpvalue_t1.csv'), delimiter=',')
+connectome = np.loadtxt(os.path.join('outputWhole_connectome_dk_linear_trend_fwe_1mpvalue_t1.csv'), delimiter=',')
 
 #plot the circle plot. Note that the number of label names need to match the number of node colours from the atlas.  
 mne.viz.plot_connectivity_circle(connectome, labels, node_angles = node_angles, node_colors = node_colors, vmin = 0, vmax = 10, colorbar=False)

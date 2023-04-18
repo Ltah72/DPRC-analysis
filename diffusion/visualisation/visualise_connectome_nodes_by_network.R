@@ -1,16 +1,16 @@
+#Visualise the connectome output, which is ordered by network, according to the 
+#Connectome Project Multi-Modal Parcellation 1.0 (HCP MMP 1.0) atlas (Glasser et al., 2016)
 
-
-
+#load packages with pacman:
 pacman::p_load(ggplot2, corrplot, viridis, magrittr)
 
-
+#set up your pathway:
 setwd('V:/Vault/NECTAR_data/LENORE/derivatives/groups/F0/diff_data/cross-sectional/connectome/stats_results/weighted/ConnectomeWhole_linear_trend_stats')
 
 #read in the family-wise error (fwe) stat files
-connectome_whole_360_nodes <- read.csv('outputWhole_360Nodes_connectome_linear_trend_Rvisualise_connectome_fwe_1mpvalue_t1.csv', header = FALSE)
+connectome_whole_360_nodes <- read.csv('outputWhole_360Nodes_connectome_linear_trend_Rvisualise_connectome_fwe_1mpvalue_t2.csv', header = FALSE)
 #remove the rows and columns if they contain all zeros in them.
 #z<-y[rowSums(y[])>0,colSums(y[])>0]
-
 
 
 #nodes <- c(73,253,67,247,97,277,98,278,26,206,70,250,71,251,87,267,68,248,83,263,85,265,84,264,86,266,40,220,41,221,55,235,44,224,43,223,36,216,39,219,37,217,48,228,95,275,49,229,117,297,50,230,47,227,42,222,45,225,46,226,29,209,143,323,151,331,150,330,149,329,148,328,116,296,147,327,146,326,145,325,144,324)
@@ -26,23 +26,27 @@ nodes_sorted_numerical <- sort(nodes_network_ordered)
 #order by network
 connectome_whole_360_nodes_network_ordered <- connectome_whole_360_nodes[nodes_network_ordered,nodes_network_ordered]
 
-#rename and cut down number of labels
+#rename your columns and rows, and cut down number of labels (i.e., remove duplicate labels)
 groups <- c("Primary Visual","", "Early Visual",rep("",5), "Dorsal Stream Visual",rep("",11),"Ventral Stream Visual",rep("",13),"MT+Complex & Neighboring Visual Areas",rep("",17),"Somatosensory & Motor",rep("",9),"Paracentral Lobular & Mid Cingulate",rep("",17),"Premotor",rep("",13),"Posterior Opercular",rep("",9),"Early Auditory",rep("",13),"Auditory Association",rep("",15),"Insular & Frontal Opercular",rep("",23),"Medial Temporal",rep("",15),"Lateral Temporal",rep("",15),"Temporo-Parieto Occipital Junction",rep("",9),"Superior Parietal",rep("",19),"Inferior Parietal",rep("",19),"Posterior Cingulate",rep("",25),"Anterior Cingulate & Medial Prefrontal",rep("",31),"Orbital & Polar Frontal",rep("",17),"Inferior Frontal",rep("",17),"Dorsolateral Prefrontal",rep("",25)) 
 rows <- c("Primary Visual","", "Early Visual",rep("",5), "Dorsal Stream Visual",rep("",11),"Ventral Stream Visual",rep("",13),"MT+Complex & Neighboring Visual Areas",rep("",17),"Somatosensory & Motor",rep("",9),"Paracentral Lobular & Mid Cingulate",rep("",17),"Premotor",rep("",13),"Posterior Opercular",rep("",9),"Early Auditory",rep("",13),"Auditory Association",rep("",15),"Insular & Frontal Opercular",rep("",23),"Medial Temporal",rep("",15),"Lateral Temporal",rep("",15),"Temporo-Parieto Occipital Junction",rep("",9),"Superior Parietal",rep("",19),"Inferior Parietal",rep("",19),"Posterior Cingulate",rep("",25),"Anterior Cingulate & Medial Prefrontal",rep("",31),"Orbital & Polar Frontal",rep("",17),"Inferior Frontal",rep("",17),"Dorsolateral Prefrontal",rep("",25)) 
 
+#combine primary + early visual sections
+#groups2 <- c("Primary + Early Visual", rep("",7), "Dorsal Stream Visual",rep("",11),"Ventral Stream Visual",rep("",13),"MT+Complex & Neighboring Visual Areas",rep("",17),"Somatosensory & Motor",rep("",9),"Paracentral Lobular & Mid Cingulate",rep("",17),"Premotor",rep("",13),"Posterior Opercular",rep("",9),"Early Auditory",rep("",13),"Auditory Association",rep("",15),"Insular & Frontal Opercular",rep("",23),"Medial Temporal",rep("",15),"Lateral Temporal",rep("",15),"Temporo-Parieto Occipital Junction",rep("",9),"Superior Parietal",rep("",19),"Inferior Parietal",rep("",19),"Posterior Cingulate",rep("",25),"Anterior Cingulate & Medial Prefrontal",rep("",31),"Orbital & Polar Frontal",rep("",17),"Inferior Frontal",rep("",17),"Dorsolateral Prefrontal",rep("",25)) 
+
+
 colnames(connectome_whole_360_nodes_network_ordered) <- groups
-rownames(connectome_whole_360_nodes_network_ordered) <- rows
+#rownames(connectome_whole_360_nodes_network_ordered) <- rows
 
 #view the connectome on a correlation matrix plot
-corrplot(data.matrix(connectome_whole_360_nodes_network_ordered),is.corr=FALSE,tl.srt = 45,tl.cex=0.75,method = "color",col=viridis(200), tl.col = "black")
+#corrplot(data.matrix(connectome_whole_360_nodes_network_ordered),is.corr=FALSE,tl.srt = 45,tl.cex=0.75,method = "color",col=viridis(200), tl.col = "black")
 
 
 #if you want to display only sig. values (>.95), delete values which are lower than .95 and replace them with zeros (0) in the matrix.
 connectome_whole_sig_360_nodes_network_ordered<-replace(data.matrix(connectome_whole_360_nodes_network_ordered), data.matrix(connectome_whole_360_nodes_network_ordered)<.95, 0) 
-colnames(connectome_whole_sig_360_nodes_network_ordered) <- groups
+#colnames(connectome_whole_sig_360_nodes_network_ordered) <- groups
 
 #display sig. nodes only (>.95)
-corrplot(connectome_whole_sig_360_nodes_network_ordered,tl.srt = 45,tl.cex=0.75,method = "color",col=viridis(200),is.corr=FALSE,cl.pos="n",tl.col = "black")
+corrplot(connectome_whole_sig_360_nodes_network_ordered,tl.srt = 45,tl.cex=0.6,method = "color",col=viridis(200),is.corr=FALSE,cl.pos="n",tl.col = "black")
 
 #put squares around the networks - can't get it to work :(
 #corrplot(connectome_whole_sig_360_nodes_network_ordered,tl.srt = 45,tl.cex=0.75,method = "color",col=viridis(200),is.corr=FALSE,cl.pos="n",tl.col = "black")%>% corrRect(c(1, 100, 150), col="white")

@@ -38,7 +38,7 @@ DPRC_neuropsych_data$Sex_binary <- as.factor(DPRC_neuropsych_data$Sex_binary)
 DPRC_neuropsych_data$Sex<- as.factor(DPRC_neuropsych_data$Sex)
 
 #navigate to the correct pathway which contains the SLF metric text files: 
-setwd('V:/Vault/NECTAR_data/LENORE/derivatives/groups/F0/diff_data/cross-sectional/template/TOI')
+setwd('V:/Archive/NECTAR_data/LENORE/derivatives/groups/F0/diff_data/cross-sectional/template/TOI')
 
 #read in text file of data
 SLF_data <- cbind.data.frame(read.table("FD_SLF_whole_TOI.txt", header = T), 
@@ -698,7 +698,7 @@ t_value_effect_size <- summary(post_hoc_SLF3_L_FD_ancova_mod)
     #for C vs. SCD
     DPRC_neuropsych_data_CvSCD_SLF3_L <- subset(SLF_data, SLF_data$Group == 1 | SLF_data$Group == 2)
     DPRC_neuropsych_data_CvSCD_SLF3_L$Group <- droplevels(DPRC_neuropsych_data_CvSCD_SLF3_L$Group)
-    group_number <-dplyr::count(DPRC_neuropsych_data_CvmMCI_SLF3_L, Group) #count number of participants per group
+    group_number <-dplyr::count(DPRC_neuropsych_data_CvSCD_SLF3_L, Group) #count number of participants per group
     mult.r_value_2covar_mod<-summary(lm(mn_FD_SLF3_L ~ Age + Sex, data = DPRC_neuropsych_data_CvSCD_SLF3_L)) #create multiple regression between age, sex, and y-var, and get square root of mult-r squared as the r-value
     r_value <- sqrt(mult.r_value_2covar_mod$r.squared) #find correlation value (r) between dependent variable
     a.tes(t=t_value_effect_size$test$tstat['2 - 1'],n.1=group_number['1','n'],n.2=group_number['2','n'],R=r_value,q=2) #calculate Cohen's D with the covariate of age & sex
@@ -4743,7 +4743,7 @@ DPRC_neuropsych_data$Individual_number <- as.factor(DPRC_neuropsych_data$Individ
 
 
 #navigate to the correct pathway which contains the SLF metric text files: 
-setwd('V:/Vault/NECTAR_data/LENORE/derivatives/groups/F2/diff_data/longitudinal/template/TOI')
+setwd('V:/Archive/NECTAR_data/LENORE/derivatives/groups/F2/diff_data/longitudinal/template/TOI')
 
 #read in text file of data
 SLF_data <- cbind.data.frame(read.table("FD_SLF_whole_TOI.txt", header = T), 

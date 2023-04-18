@@ -43,7 +43,7 @@ DPRC_neuropsych_data$Timepoint <- as.factor(DPRC_neuropsych_data$Timepoint)
 DPRC_neuropsych_data$Individual_number <- as.factor(DPRC_neuropsych_data$Individual_number)
 
 #navigate to the correct pathway which contains the SLF metric text files: 
-setwd('V:/Vault/NECTAR_data/LENORE/derivatives/groups/F2/diff_data/longitudinal/template/TOI')
+setwd('V:/Archive/NECTAR_data/LENORE/derivatives/groups/F2/diff_data/longitudinal/template/TOI')
 
 #read in text file of data
 SLF_data <- cbind.data.frame(read.table("FD_SLF_whole_TOI.txt", header = T), 
@@ -733,21 +733,21 @@ SLF_FC_95CI_data_no_combined_SLF <- data.frame(SLF_group_number = c('1','2','3')
                                                upper = c(-0.004023983,-0.0003066471,-0.004105617)*-1)  
 
 
-# #FC 95% CI (with sex and age as covariates)
+# #FC 95% CI (with sex and age as covariates) #does not plot correctly.....
 # #plot 95% Confidence Interval (separated confidence intervals and separated SLF tracts only)
 # SLF_FC_95CI_data_no_combined_SLF <- data.frame(SLF_group_number = c('1','2','3'),
 #                                                SLF_type = c('Left_SLF1','Left_SLF2','Right_SLF1'),
 #                                                Timepoint_contrast = c('F0 > F2','F0 > F2','F0 > F2'),
 #                                                estimate_diff = c(-0.007329525,-0.00368148,-0.007308974)*-1,#diff. between the means
-#                                                lower = c(-0.019460800,-0.0169412925,-0.0204636577)*-1, 
+#                                                lower = c(-0.019460800,-0.0169412925,-0.0204636577)*-1,
 #                                                upper = c(-0.0007652705,0.001953156,-0.002335503)*-1)  #why is the second one positive??? not sig. then
-# 
+
 
 
 #plot data
 ggplot(SLF_FC_95CI_data_no_combined_SLF, aes(x=SLF_group_number, y=estimate_diff, colour=Timepoint_contrast))+
-  geom_point(position = position_dodge(width=0.5))+
-  geom_errorbar(aes(ymin=lower, ymax=upper), position = position_dodge(width=0.5))+
+  geom_point(position = position_dodge(width=0.5), size=5)+
+  geom_errorbar(aes(ymin=lower, ymax=upper), size=1.5, position = position_dodge(width=0.5))+
   xlab("SLF Tract") + 
   ylab("95% Confidence Interval")+
   scale_x_discrete(labels = c("1" = "Left SLF 1", "2" = "Left SLF 2", "3" = "Right SLF 1"))+
@@ -756,6 +756,7 @@ ggplot(SLF_FC_95CI_data_no_combined_SLF, aes(x=SLF_group_number, y=estimate_diff
   theme_classic()+
   theme(axis.title.x = element_text(size = 22),axis.title.y = element_text(size = 22),axis.text.x = element_text(size = 18),axis.text.y = element_text(size = 18))+
   coord_flip()
+
 
 #FDC 95% CI
 #plot 95% Confidence Interval (separated confidence intervals and separated SLF tracts only)
@@ -767,8 +768,8 @@ SLF_FDC_95CI_data_no_combined_SLF <- data.frame(SLF_group_number = c('1','2'),
                                                upper = c(-0.001461536,-0.0007493373)*-1)  
 #plot data
 ggplot(SLF_FDC_95CI_data_no_combined_SLF, aes(x=SLF_group_number, y=estimate_diff, colour=Timepoint_contrast))+
-  geom_point(position = position_dodge(width=0.5))+
-  geom_errorbar(aes(ymin=lower, ymax=upper), position = position_dodge(width=0.5))+
+  geom_point(position = position_dodge(width=0.5), size=5)+
+  geom_errorbar(aes(ymin=lower, ymax=upper), size = 1.5, position = position_dodge(width=0.5))+
   xlab("SLF Tract") + 
   ylab("95% Confidence Interval")+
   scale_x_discrete(labels = c("1" = "Left SLF 1", "2" = "Right SLF 1"))+

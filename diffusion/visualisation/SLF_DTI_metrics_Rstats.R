@@ -8,7 +8,7 @@
 
 #------------------------------Setting up--------------------------------------#
 #install packages/open libraries
-pacman::p_load(dplyr, ggplot2, psych, car, purrr, vroom, multcomp, rstatix, tidyr)
+pacman::p_load(dplyr, ggplot2, psych, car, purrr, vroom, multcomp, rstatix, tidyr, lsr)
 
 #add any necessary sources: 
 source("https://raw.githubusercontent.com/datavizpyr/data/master/half_flat_violinplot.R") #for raincloud graph
@@ -25,7 +25,7 @@ DPRC_neuropsych_data <- read.csv("cross-sectional_DPRC_neuropsych_data_lined_up_
 colnames(DPRC_neuropsych_data)[1] <-'ParticipantID'
 
 #convert variables
-DPRC_neuropsych_data$ParticipantID <- as.MDctor(DPRC_neuropsych_data$ParticipantID)
+DPRC_neuropsych_data$ParticipantID <- as.factor(DPRC_neuropsych_data$ParticipantID)
 DPRC_neuropsych_data$Group <- as.factor(DPRC_neuropsych_data$Group)
 DPRC_neuropsych_data$Sex_binary <- as.factor(DPRC_neuropsych_data$Sex_binary)
 DPRC_neuropsych_data$Sex<- as.factor(DPRC_neuropsych_data$Sex)
@@ -33,7 +33,7 @@ DPRC_neuropsych_data$Sex<- as.factor(DPRC_neuropsych_data$Sex)
 
 #navigate to the correct pathway which contains the SLF DTI metric text files: 
 #setwd('/yourpathway/')
-setwd('V:/Vault/NECTAR_data/LENORE/derivatives/groups/F0/diff_data/cross-sectional/DTI_metrics/')
+setwd('V:/Archive/NECTAR_data/LENORE/derivatives/groups/F0/diff_data/cross-sectional/DTI_metrics/')
 
 #for FA:
 setwd('fractional_anisotropy_FA/')
@@ -270,32 +270,107 @@ Trend_Group <- as.numeric(SLF_DTI_metrics_data$Group)
 ####--------------------------Descriptives----------------------------------####
 #for FA:
 SLF1_FA_L_descrip <- describeBy(SLF_DTI_metrics_data$mean_FA_LSLF1_values, SLF_DTI_metrics_data$Group)
+#find mean & SD from total sample:
+mean(SLF_DTI_metrics_data$mean_FA_LSLF1_values)
+sd(SLF_DTI_metrics_data$mean_FA_LSLF1_values)
 SLF2_FA_L_descrip <- describeBy(SLF_DTI_metrics_data$mean_FA_LSLF2_values, SLF_DTI_metrics_data$Group)
+#find mean & SD from total sample:
+mean(SLF_DTI_metrics_data$mean_FA_LSLF2_values)
+sd(SLF_DTI_metrics_data$mean_FA_LSLF2_values)
 SLF3_FA_L_descrip <- describeBy(SLF_DTI_metrics_data$mean_FA_LSLF3_values, SLF_DTI_metrics_data$Group)
+#find mean & SD from total sample:
+mean(SLF_DTI_metrics_data$mean_FA_LSLF3_values)
+sd(SLF_DTI_metrics_data$mean_FA_LSLF3_values)
 SLF1_FA_R_descrip <- describeBy(SLF_DTI_metrics_data$mean_FA_RSLF1_values, SLF_DTI_metrics_data$Group)
+#find mean & SD from total sample:
+mean(SLF_DTI_metrics_data$mean_FA_RSLF1_values)
+sd(SLF_DTI_metrics_data$mean_FA_RSLF1_values)
 SLF2_FA_R_descrip <- describeBy(SLF_DTI_metrics_data$mean_FA_RSLF2_values, SLF_DTI_metrics_data$Group)
+#find mean & SD from total sample:
+mean(SLF_DTI_metrics_data$mean_FA_RSLF2_values)
+sd(SLF_DTI_metrics_data$mean_FA_RSLF2_values)
 SLF3_FA_R_descrip <- describeBy(SLF_DTI_metrics_data$mean_FA_RSLF3_values, SLF_DTI_metrics_data$Group)
+#find mean & SD from total sample:
+mean(SLF_DTI_metrics_data$mean_FA_RSLF3_values)
+sd(SLF_DTI_metrics_data$mean_FA_RSLF3_values)
+
 #for MD:
 SLF1_MD_L_descrip <- describeBy(SLF_DTI_metrics_data$mean_MD_LSLF1_values, SLF_DTI_metrics_data$Group)
+#find mean & SD from total sample:
+mean(SLF_DTI_metrics_data$mean_MD_LSLF1_values)
+sd(SLF_DTI_metrics_data$mean_MD_LSLF1_values)
 SLF2_MD_L_descrip <- describeBy(SLF_DTI_metrics_data$mean_MD_LSLF2_values, SLF_DTI_metrics_data$Group)
+#find mean & SD from total sample:
+mean(SLF_DTI_metrics_data$mean_MD_LSLF2_values)
+sd(SLF_DTI_metrics_data$mean_MD_LSLF2_values)
 SLF3_MD_L_descrip <- describeBy(SLF_DTI_metrics_data$mean_MD_LSLF3_values, SLF_DTI_metrics_data$Group)
+#find mean & SD from total sample:
+mean(SLF_DTI_metrics_data$mean_MD_LSLF3_values)
+sd(SLF_DTI_metrics_data$mean_MD_LSLF3_values)
 SLF1_MD_R_descrip <- describeBy(SLF_DTI_metrics_data$mean_MD_RSLF1_values, SLF_DTI_metrics_data$Group)
+#find mean & SD from total sample:
+mean(SLF_DTI_metrics_data$mean_MD_RSLF1_values)
+sd(SLF_DTI_metrics_data$mean_MD_RSLF1_values)
 SLF2_MD_R_descrip <- describeBy(SLF_DTI_metrics_data$mean_MD_RSLF2_values, SLF_DTI_metrics_data$Group)
+#find mean & SD from total sample:
+mean(SLF_DTI_metrics_data$mean_MD_RSLF2_values)
+sd(SLF_DTI_metrics_data$mean_MD_RSLF2_values)
 SLF3_MD_R_descrip <- describeBy(SLF_DTI_metrics_data$mean_MD_RSLF3_values, SLF_DTI_metrics_data$Group)
+#find mean & SD from total sample:
+mean(SLF_DTI_metrics_data$mean_MD_RSLF3_values)
+sd(SLF_DTI_metrics_data$mean_MD_RSLF3_values)
+
 #for AD:
 SLF1_AD_L_descrip <- describeBy(SLF_DTI_metrics_data$mean_AD_LSLF1_values, SLF_DTI_metrics_data$Group)
+#find mean & SD from total sample:
+mean(SLF_DTI_metrics_data$mean_AD_LSLF1_values)
+sd(SLF_DTI_metrics_data$mean_AD_LSLF1_values)
 SLF2_AD_L_descrip <- describeBy(SLF_DTI_metrics_data$mean_AD_LSLF2_values, SLF_DTI_metrics_data$Group)
+#find mean & SD from total sample:
+mean(SLF_DTI_metrics_data$mean_AD_LSLF2_values)
+sd(SLF_DTI_metrics_data$mean_AD_LSLF2_values)
 SLF3_AD_L_descrip <- describeBy(SLF_DTI_metrics_data$mean_AD_LSLF3_values, SLF_DTI_metrics_data$Group)
+#find mean & SD from total sample:
+mean(SLF_DTI_metrics_data$mean_AD_LSLF3_values)
+sd(SLF_DTI_metrics_data$mean_AD_LSLF3_values)
 SLF1_AD_R_descrip <- describeBy(SLF_DTI_metrics_data$mean_AD_RSLF1_values, SLF_DTI_metrics_data$Group)
+#find mean & SD from total sample:
+mean(SLF_DTI_metrics_data$mean_AD_RSLF1_values)
+sd(SLF_DTI_metrics_data$mean_AD_RSLF1_values)
 SLF2_AD_R_descrip <- describeBy(SLF_DTI_metrics_data$mean_AD_RSLF2_values, SLF_DTI_metrics_data$Group)
+#find mean & SD from total sample:
+mean(SLF_DTI_metrics_data$mean_AD_RSLF2_values)
+sd(SLF_DTI_metrics_data$mean_AD_RSLF2_values)
 SLF3_AD_R_descrip <- describeBy(SLF_DTI_metrics_data$mean_AD_RSLF3_values, SLF_DTI_metrics_data$Group)
+#find mean & SD from total sample:
+mean(SLF_DTI_metrics_data$mean_AD_RSLF3_values)
+sd(SLF_DTI_metrics_data$mean_AD_RSLF3_values)
+
 #for RD:
 SLF1_RD_L_descrip <- describeBy(SLF_DTI_metrics_data$mean_RD_LSLF1_values, SLF_DTI_metrics_data$Group)
+#find mean & SD from total sample:
+mean(SLF_DTI_metrics_data$mean_RD_LSLF1_values)
+sd(SLF_DTI_metrics_data$mean_RD_LSLF1_values)
 SLF2_RD_L_descrip <- describeBy(SLF_DTI_metrics_data$mean_RD_LSLF2_values, SLF_DTI_metrics_data$Group)
+#find mean & SD from total sample:
+mean(SLF_DTI_metrics_data$mean_RD_LSLF2_values)
+sd(SLF_DTI_metrics_data$mean_RD_LSLF2_values)
 SLF3_RD_L_descrip <- describeBy(SLF_DTI_metrics_data$mean_RD_LSLF3_values, SLF_DTI_metrics_data$Group)
+#find mean & SD from total sample:
+mean(SLF_DTI_metrics_data$mean_RD_LSLF3_values)
+sd(SLF_DTI_metrics_data$mean_RD_LSLF3_values)
 SLF1_RD_R_descrip <- describeBy(SLF_DTI_metrics_data$mean_RD_RSLF1_values, SLF_DTI_metrics_data$Group)
+#find mean & SD from total sample:
+mean(SLF_DTI_metrics_data$mean_RD_RSLF1_values)
+sd(SLF_DTI_metrics_data$mean_RD_RSLF1_values)
 SLF2_RD_R_descrip <- describeBy(SLF_DTI_metrics_data$mean_RD_RSLF2_values, SLF_DTI_metrics_data$Group)
+#find mean & SD from total sample:
+mean(SLF_DTI_metrics_data$mean_RD_RSLF2_values)
+sd(SLF_DTI_metrics_data$mean_RD_RSLF2_values)
 SLF3_RD_R_descrip <- describeBy(SLF_DTI_metrics_data$mean_RD_RSLF3_values, SLF_DTI_metrics_data$Group)
+#find mean & SD from total sample:
+mean(SLF_DTI_metrics_data$mean_RD_RSLF3_values)
+sd(SLF_DTI_metrics_data$mean_RD_RSLF3_values)
 
 ###------------------ ANOVA & ANCOVA (age) + (age + sex) ---------------------------####
 #for FA:
@@ -311,6 +386,7 @@ anova(SLF3_FA_mod_L)
 anova(SLF1_FA_mod_R)
 anova(SLF2_FA_mod_R)
 anova(SLF3_FA_mod_R)
+
 #ANCOVA (w/ age)
 SLF1_FA_covar_mod_L <- lm(mean_FA_LSLF1_values ~ Group+Age, data = SLF_DTI_metrics_data)
 SLF2_FA_covar_mod_L <- lm(mean_FA_LSLF2_values ~ Group+Age, data = SLF_DTI_metrics_data)
@@ -365,6 +441,9 @@ anova(SLF3_AD_mod_L)
 anova(SLF1_AD_mod_R)
 anova(SLF2_AD_mod_R)
 anova(SLF3_AD_mod_R) #sig
+#effect size omnibus ANOVA
+etaSquared(SLF3_AD_mod_R)
+
 #ANCOVA (w/ age)
 SLF1_AD_covar_mod_L <- lm(mean_AD_LSLF1_values ~ Group+Age, data = SLF_DTI_metrics_data)
 SLF2_AD_covar_mod_L <- lm(mean_AD_LSLF2_values ~ Group+Age, data = SLF_DTI_metrics_data)
@@ -420,7 +499,7 @@ confint(post_hoc_SLF3_AD_covar_mod_R)
 SLF1_L_FA_LinTrend_mod <- lm(mean_FA_LSLF1_values ~ Trend_Group + Group, data = SLF_DTI_metrics_data)
 anova(SLF1_L_FA_LinTrend_mod)
 SLF2_L_FA_LinTrend_mod <- lm(mean_FA_LSLF2_values ~ Trend_Group + Group, data = SLF_DTI_metrics_data)
-anova(SLF2_L_FA_LinTrend_mod)
+anova(SLF2_L_FA_LinTrend_mod) 
 SLF3_L_FA_LinTrend_mod <- lm(mean_FA_LSLF3_values ~ Trend_Group + Group, data = SLF_DTI_metrics_data)
 anova(SLF3_L_FA_LinTrend_mod)
 SLF1_R_FA_LinTrend_mod <- lm(mean_FA_RSLF1_values ~ Trend_Group + Group, data = SLF_DTI_metrics_data)
@@ -639,7 +718,7 @@ DPRC_neuropsych_data$Individual_number <- as.factor(DPRC_neuropsych_data$Individ
 
 #navigate to the correct pathway which contains the SLF DTI metric text files: 
 #setwd('/yourpathway/')
-setwd('V:/Vault/NECTAR_data/LENORE/derivatives/groups/F2/diff_data/longitudinal/DTI_metrics/')
+setwd('V:/Archive/NECTAR_data/LENORE/derivatives/groups/F2/diff_data/longitudinal/DTI_metrics/')
 
 #for FA:
 setwd('fractional_anisotropy_FA/')
@@ -884,6 +963,325 @@ SLF_DTI_metrics_data$Sex_binary <- DPRC_neuropsych_data$Sex_binary
 
 ###----------------------------Descriptives----------------------------------####
 #look at descriptive stats of the DTI metrics between groups and over time for F0 and F2 time points
+#FA
+#Left SLF 1
+SLF1_L_FA_descrip <- describeBy(SLF_DTI_metrics_data$mean_FA_LSLF1_values, list(SLF_DTI_metrics_data$Group, SLF_DTI_metrics_data$Timepoint))
+SLF1_L_FA_descrip <-as.data.frame.matrix(SLF1_L_FA_descrip)
+#find mean & SD from total sample in F0 and F2 timepoints:
+F0_SLF1_L_FA <- SLF_DTI_metrics_data[SLF_DTI_metrics_data[, "Timepoint"] == "F0",]
+noNAsF0_SLF1_L_FA <- na.omit(F0_SLF1_L_FA$mean_FA_LSLF1_values)
+mean(noNAsF0_SLF1_L_FA)
+sd(noNAsF0_SLF1_L_FA)
+#F2
+F2_SLF1_L_FA <- SLF_DTI_metrics_data[SLF_DTI_metrics_data[, "Timepoint"] == "F2",]
+noNAsF2_SLF1_L_FA <- na.omit(F2_SLF1_L_FA$mean_FA_LSLF1_values)
+mean(noNAsF2_SLF1_L_FA)
+sd(noNAsF2_SLF1_L_FA)
+#Left SLF 2
+SLF2_L_FA_descrip <- describeBy(SLF_DTI_metrics_data$mean_FA_LSLF2_values, list(SLF_DTI_metrics_data$Group, SLF_DTI_metrics_data$Timepoint))
+SLF2_L_FA_descrip <-as.data.frame.matrix(SLF2_L_FA_descrip)
+#find mean & SD from total sample in F0 and F2 timepoints:
+F0_SLF2_L_FA <- SLF_DTI_metrics_data[SLF_DTI_metrics_data[, "Timepoint"] == "F0",]
+noNAsF0_SLF2_L_FA <- na.omit(F0_SLF2_L_FA$mean_FA_LSLF2_values)
+mean(noNAsF0_SLF2_L_FA)
+sd(noNAsF0_SLF2_L_FA)
+#F2
+F2_SLF2_L_FA <- SLF_DTI_metrics_data[SLF_DTI_metrics_data[, "Timepoint"] == "F2",]
+noNAsF2_SLF2_L_FA <- na.omit(F2_SLF2_L_FA$mean_FA_LSLF2_values)
+mean(noNAsF2_SLF2_L_FA)
+sd(noNAsF2_SLF2_L_FA)
+#Left SLF 3
+SLF3_L_FA_descrip <- describeBy(SLF_DTI_metrics_data$mean_FA_LSLF3_values, list(SLF_DTI_metrics_data$Group, SLF_DTI_metrics_data$Timepoint))
+SLF3_L_FA_descrip <-as.data.frame.matrix(SLF3_L_FA_descrip)
+#find mean & SD from total sample in F0 and F2 timepoints:
+F0_SLF3_L_FA <- SLF_DTI_metrics_data[SLF_DTI_metrics_data[, "Timepoint"] == "F0",]
+noNAsF0_SLF3_L_FA <- na.omit(F0_SLF3_L_FA$mean_FA_LSLF3_values)
+mean(noNAsF0_SLF3_L_FA)
+sd(noNAsF0_SLF3_L_FA)
+#F2
+F2_SLF3_L_FA <- SLF_DTI_metrics_data[SLF_DTI_metrics_data[, "Timepoint"] == "F2",]
+noNAsF2_SLF3_L_FA <- na.omit(F2_SLF3_L_FA$mean_FA_LSLF3_values)
+mean(noNAsF2_SLF3_L_FA)
+sd(noNAsF2_SLF3_L_FA)
+#Right SLF 1
+SLF1_R_FA_descrip <- describeBy(SLF_DTI_metrics_data$mean_FA_RSLF1_values, list(SLF_DTI_metrics_data$Group, SLF_DTI_metrics_data$Timepoint))
+SLF1_R_FA_descrip <-as.data.frame.matrix(SLF1_R_FA_descrip)
+#find mean & SD from total sample in F0 and F2 timepoints:
+F0_SLF1_R_FA <- SLF_DTI_metrics_data[SLF_DTI_metrics_data[, "Timepoint"] == "F0",]
+noNAsF0_SLF1_R_FA <- na.omit(F0_SLF1_R_FA$mean_FA_RSLF1_values)
+mean(noNAsF0_SLF1_R_FA)
+sd(noNAsF0_SLF1_R_FA)
+#F2
+F2_SLF1_R_FA <- SLF_DTI_metrics_data[SLF_DTI_metrics_data[, "Timepoint"] == "F2",]
+noNAsF2_SLF1_R_FA <- na.omit(F2_SLF1_R_FA$mean_FA_RSLF1_values)
+mean(noNAsF2_SLF1_R_FA)
+sd(noNAsF2_SLF1_R_FA)
+#Right SLF 2
+SLF2_R_FA_descrip <- describeBy(SLF_DTI_metrics_data$mean_FA_RSLF2_values, list(SLF_DTI_metrics_data$Group, SLF_DTI_metrics_data$Timepoint))
+SLF2_R_FA_descrip <-as.data.frame.matrix(SLF2_R_FA_descrip)
+#find mean & SD from total sample in F0 and F2 timepoints:
+F0_SLF2_R_FA <- SLF_DTI_metrics_data[SLF_DTI_metrics_data[, "Timepoint"] == "F0",]
+noNAsF0_SLF2_R_FA <- na.omit(F0_SLF2_R_FA$mean_FA_RSLF2_values)
+mean(noNAsF0_SLF2_R_FA)
+sd(noNAsF0_SLF2_R_FA)
+#F2
+F2_SLF2_R_FA <- SLF_DTI_metrics_data[SLF_DTI_metrics_data[, "Timepoint"] == "F2",]
+noNAsF2_SLF2_R_FA <- na.omit(F2_SLF2_R_FA$mean_FA_RSLF2_values)
+mean(noNAsF2_SLF2_R_FA)
+sd(noNAsF2_SLF2_R_FA)
+#Right SLF 3
+SLF3_R_FA_descrip <- describeBy(SLF_DTI_metrics_data$mean_FA_RSLF3_values, list(SLF_DTI_metrics_data$Group, SLF_DTI_metrics_data$Timepoint))
+SLF3_R_FA_descrip <-as.data.frame.matrix(SLF3_R_FA_descrip)
+#find mean & SD from total sample in F0 and F2 timepoints:
+F0_SLF3_R_FA <- SLF_DTI_metrics_data[SLF_DTI_metrics_data[, "Timepoint"] == "F0",]
+noNAsF0_SLF3_R_FA <- na.omit(F0_SLF3_R_FA$mean_FA_RSLF3_values)
+mean(noNAsF0_SLF3_R_FA)
+sd(noNAsF0_SLF3_R_FA)
+#F2
+F2_SLF3_R_FA <- SLF_DTI_metrics_data[SLF_DTI_metrics_data[, "Timepoint"] == "F2",]
+noNAsF2_SLF3_R_FA <- na.omit(F2_SLF3_R_FA$mean_FA_RSLF3_values)
+mean(noNAsF2_SLF3_R_FA)
+sd(noNAsF2_SLF3_R_FA)
+
+#MD
+#Left SLF 1
+SLF1_L_MD_descrip <- describeBy(SLF_DTI_metrics_data$mean_MD_LSLF1_values, list(SLF_DTI_metrics_data$Group, SLF_DTI_metrics_data$Timepoint))
+SLF1_L_MD_descrip <-as.data.frame.matrix(SLF1_L_MD_descrip)
+#find mean & SD from total sample in F0 and F2 timepoints:
+F0_SLF1_L_MD <- SLF_DTI_metrics_data[SLF_DTI_metrics_data[, "Timepoint"] == "F0",]
+noNAsF0_SLF1_L_MD <- na.omit(F0_SLF1_L_MD$mean_MD_LSLF1_values)
+mean(noNAsF0_SLF1_L_MD)
+sd(noNAsF0_SLF1_L_MD)
+#F2
+F2_SLF1_L_MD <- SLF_DTI_metrics_data[SLF_DTI_metrics_data[, "Timepoint"] == "F2",]
+noNAsF2_SLF1_L_MD <- na.omit(F2_SLF1_L_MD$mean_MD_LSLF1_values)
+mean(noNAsF2_SLF1_L_MD)
+sd(noNAsF2_SLF1_L_MD)
+#Left SLF 2
+SLF2_L_MD_descrip <- describeBy(SLF_DTI_metrics_data$mean_MD_LSLF2_values, list(SLF_DTI_metrics_data$Group, SLF_DTI_metrics_data$Timepoint))
+SLF2_L_MD_descrip <-as.data.frame.matrix(SLF2_L_MD_descrip)
+#find mean & SD from total sample in F0 and F2 timepoints:
+F0_SLF2_L_MD <- SLF_DTI_metrics_data[SLF_DTI_metrics_data[, "Timepoint"] == "F0",]
+noNAsF0_SLF2_L_MD <- na.omit(F0_SLF2_L_MD$mean_MD_LSLF2_values)
+mean(noNAsF0_SLF2_L_MD)
+sd(noNAsF0_SLF2_L_MD)
+#F2
+F2_SLF2_L_MD <- SLF_DTI_metrics_data[SLF_DTI_metrics_data[, "Timepoint"] == "F2",]
+noNAsF2_SLF2_L_MD <- na.omit(F2_SLF2_L_MD$mean_MD_LSLF2_values)
+mean(noNAsF2_SLF2_L_MD)
+sd(noNAsF2_SLF2_L_MD)
+#Left SLF 3
+SLF3_L_MD_descrip <- describeBy(SLF_DTI_metrics_data$mean_MD_LSLF3_values, list(SLF_DTI_metrics_data$Group, SLF_DTI_metrics_data$Timepoint))
+SLF3_L_MD_descrip <-as.data.frame.matrix(SLF3_L_MD_descrip)
+#find mean & SD from total sample in F0 and F2 timepoints:
+F0_SLF3_L_MD <- SLF_DTI_metrics_data[SLF_DTI_metrics_data[, "Timepoint"] == "F0",]
+noNAsF0_SLF3_L_MD <- na.omit(F0_SLF3_L_MD$mean_MD_LSLF3_values)
+mean(noNAsF0_SLF3_L_MD)
+sd(noNAsF0_SLF3_L_MD)
+#F2
+F2_SLF3_L_MD <- SLF_DTI_metrics_data[SLF_DTI_metrics_data[, "Timepoint"] == "F2",]
+noNAsF2_SLF3_L_MD <- na.omit(F2_SLF3_L_MD$mean_MD_LSLF3_values)
+mean(noNAsF2_SLF3_L_MD)
+sd(noNAsF2_SLF3_L_MD)
+#Right SLF 1
+SLF1_R_MD_descrip <- describeBy(SLF_DTI_metrics_data$mean_MD_RSLF1_values, list(SLF_DTI_metrics_data$Group, SLF_DTI_metrics_data$Timepoint))
+SLF1_R_MD_descrip <-as.data.frame.matrix(SLF1_R_MD_descrip)
+#find mean & SD from total sample in F0 and F2 timepoints:
+F0_SLF1_R_MD <- SLF_DTI_metrics_data[SLF_DTI_metrics_data[, "Timepoint"] == "F0",]
+noNAsF0_SLF1_R_MD <- na.omit(F0_SLF1_R_MD$mean_MD_RSLF1_values)
+mean(noNAsF0_SLF1_R_MD)
+sd(noNAsF0_SLF1_R_MD)
+#F2
+F2_SLF1_R_MD <- SLF_DTI_metrics_data[SLF_DTI_metrics_data[, "Timepoint"] == "F2",]
+noNAsF2_SLF1_R_MD <- na.omit(F2_SLF1_R_MD$mean_MD_RSLF1_values)
+mean(noNAsF2_SLF1_R_MD)
+sd(noNAsF2_SLF1_R_MD)
+#Right SLF 2
+SLF2_R_MD_descrip <- describeBy(SLF_DTI_metrics_data$mean_MD_RSLF2_values, list(SLF_DTI_metrics_data$Group, SLF_DTI_metrics_data$Timepoint))
+SLF2_R_MD_descrip <-as.data.frame.matrix(SLF2_R_MD_descrip)
+#find mean & SD from total sample in F0 and F2 timepoints:
+F0_SLF2_R_MD <- SLF_DTI_metrics_data[SLF_DTI_metrics_data[, "Timepoint"] == "F0",]
+noNAsF0_SLF2_R_MD <- na.omit(F0_SLF2_R_MD$mean_MD_RSLF2_values)
+mean(noNAsF0_SLF2_R_MD)
+sd(noNAsF0_SLF2_R_MD)
+#F2
+F2_SLF2_R_MD <- SLF_DTI_metrics_data[SLF_DTI_metrics_data[, "Timepoint"] == "F2",]
+noNAsF2_SLF2_R_MD <- na.omit(F2_SLF2_R_MD$mean_MD_RSLF2_values)
+mean(noNAsF2_SLF2_R_MD)
+sd(noNAsF2_SLF2_R_MD)
+#Right SLF 3
+SLF3_R_MD_descrip <- describeBy(SLF_DTI_metrics_data$mean_MD_RSLF3_values, list(SLF_DTI_metrics_data$Group, SLF_DTI_metrics_data$Timepoint))
+SLF3_R_MD_descrip <-as.data.frame.matrix(SLF3_R_MD_descrip)
+#find mean & SD from total sample in F0 and F2 timepoints:
+F0_SLF3_R_MD <- SLF_DTI_metrics_data[SLF_DTI_metrics_data[, "Timepoint"] == "F0",]
+noNAsF0_SLF3_R_MD <- na.omit(F0_SLF3_R_MD$mean_MD_RSLF3_values)
+mean(noNAsF0_SLF3_R_MD)
+sd(noNAsF0_SLF3_R_MD)
+#F2
+F2_SLF3_R_MD <- SLF_DTI_metrics_data[SLF_DTI_metrics_data[, "Timepoint"] == "F2",]
+noNAsF2_SLF3_R_MD <- na.omit(F2_SLF3_R_MD$mean_MD_RSLF3_values)
+mean(noNAsF2_SLF3_R_MD)
+sd(noNAsF2_SLF3_R_MD)
+
+#AD
+#Left SLF 1
+SLF1_L_AD_descrip <- describeBy(SLF_DTI_metrics_data$mean_AD_LSLF1_values, list(SLF_DTI_metrics_data$Group, SLF_DTI_metrics_data$Timepoint))
+SLF1_L_AD_descrip <-as.data.frame.matrix(SLF1_L_AD_descrip)
+#find mean & SD from total sample in F0 and F2 timepoints:
+F0_SLF1_L_AD <- SLF_DTI_metrics_data[SLF_DTI_metrics_data[, "Timepoint"] == "F0",]
+noNAsF0_SLF1_L_AD <- na.omit(F0_SLF1_L_AD$mean_AD_LSLF1_values)
+mean(noNAsF0_SLF1_L_AD)
+sd(noNAsF0_SLF1_L_AD)
+#F2
+F2_SLF1_L_AD <- SLF_DTI_metrics_data[SLF_DTI_metrics_data[, "Timepoint"] == "F2",]
+noNAsF2_SLF1_L_AD <- na.omit(F2_SLF1_L_AD$mean_AD_LSLF1_values)
+mean(noNAsF2_SLF1_L_AD)
+sd(noNAsF2_SLF1_L_AD)
+#Left SLF 2
+SLF2_L_AD_descrip <- describeBy(SLF_DTI_metrics_data$mean_AD_LSLF2_values, list(SLF_DTI_metrics_data$Group, SLF_DTI_metrics_data$Timepoint))
+SLF2_L_AD_descrip <-as.data.frame.matrix(SLF2_L_AD_descrip)
+#find mean & SD from total sample in F0 and F2 timepoints:
+F0_SLF2_L_AD <- SLF_DTI_metrics_data[SLF_DTI_metrics_data[, "Timepoint"] == "F0",]
+noNAsF0_SLF2_L_AD <- na.omit(F0_SLF2_L_AD$mean_AD_LSLF2_values)
+mean(noNAsF0_SLF2_L_AD)
+sd(noNAsF0_SLF2_L_AD)
+#F2
+F2_SLF2_L_AD <- SLF_DTI_metrics_data[SLF_DTI_metrics_data[, "Timepoint"] == "F2",]
+noNAsF2_SLF2_L_AD <- na.omit(F2_SLF2_L_AD$mean_AD_LSLF2_values)
+mean(noNAsF2_SLF2_L_AD)
+sd(noNAsF2_SLF2_L_AD)
+#Left SLF 3
+SLF3_L_AD_descrip <- describeBy(SLF_DTI_metrics_data$mean_AD_LSLF3_values, list(SLF_DTI_metrics_data$Group, SLF_DTI_metrics_data$Timepoint))
+SLF3_L_AD_descrip <-as.data.frame.matrix(SLF3_L_AD_descrip)
+#find mean & SD from total sample in F0 and F2 timepoints:
+F0_SLF3_L_AD <- SLF_DTI_metrics_data[SLF_DTI_metrics_data[, "Timepoint"] == "F0",]
+noNAsF0_SLF3_L_AD <- na.omit(F0_SLF3_L_AD$mean_AD_LSLF3_values)
+mean(noNAsF0_SLF3_L_AD)
+sd(noNAsF0_SLF3_L_AD)
+#F2
+F2_SLF3_L_AD <- SLF_DTI_metrics_data[SLF_DTI_metrics_data[, "Timepoint"] == "F2",]
+noNAsF2_SLF3_L_AD <- na.omit(F2_SLF3_L_AD$mean_AD_LSLF3_values)
+mean(noNAsF2_SLF3_L_AD)
+sd(noNAsF2_SLF3_L_AD)
+#Right SLF 1
+SLF1_R_AD_descrip <- describeBy(SLF_DTI_metrics_data$mean_AD_RSLF1_values, list(SLF_DTI_metrics_data$Group, SLF_DTI_metrics_data$Timepoint))
+SLF1_R_AD_descrip <-as.data.frame.matrix(SLF1_R_AD_descrip)
+#find mean & SD from total sample in F0 and F2 timepoints:
+F0_SLF1_R_AD <- SLF_DTI_metrics_data[SLF_DTI_metrics_data[, "Timepoint"] == "F0",]
+noNAsF0_SLF1_R_AD <- na.omit(F0_SLF1_R_AD$mean_AD_RSLF1_values)
+mean(noNAsF0_SLF1_R_AD)
+sd(noNAsF0_SLF1_R_AD)
+#F2
+F2_SLF1_R_AD <- SLF_DTI_metrics_data[SLF_DTI_metrics_data[, "Timepoint"] == "F2",]
+noNAsF2_SLF1_R_AD <- na.omit(F2_SLF1_R_AD$mean_AD_RSLF1_values)
+mean(noNAsF2_SLF1_R_AD)
+sd(noNAsF2_SLF1_R_AD)
+#Right SLF 2
+SLF2_R_AD_descrip <- describeBy(SLF_DTI_metrics_data$mean_AD_RSLF2_values, list(SLF_DTI_metrics_data$Group, SLF_DTI_metrics_data$Timepoint))
+SLF2_R_AD_descrip <-as.data.frame.matrix(SLF2_R_AD_descrip)
+#find mean & SD from total sample in F0 and F2 timepoints:
+F0_SLF2_R_AD <- SLF_DTI_metrics_data[SLF_DTI_metrics_data[, "Timepoint"] == "F0",]
+noNAsF0_SLF2_R_AD <- na.omit(F0_SLF2_R_AD$mean_AD_RSLF2_values)
+mean(noNAsF0_SLF2_R_AD)
+sd(noNAsF0_SLF2_R_AD)
+#F2
+F2_SLF2_R_AD <- SLF_DTI_metrics_data[SLF_DTI_metrics_data[, "Timepoint"] == "F2",]
+noNAsF2_SLF2_R_AD <- na.omit(F2_SLF2_R_AD$mean_AD_RSLF2_values)
+mean(noNAsF2_SLF2_R_AD)
+sd(noNAsF2_SLF2_R_AD)
+#Right SLF 3
+SLF3_R_AD_descrip <- describeBy(SLF_DTI_metrics_data$mean_AD_RSLF3_values, list(SLF_DTI_metrics_data$Group, SLF_DTI_metrics_data$Timepoint))
+SLF3_R_AD_descrip <-as.data.frame.matrix(SLF3_R_AD_descrip)
+#find mean & SD from total sample in F0 and F2 timepoints:
+F0_SLF3_R_AD <- SLF_DTI_metrics_data[SLF_DTI_metrics_data[, "Timepoint"] == "F0",]
+noNAsF0_SLF3_R_AD <- na.omit(F0_SLF3_R_AD$mean_AD_RSLF3_values)
+mean(noNAsF0_SLF3_R_AD)
+sd(noNAsF0_SLF3_R_AD)
+#F2
+F2_SLF3_R_AD <- SLF_DTI_metrics_data[SLF_DTI_metrics_data[, "Timepoint"] == "F2",]
+noNAsF2_SLF3_R_AD <- na.omit(F2_SLF3_R_AD$mean_AD_RSLF3_values)
+mean(noNAsF2_SLF3_R_AD)
+sd(noNAsF2_SLF3_R_AD)
+
+#RD
+#Left SLF 1
+SLF1_L_RD_descrip <- describeBy(SLF_DTI_metrics_data$mean_RD_LSLF1_values, list(SLF_DTI_metrics_data$Group, SLF_DTI_metrics_data$Timepoint))
+SLF1_L_RD_descrip <-as.data.frame.matrix(SLF1_L_RD_descrip)
+#find mean & SD from total sample in F0 and F2 timepoints:
+F0_SLF1_L_RD <- SLF_DTI_metrics_data[SLF_DTI_metrics_data[, "Timepoint"] == "F0",]
+noNAsF0_SLF1_L_RD <- na.omit(F0_SLF1_L_RD$mean_RD_LSLF1_values)
+mean(noNAsF0_SLF1_L_RD)
+sd(noNAsF0_SLF1_L_RD)
+#F2
+F2_SLF1_L_RD <- SLF_DTI_metrics_data[SLF_DTI_metrics_data[, "Timepoint"] == "F2",]
+noNAsF2_SLF1_L_RD <- na.omit(F2_SLF1_L_RD$mean_RD_LSLF1_values)
+mean(noNAsF2_SLF1_L_RD)
+sd(noNAsF2_SLF1_L_RD)
+#Left SLF 2
+SLF2_L_RD_descrip <- describeBy(SLF_DTI_metrics_data$mean_RD_LSLF2_values, list(SLF_DTI_metrics_data$Group, SLF_DTI_metrics_data$Timepoint))
+SLF2_L_RD_descrip <-as.data.frame.matrix(SLF2_L_RD_descrip)
+#find mean & SD from total sample in F0 and F2 timepoints:
+F0_SLF2_L_RD <- SLF_DTI_metrics_data[SLF_DTI_metrics_data[, "Timepoint"] == "F0",]
+noNAsF0_SLF2_L_RD <- na.omit(F0_SLF2_L_RD$mean_RD_LSLF2_values)
+mean(noNAsF0_SLF2_L_RD)
+sd(noNAsF0_SLF2_L_RD)
+#F2
+F2_SLF2_L_RD <- SLF_DTI_metrics_data[SLF_DTI_metrics_data[, "Timepoint"] == "F2",]
+noNAsF2_SLF2_L_RD <- na.omit(F2_SLF2_L_RD$mean_RD_LSLF2_values)
+mean(noNAsF2_SLF2_L_RD)
+sd(noNAsF2_SLF2_L_RD)
+#Left SLF 3
+SLF3_L_RD_descrip <- describeBy(SLF_DTI_metrics_data$mean_RD_LSLF3_values, list(SLF_DTI_metrics_data$Group, SLF_DTI_metrics_data$Timepoint))
+SLF3_L_RD_descrip <-as.data.frame.matrix(SLF3_L_RD_descrip)
+#find mean & SD from total sample in F0 and F2 timepoints:
+F0_SLF3_L_RD <- SLF_DTI_metrics_data[SLF_DTI_metrics_data[, "Timepoint"] == "F0",]
+noNAsF0_SLF3_L_RD <- na.omit(F0_SLF3_L_RD$mean_RD_LSLF3_values)
+mean(noNAsF0_SLF3_L_RD)
+sd(noNAsF0_SLF3_L_RD)
+#F2
+F2_SLF3_L_RD <- SLF_DTI_metrics_data[SLF_DTI_metrics_data[, "Timepoint"] == "F2",]
+noNAsF2_SLF3_L_RD <- na.omit(F2_SLF3_L_RD$mean_RD_LSLF3_values)
+mean(noNAsF2_SLF3_L_RD)
+sd(noNAsF2_SLF3_L_RD)
+#Right SLF 1
+SLF1_R_RD_descrip <- describeBy(SLF_DTI_metrics_data$mean_RD_RSLF1_values, list(SLF_DTI_metrics_data$Group, SLF_DTI_metrics_data$Timepoint))
+SLF1_R_RD_descrip <-as.data.frame.matrix(SLF1_R_RD_descrip)
+#find mean & SD from total sample in F0 and F2 timepoints:
+F0_SLF1_R_RD <- SLF_DTI_metrics_data[SLF_DTI_metrics_data[, "Timepoint"] == "F0",]
+noNAsF0_SLF1_R_RD <- na.omit(F0_SLF1_R_RD$mean_RD_RSLF1_values)
+mean(noNAsF0_SLF1_R_RD)
+sd(noNAsF0_SLF1_R_RD)
+#F2
+F2_SLF1_R_RD <- SLF_DTI_metrics_data[SLF_DTI_metrics_data[, "Timepoint"] == "F2",]
+noNAsF2_SLF1_R_RD <- na.omit(F2_SLF1_R_RD$mean_RD_RSLF1_values)
+mean(noNAsF2_SLF1_R_RD)
+sd(noNAsF2_SLF1_R_RD)
+#Right SLF 2
+SLF2_R_RD_descrip <- describeBy(SLF_DTI_metrics_data$mean_RD_RSLF2_values, list(SLF_DTI_metrics_data$Group, SLF_DTI_metrics_data$Timepoint))
+SLF2_R_RD_descrip <-as.data.frame.matrix(SLF2_R_RD_descrip)
+#find mean & SD from total sample in F0 and F2 timepoints:
+F0_SLF2_R_RD <- SLF_DTI_metrics_data[SLF_DTI_metrics_data[, "Timepoint"] == "F0",]
+noNAsF0_SLF2_R_RD <- na.omit(F0_SLF2_R_RD$mean_RD_RSLF2_values)
+mean(noNAsF0_SLF2_R_RD)
+sd(noNAsF0_SLF2_R_RD)
+#F2
+F2_SLF2_R_RD <- SLF_DTI_metrics_data[SLF_DTI_metrics_data[, "Timepoint"] == "F2",]
+noNAsF2_SLF2_R_RD <- na.omit(F2_SLF2_R_RD$mean_RD_RSLF2_values)
+mean(noNAsF2_SLF2_R_RD)
+sd(noNAsF2_SLF2_R_RD)
+#Right SLF 3
+SLF3_R_RD_descrip <- describeBy(SLF_DTI_metrics_data$mean_RD_RSLF3_values, list(SLF_DTI_metrics_data$Group, SLF_DTI_metrics_data$Timepoint))
+SLF3_R_RD_descrip <-as.data.frame.matrix(SLF3_R_RD_descrip)
+#find mean & SD from total sample in F0 and F2 timepoints:
+F0_SLF3_R_RD <- SLF_DTI_metrics_data[SLF_DTI_metrics_data[, "Timepoint"] == "F0",]
+noNAsF0_SLF3_R_RD <- na.omit(F0_SLF3_R_RD$mean_RD_RSLF3_values)
+mean(noNAsF0_SLF3_R_RD)
+sd(noNAsF0_SLF3_R_RD)
+#F2
+F2_SLF3_R_RD <- SLF_DTI_metrics_data[SLF_DTI_metrics_data[, "Timepoint"] == "F2",]
+noNAsF2_SLF3_R_RD <- na.omit(F2_SLF3_R_RD$mean_RD_RSLF3_values)
+mean(noNAsF2_SLF3_R_RD)
+sd(noNAsF2_SLF3_R_RD)
 
 
 

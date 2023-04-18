@@ -36,7 +36,7 @@ DPRC_neuropsych_data$Sex_binary <- as.factor(DPRC_neuropsych_data$Sex_binary)
 DPRC_neuropsych_data$Sex<- as.factor(DPRC_neuropsych_data$Sex)
 
 #navigate to the correct pathway which contains the SLF metric text files: 
-setwd('V:/Vault/NECTAR_data/LENORE/derivatives/groups/F0/diff_data/cross-sectional/template/TOI')
+setwd('V:/Archive/NECTAR_data/LENORE/derivatives/groups/F0/diff_data/cross-sectional/template/TOI')
 
 #read in text file of data
 SLF_data <- cbind.data.frame(read.table("FD_SLF_whole_TOI.txt", header = T), 
@@ -768,14 +768,14 @@ ggplot(SLF_FD_95CI_2covar_data, aes(x=SLF_group_number, y=estimate_diff, colour=
 SLF_FD_95CI_data_no_combined_SLF <- data.frame(SLF_group_number = c('1','1','1','2','3','3'),
                                                SLF_type = c('Left_SLF3','Left_SLF3','Left_SLF3','Right_SLF2','Right_SLF3', 'Right_SLF3'),
                                                Group_contrast = c('C > SCD','C > mMCI','C > AD','C > mMCI','C > SCD','C > mMCI'),
-                                               estimate_diff = c(0.0131557,0.0157707,0.0173792,0.0201441,0.0141640,0.0189842),
-                                               lower = c(0.0257656,0.0289329,0.0332533,0.0396806,0.0278590,0.0332791), 
-                                               upper = c(0.0005459,0.0026086,0.0015050,0.0006075,0.0004690,0.0046894))  
+                                               estimate_diff = c(0.0131553,0.0157052,0.0174042,0.020154,0.0141693,0.0190178),
+                                               lower = c(0.0257682,0.0288883,0.0332881,0.039728,0.0278625,0.0333300), 
+                                               upper = c(0.0005425,0.0025222,0.0015202,0.000580,0.0004762,0.0047055))  
 
 #plot data
 ggplot(SLF_FD_95CI_data_no_combined_SLF, aes(x=SLF_group_number, y=estimate_diff, colour=Group_contrast))+
-  geom_point(position = position_dodge(width=0.5))+
-  geom_errorbar(aes(ymin=lower, ymax=upper), position = position_dodge(width=0.5))+
+  geom_point(position = position_dodge(width=0.5), size=5)+
+  geom_errorbar(aes(ymin=lower, ymax=upper), size=1.5, position = position_dodge(width=0.5))+
   xlab("SLF Tract") + 
   ylab("95% Confidence Interval")+
   scale_x_discrete(labels = c("1" = "Left SLF 3", "2" = "Right SLF 2", "3" = "Right SLF 3"))+
@@ -1558,13 +1558,13 @@ ggplot(SLF_FDC_95CI_data, aes(x=SLF_group_number, y=estimate_diff, colour=Group_
 SLF_FDC_95CI_2covar_data <- data.frame(SLF_group_number = c('1','1'),
                                 SLF_type = c('Right_SLF3','Right_SLF3'),
                                 Group_contrast = c('C > SCD', 'C > aMCI'),
-                                estimate_diff = c(0.0345616,0.0317537),
-                                lower = c(0.0647873,0.0630815), 
-                                upper = c(0.0043359,0.0004259)) 
+                                estimate_diff = c(0.0345572317,0.0313322949),
+                                lower = c(0.06474609,0.06256263), 
+                                upper = c(0.0043683764,0.0001019582)) 
 #plot data
 ggplot(SLF_FDC_95CI_2covar_data, aes(x=SLF_group_number, y=estimate_diff, colour=Group_contrast))+
-    geom_point(position = position_dodge(width=0.5))+
-    geom_errorbar(aes(ymin=lower, ymax=upper), position = position_dodge(width=0.5))+
+    geom_point(position = position_dodge(width=0.5), size=5)+
+    geom_errorbar(aes(ymin=lower, ymax=upper), size = 1.5, position = position_dodge(width=0.5))+
     xlab("SLF Tract") + 
     ylab("95% Confidence Interval")+
     scale_x_discrete(labels = c("1" = "Right SLF 3"))+
