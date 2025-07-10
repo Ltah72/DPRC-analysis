@@ -211,11 +211,14 @@ for i = 1:length(participants)
     
     %---------------------------------------------------------------------%
     %Step 4: Refine streamlines with tcksift2
+    % Note that this will NOT reduce streamlines to 1 mil, but will optimise the streamlines to a cross-sectional area multiplier to match the whole-brain tractogram to the fixel-wise fibre densities (e.g., tcksift2 algorithm)
     unix(['tcksift2 -act 5ttimage_' PAR_NAME '.mif -out_mu sift_mu_' PAR_NAME '.txt -out_coeffs sift_coeffs_' PAR_NAME '.txt tracks_10M_' PAR_NAME '.tck ' DWIPreprocDir, 'wmfod_norm_' PAR_NAME '.mif sift_1M_' PAR_NAME '.txt -force']);
     
     %Also, generate the .tck 1M SIFT file, used for connectome visualisation later on 
     unix(['tcksift -act 5ttimage_' PAR_NAME '.mif -term_number 1000000 tracks_10M_' PAR_NAME '.tck ' DWIPreprocDir 'wmfod_norm_' PAR_NAME '.mif sift_1M_' PAR_NAME '.tck -force']);
-    
+
+    %OPTION: tcksift2 with -min_factor option (to set threshold of streamline weights to 0.3)
+    unix(['tcksift2 -act 5ttimage_' PAR_NAME '.mif -min_factor 0.3 -out_mu sift_mu_thr_' PAR_NAME '.txt -out_coeffs sift_coeffs_thr_' PAR_NAME '.txt tracks_10M_' PAR_NAME '.tck ' DWIPreprocDir, 'wmfod_norm_' PAR_NAME '.mif sift_1M_thr_' PAR_NAME '.txt']);
 
 %     %Compare the tracks with and without SIFT with 10k tracks (for
 %     %visualation only)
