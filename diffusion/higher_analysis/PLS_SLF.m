@@ -78,6 +78,7 @@ behav_11names = {'TMT-A','Colour Naming','Word Reading','Haytime1','TMT-B','Inhi
 %ProcSpeed_names = {'TMT-A','Colour Naming','Word Reading','Haytime1'};
 %3 processing speed names
 ProcSpeed_3names = {'TMT-A','Colour Naming','Word Reading'};
+ProcSpeed_name = {'Processing Speed'};
 % 4 Inhibition test 
 %Inhibition_names = {'TMT-B','Inhibition','Category Switching','Haytime2'};
 % 2 generation tests
@@ -89,7 +90,7 @@ ProcSpeed_3names = {'TMT-A','Colour Naming','Word Reading'};
 %5 inhib names
 %inhib_5names = {'TMT-B/TMT-A','Inhibition/ColourNaming','Category Switching','HayTime2-HayTime1','HayTotalError'};
 inhib_5names = {'TMT-B/TMT-A','Interference Effect','Category Switching','HayTime2-HayTime1','HayTotalError'};
-
+inhib_name = {'Inhibition'};
 %13 neuropsych scores (omit HayError scores, and include Inhib Rate scores)
 %behav_13names = {'TMT-A','TMT-B','Colour Naming','Word Reading','Inhibition','Letter Fluency','Category Fluency','Category Switching','Haytime1','HayTime2','TMT-B/TMT-A','Inhibition/ColourNaming','Inhibition/WordReading'};
 %13 neuropsych scores (omit HayError scores, and include Inhib Rate
@@ -107,9 +108,11 @@ addpath 'C:/Program Files/MATLAB/MDI'
 %2. Perform imputation on data
 fileLocation = 'H:\ltah262\PhD\ExecutiveFunction\NeuroPsychAssessment\data\PLS\MDI';
 cd ([fileLocation]);
-excelFile_all_behav = 'DPRC_neuropsych_data_only_switchedVars(n=224).xlsx';
+excelFile_all_behav = 'DPRC_neuropsych_data_only_switchedVars(n=226).xlsx';
 %or, for connectome data (n = 224):
 excelFile_all_behav = 'DPRC_neuropsych_data_only_switchedVars(n=223).xlsx';
+%or, for data w/o AD group (n = 201)
+excelFile_all_behav = 'DPRC_neuropsych_data_only_switchedVars(n=201).xlsx';
 
 
 excelFile_all_behav = 'DPRC_neuropsych_data_F0_only_switched_Vars(n=119).xlsx';
@@ -151,7 +154,7 @@ MDIgui
 
 %combine the imputted neuropsych data with the SLF data
 cd H:\ltah262\PhD\ExecutiveFunction\NeuroPsychAssessment\data\PLS\MDI;
-all_data = readtable('SLF_data_tracts_of_interest(n=226).xlsx');
+all_data = readtable('SLF_data_tracts_of_interest(n=201).xlsx');
 
 %extract SLF data from the imputted files:
 FD_data = table2array(all_data(:,{'mn_FD_SLF1_L', 'mn_FD_SLF2_L', 'mn_FD_SLF3_L', 'mn_FD_SLF1_R', 'mn_FD_SLF2_R', 'mn_FD_SLF3_R'}));
@@ -176,6 +179,8 @@ FC_FPN_data = table2array(FC_FPN_data(:,2:3322));
 all_11_behav_raw_scores = MDItoolbox_results.X_imputed(:,[1,3,4,9,2,5,8,10,16,6,7]);
 %%inhib_behav5 = MDItoolbox_results.X_imputed(:,[15,13,8,17,16]);
 ProcSpeed_behav3 = MDItoolbox_results.X_imputed(:,[1,3,4]);
+%take average of ProcSpeed z-scores for one value
+ProcSpeed_means = mean(ProcSpeed_behav3, 2);
 %all_12_behav_raw_scores = MDItoolbox_results.X_imputed(:,[1:12]);
 %inhibition_raw_scores = MDItoolbox_results.X_imputed(:,[2,5,8,10]); 
 %proc_speed_raw_scores = MDItoolbox_results.X_imputed(:,[1,3,4,9]);
@@ -183,6 +188,15 @@ ProcSpeed_behav3 = MDItoolbox_results.X_imputed(:,[1,3,4]);
 %inhibition_InhibRate_raw_scores = MDItoolbox_results.X_imputed(:,[2,5,8,10,13,14,15]); 
 %behav_13_reordered_raw_scores = MDItoolbox_results.X_imputed(:,[1,3,4,9,2,5,8,10,13,14,15,6,7]);
 inhib_behav5 = MDItoolbox_results.X_imputed(:,[15,18,8,17,16]);
+%take average of inhib z-scores for one value
+inhib_means = mean(inhib_behav5, 2);
+
+
+
+%contrast definitions:
+contrast_1 = [1];
+contrast_3 = [1;1;1];
+contrast_5 = [1;1;1;1;1];
 
 %zscores
 %all_12_behav_zscores = MDItoolbox_results.X_imputed(:,[1:12]);
@@ -202,11 +216,12 @@ fileLocation = 'H:\ltah262\PhD\ExecutiveFunction\NeuroPsychAssessment\data\PLS\M
 cd ([fileLocation]);
 
 %function format: residualize(xvecs,datamat)
-%age_data = table2array(readtable('age_data_(n=226).xlsx'));
-age_data = table2array(readtable('age_data_(n=224).xlsx'));
+age_data = table2array(readtable('age_data_(n=226).xlsx'));
+age_data = table2array(readtable('age_data_(n=201).xlsx'));
 sex_data = table2array(readtable('sex_data_(n=226).xlsx'));
-%two_covars = table2array(readtable('two_covariates_(n=226).xlsx'));
-two_covars = table2array(readtable('two_covariates_(n=224).xlsx'));
+
+two_covars = table2array(readtable('two_covariates_(n=226).xlsx'));
+two_covars = table2array(readtable('two_covariates_(n=201).xlsx'));
 two_covars = table2array(readtable('two_covariates_F2(n=114).xlsx'));
 
 age_data = table2array(readtable('age_F2_data(n=114).xlsx'));
@@ -222,16 +237,16 @@ resid_FC_FPN_data = residualize(two_covars, FC_FPN_data);
 
 
 %set up PLS options
-datamat_list{1} = cat(1, SC_FPN_data);
-num_subj_lst = height(SC_FPN_data);
+datamat_list{1} = cat(1, resid_FD_data);
+num_subj_lst = height(resid_FD_data);
 num_cond = 1;
-option.stacked_behavdata = resid_behav_data; 
+option.stacked_behavdata = inhib_behav5; 
 option.method = 5; %non-rotated
 option.num_perm = 5000;
 option.num_boot = 5000;
 option.clim = 95;
 option.stacked_designdata = contrast_5; 
-resultRotated = pls_analysis(datamat_list, num_subj_lst, num_cond,option); 
+resultRotated = pls_analysis(datamat_list, num_subj_lst, num_cond, option); 
 
 %save('FD_behav_PLS_raw_scores.mat', 'resultRotated'); 
 
@@ -257,6 +272,8 @@ title(['LV p = ' num2str(resultRotated.perm_result.sprob)]);
 %for Group contrast PLS: 
 %define group names: 
 Group_names = {'C','SCD','aMCI','mMCI','AD'};
+Group_names = {'C','SCD','aMCI','mMCI'};
+
 
 %For fibre metric data:
 % cd 'H:\ltah262\PhD\ExecutiveFunction\NeuroPsychAssessment\data\PLS\MDI\group_contrast\FibreMetrics';
@@ -282,20 +299,20 @@ Group_names = {'C','SCD','aMCI','mMCI','AD'};
 
 
 %For behavioural measures (executive function neuropsych data):
-cd 'H:\ltah262\PhD\ExecutiveFunction\NeuroPsychAssessment\data\PLS\MDI\group_contrast\Behavioural-ExecFunc';
+cd 'H:\ltah262\PhD\ExecutiveFunction\NeuroPsychAssessment\data\PLS\MDI\cross-sectional\dMRI\group_contrast\Behavioural-ExecFunc';
 %for all raw variables (11 variables):
 all_behav11_group_ordered = table2array(readtable('all_behav11(n=226).xlsx'));
-inhib_behav5_group_ordered = table2array(readtable('inhib_behav5(n=226).xlsx'));
-ProcSpeed_behav3_group_ordered = table2array(readtable('ProcSpeed_behav3(n=226).xlsx'));
+inhib_behav5_group_ordered = table2array(readtable('inhib_behav5_zscores(n=201).xlsx'));
+ProcSpeed_behav3_group_ordered = table2array(readtable('ProcSpeed_behav3_zscores(n=201).xlsx'));
 
 %normalise the data
 %age residualize data (behavioural + SLF data):
 fileLocation = 'H:\ltah262\PhD\ExecutiveFunction\NeuroPsychAssessment\data\PLS\MDI';
 cd ([fileLocation]);
 %load in age + SLF and/or multiple covariates (ordered by group):
-age_data = table2array(readtable('age_ordered_by_group(n=226).xlsx'));
-SLF_data_ordered = table2array(readtable('SLF_ordered_by_group(n=226).xlsx'));
-two_covars_ordered = table2array(readtable('two_covariates_ordered_by_group(n=226).xlsx'));
+age_data = table2array(readtable('age_ordered_by_group(n=201).xlsx'));
+SLF_data_ordered = table2array(readtable('SLF_ordered_by_group(n=201).xlsx'));
+two_covars_ordered = table2array(readtable('two_covariates_ordered_by_group(n=201).xlsx'));
 
 
 %non-residualised SLF data: 
@@ -771,20 +788,23 @@ resid_FC_FPN_AD = resid_FC_FPN_data(107:114,1:10);
 
 
 %Run behav PLS by separating groups and compare groups with correlation between neural x behav scores 
-datamat_list{1} = cat(1, SC_FPN_C);
-datamat_list{2} = cat(1, SC_FPN_SCD);
-datamat_list{3} = cat(1, SC_FPN_aMCI);
-datamat_list{4} = cat(1, SC_FPN_mMCI);
-datamat_list{5} = cat(1, SC_FPN_AD);
-num_subj_lst = [height(SC_FPN_C)  height(SC_FPN_SCD) height(SC_FPN_aMCI) height(SC_FPN_mMCI) height(SC_FPN_AD)];
+datamat_list{1} = cat(1, resid_FDC_C);
+datamat_list{2} = cat(1, resid_FDC_SCD);
+datamat_list{3} = cat(1, resid_FDC_aMCI);
+datamat_list{4} = cat(1, resid_FDC_mMCI);
+%datamat_list{5} = cat(1, resid_FD_AD);
+%num_subj_lst = [height(resid_FD_C)  height(resid_FD_SCD) height(resid_FD_aMCI) height(resid_FD_mMCI) height(resid_FD_AD)];
+num_subj_lst = [height(resid_FD_C)  height(resid_FD_SCD) height(resid_FD_aMCI) height(resid_FD_mMCI)];
 num_cond = 1;
-option.stacked_behavdata = resid_proc_speed_behav3_data; %data must be in group order (same order as the neural behaviour)
+option.stacked_behavdata = inhib_behav5_group_ordered; %data must be in group order (same order as the neural behaviour)
 option.method = 3; %regular behaviour PLS
 option.num_perm = 5000;
 option.num_boot = 5000;
 option.clim = 95;
 option.num_split = 100;
-option.stacked_designdata = ones(width(resid_proc_speed_behav3_data)*length(Group_names),1)*-1; %should be # of tasks * # of groups
+%option.stacked_designdata = ones(width(inhib_behav5_group_ordered)*length(Group_names),1)*-1; %should be # of tasks * # of groups
+option.stacked_designdata = ones(width(inhib_behav5_group_ordered)*length(Group_names),1); %should be # of tasks * # of groups
+%option.stacked_designdata = ones(width(ProcSpeed_behav3_group_ordered)*length(Group_names),1); %should be # of tasks * # of groups
 resultRotated_group_rotated_behav_PLS = pls_analysis(datamat_list, num_subj_lst, num_cond,option);
 
 
