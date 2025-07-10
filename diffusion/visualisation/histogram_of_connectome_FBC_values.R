@@ -71,3 +71,6 @@ hist(vec_AD_data)
 hist(vec_AD_data, ylim=c(0,1000))
 
 
+#for an individual participant: 
+
+

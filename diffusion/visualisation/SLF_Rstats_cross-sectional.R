@@ -85,7 +85,7 @@ colnames(SLF_data) <- c("mn_FD_SLF", "md_FD_SLF", "std_FD_SLF", "std_rv_FD_SLF",
                         "std_FC_SLF2_L", "std_rv_FC_SLF2_L", "min_FC_SLF2_L", "max_FC_SLF2_L", "count_FC_SLF2_L", "mn_FDC_SLF2_L", 
                         "md_FDC_SLF2_L", "std_FDC_SLF2_L", "std_rv_FDC_SLF2_L", "min_FDC_SLF2_L", "max_FDC_SLF2_L", "count_FDC_SLF2_L",
                         "mn_FD_SLF3_L", "md_FD_SLF3_L", "std_FD_SLF3_L", "std_rv_FD_SLF3_L", "min_FD_SLF3_L", "max_FD_SLF3_L", 
-                        "count_FD_SLF3_L", "mn_FC_SLF3_L", "md_FC_SLF3_L", "std_FC_SLF3_L", "std_rv_FC_SLF3_L", "min_Fc_SLF3_L", 
+                        "count_FD_SLF3_L", "mn_FC_SLF3_L", "md_FC_SLF3_L", "std_FC_SLF3_L", "std_rv_FC_SLF3_L", "min_FC_SLF3_L", 
                         "max_FC_SLF3_L", "count_FC_SLF3_L", "mn_FDC_SLF3_L", "md_FDC_SLF3_L", "std_FDC_SLF3_L", "std_rv_FDC_SLF3_L", 
                         "min_FDC_SLF3_L", "max_FDC_SLF3_L", "count_FDC_SLF3_L", "mn_FD_SLF1_R", "md_FD_SLF1_R", "std_FD_SLF1_R", 
                         "std_rv_FD_SLF1_R", "min_FD_SLF1_R", "max_FD_SLF1_R", "count_FD_SLF1_R", "mn_FC_SLF1_R", "md_FC_SLF1_R", 
@@ -115,7 +115,7 @@ Trend_Group <- as.numeric(DPRC_neuropsych_data$Group)
 
 ####--------------------------Descriptives----------------------------------####
 #look at descriptive stats of the whole SLF FBA metrics between groups
-SLF_FD_descrip <- describeBy(SLF_data$mn_FD_SLF, SLF_data$Group)
+SLF_FDC_descrip <- describeBy(SLF_data$mn_FDC_SLF, SLF_data$Group)
 SLF_FC_descrip <- describeBy(SLF_data$mn_FC_SLF, SLF_data$Group)
 SLF_FDC_descrip <- describeBy(SLF_data$mn_FDC_SLF, SLF_data$Group)
 mean(SLF_data$mn_FD_SLF)
@@ -238,6 +238,7 @@ SLF3_FD_covar_mod_R <- lm(mn_FD_SLF3_R ~ Group + Age, data = SLF_data)
 # SLF_FD_clinsite_mod_L <- lm(mn_FD_SLF_L ~ Group + ClinSite_name, data = SLF_data)
 # SLF_FD_clinsite_mod_R <- lm(mn_FD_SLF_R ~ Group + ClinSite_name, data = SLF_data)
 
+
 #include the covariate of 2 variables (age + sex) (run an ANCOVA) in model
 SLF_FD_2covar_mod <- lm(mn_FD_SLF ~ Group + Age + Sex, data = SLF_data)
 SLF_FD_2covar_mod_L <- lm(mn_FD_SLF_L ~ Group + Age + Sex, data = SLF_data)
@@ -248,6 +249,7 @@ SLF3_FD_2covar_mod_L <- lm(mn_FD_SLF3_L ~ Group + Age + Sex, data = SLF_data)
 SLF1_FD_2covar_mod_R <- lm(mn_FD_SLF1_R ~ Group + Age + Sex, data = SLF_data)
 SLF2_FD_2covar_mod_R <- lm(mn_FD_SLF2_R ~ Group + Age + Sex, data = SLF_data)
 SLF3_FD_2covar_mod_R <- lm(mn_FD_SLF3_R ~ Group + Age + Sex, data = SLF_data)
+
 
 #test to see if the covariates (sex & age) and the treatment variable are independent from one another (assumption). 
 #for FD:
@@ -452,13 +454,13 @@ SLF3_FD_2covar_mod_R <- lm(mn_FD_SLF3_R ~ Group + Age + Sex, data = SLF_data)
 #   
 # #plotting example
 #   #whole SLF FD (raincloud plot)
-#   ggplot(SLF_data, aes(x = Group, y = mn_FDC_SLF, fill = Sex)) + 
+#   ggplot(SLF_data, aes(x = Group, y = mn_FD_SLF, fill = Sex)) + 
 #     geom_flat_violin(position = position_nudge(x = .2, y = 0), alpha = .8) +
-#     geom_point(aes(y = mn_FDC_SLF, color = Sex), position = position_jitter(width = .15), size = .5, alpha = 0.8) +
+#     geom_point(aes(y = mn_FD_SLF, color = Sex), position = position_jitter(width = .15), size = .5, alpha = 0.8) +
 #     geom_boxplot(width = 0.1, fill = "white", outlier.size = 1, aes(colour = Sex)) + 
 #     stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Sex)) + 
 #     xlab("Sex") + 
-#     ylab("Fibre Density Cross-section (FDC)") +
+#     ylab("Fibre Density Cross-section (FD)") +
 #     scale_x_discrete(labels = c("1" = "Control", "2" = "SCD", "3" = "aMCI", "4" = "mMCI", "5" = "AD")) + 
 #     theme_classic() +
 #     #theme(legend.position = "none") +
@@ -508,6 +510,8 @@ anova(SLF3_FD_2covar_mod_L)
 anova(SLF1_FD_2covar_mod_R)
 anova(SLF2_FD_2covar_mod_R)
 anova(SLF3_FD_2covar_mod_R)
+
+
 #run Bayesian ANCOVA
 #anovaBF(mn_FD_SLF ~ Group + Age, data = SLF_data) 
 #anovaBF(mn_FD_SLF_L ~ Group, data = SLF_data) 
@@ -635,7 +639,7 @@ post_hoc_SLF3_FD_mod_R <- glht(SLF3_FD_mod_R, linfct = mcp(Group = "Tukey"))
 summary(post_hoc_SLF3_FD_mod_R)
 confint(post_hoc_SLF3_FD_mod_R)
 
-#post hoc for covariate (age )
+#post hoc for covariate (age)
 #Left SLF 1, 2, and 3
 post_hoc_SLF1_FD_covar_mod_L <- glht(SLF1_FD_covar_mod_L, linfct = mcp(Group = "Tukey"))
 summary(post_hoc_SLF1_FD_covar_mod_L)
@@ -733,29 +737,31 @@ SLF_FD_95CI_data_no_combined_SLF <- data.frame(SLF_group_number = c('1','1','1',
 
 #plot data
 ggplot(SLF_FD_95CI_data_no_combined_SLF, aes(x=SLF_group_number, y=estimate_diff, colour=Group_contrast))+
-  geom_point(position = position_dodge(width=0.5))+
-  geom_errorbar(aes(ymin=lower, ymax=upper), position = position_dodge(width=0.5))+
+  geom_point(position = position_dodge(width=0.5), size=5)+
+  geom_errorbar(aes(ymin=lower, ymax=upper), size=1.5, position = position_dodge(width=0.5))+
   xlab("SLF Tract") + 
   ylab("95% Confidence Interval")+
-  scale_x_discrete(labels = c("1" = "Whole SLF", "2" = "Left SLF", "3" = "Right SLF", "4" = "Right SLF 1", "5" = "Left SLF 2", "6" = "Left SLF 3", "7" = "Right SLF 2", "8" = "Right SLF 3"))+
+  scale_x_discrete(labels = c("1" = "Left SLF 2", "2" = "Left SLF 3", "3" = "Right SLF 1", "4" = "Right SLF 2", "5" = "Right SLF 3"))+
+  #scale_x_discrete(labels = c("1" = "Whole SLF", "2" = "Left SLF", "3" = "Right SLF", "4" = "Right SLF 1", "5" = "Left SLF 2", "6" = "Left SLF 3", "7" = "Right SLF 2", "8" = "Right SLF 3"))+
   scale_color_manual(values = c("#FF00FF", "#33CC66", "#33CCFF", "#999900", "#CCCCCC"))+
   labs(colour='Group Contrast')+   
   theme_classic()+
+  theme(axis.title.x = element_text(size = 22),axis.title.y = element_text(size = 22),axis.text.x = element_text(size = 18),axis.text.y = element_text(size = 18))+
   coord_flip()
 
 
     
 #plot 95% Confidence Interval for ANCOVA (age & sex)
-#for FD
+#for FDC
 #Create dataset: 
-SLF_FD_95CI_2covar_data <- data.frame(SLF_group_number = c('1','1','3','3','5','5','5','7','8','8'),
+SLF_FDC_95CI_2covar_data <- data.frame(SLF_group_number = c('1','1','3','3','5','5','5','7','8','8'),
                                SLF_type = c('Whole_SLF','Whole_SLF', 'Right_SLF', 'Right_SLF','Left_SLF3','Left_SLF3','Left_SLF3','Right_SLF2','Right_SLF3','Right_SLF3'),
                                Group_contrast = c('CvmMCI', 'CvAD', 'CvmMCI', 'CvAD','CvSCD','CvmMCI','CvAD','CvmMCI','CvSCD','CvmMCI'),
                                estimate_diff = c(0.0149701,0.0171247,0.016138,0.017475,0.013165,0.015781,0.0174047,0.0201535,0.0142024,0.019025),
                                lower = c(0.0286742,0.0336528,0.030519,0.03482,0.0257797,0.0289482,0.0332852,0.0397022,0.02792,0.0333434), 
                                upper = c(0.0012659,0.0005967,0.001757,0.000131,0.0005503,0.0026138,0.0015243,0.0006048,0.0004848,0.0047066))  
 #plot data
-ggplot(SLF_FD_95CI_2covar_data, aes(x=SLF_group_number, y=estimate_diff, colour=Group_contrast))+
+ggplot(SLF_FDC_95CI_2covar_data, aes(x=SLF_group_number, y=estimate_diff, colour=Group_contrast))+
     geom_point()+
     geom_errorbar(aes(ymin=lower, ymax=upper))+
     xlab("SLF Tract") + 
@@ -765,18 +771,18 @@ ggplot(SLF_FD_95CI_2covar_data, aes(x=SLF_group_number, y=estimate_diff, colour=
     
 
 #plot 95% Confidence Interval (separated confidence intervals and separated SLF tracts only) (sex & age covariates)
-SLF_FD_95CI_data_no_combined_SLF <- data.frame(SLF_group_number = c('1','1','1','2','3','3'),
+SLF_FDC_95CI_data_no_combined_SLF <- data.frame(SLF_group_number = c('1','1','1','2','3','3'),
                                                SLF_type = c('Left_SLF3','Left_SLF3','Left_SLF3','Right_SLF2','Right_SLF3', 'Right_SLF3'),
                                                Group_contrast = c('C > SCD','C > mMCI','C > AD','C > mMCI','C > SCD','C > mMCI'),
-                                               estimate_diff = c(0.0131553,0.0157052,0.0174042,0.020154,0.0141693,0.0190178),
-                                               lower = c(0.0257682,0.0288883,0.0332881,0.039728,0.0278625,0.0333300), 
-                                               upper = c(0.0005425,0.0025222,0.0015202,0.000580,0.0004762,0.0047055))  
+                                               estimate_diff = c(0.0130476,0.0156277,0.0173008,0.0198848,0.0141504,0.0189202),
+                                               lower = c(0.0256490,0.0287923,0.0331592,0.0394443,0.0278481,0.0332301), 
+                                               upper = c(0.0004462,0.0024631,0.0014424,0.0003253,0.0004526,0.0046103))  
 
 #plot data
-ggplot(SLF_FD_95CI_data_no_combined_SLF, aes(x=SLF_group_number, y=estimate_diff, colour=Group_contrast))+
+ggplot(SLF_FDC_95CI_data_no_combined_SLF, aes(x=SLF_group_number, y=estimate_diff, colour=Group_contrast))+
   geom_point(position = position_dodge(width=0.5), size=5)+
   geom_errorbar(aes(ymin=lower, ymax=upper), size=1.5, position = position_dodge(width=0.5))+
-  xlab("SLF Tract") + 
+  xlab("FDC") + 
   ylab("95% Confidence Interval")+
   scale_x_discrete(labels = c("1" = "Left SLF 3", "2" = "Right SLF 2", "3" = "Right SLF 3"))+
   scale_color_manual(values = c("#FF00FF","#33CCFF","#999900"))+
@@ -1539,14 +1545,15 @@ SLF_FDC_95CI_data <- data.frame(SLF_group_number = c('1'),
 
 #plot data (just with the right SLF3)
 ggplot(SLF_FDC_95CI_data, aes(x=SLF_group_number, y=estimate_diff, colour=Group_contrast))+
-    geom_point()+
-    geom_errorbar(aes(ymin=lower, ymax=upper))+
+    geom_point(position = position_dodge(width=0.5), size=5)+
+    geom_errorbar(aes(ymin=lower, ymax=upper), size = 1.5, position = position_dodge(width=0.5))+
     xlab("SLF Tract") + 
     ylab("95% Confidence Interval")+
     scale_x_discrete(labels = c("1" = "Right SLF 3"))+
     labs(colour="Group Contrast")+ 
     scale_color_manual(values = "#999900")+
     theme_classic()+
+    theme(axis.title.x = element_text(size = 22),axis.title.y = element_text(size = 22),axis.text.x = element_text(size = 18),axis.text.y = element_text(size = 18))+
     coord_flip()
 
 
@@ -1638,7 +1645,7 @@ t_value_effect_size <- summary(post_hoc_SLF3_R_FDC_covar_mod)
 
 #effect size for sig. post hoc tests (with sex + age as covariates)
 #Left SLF2 FDC - no sig. f/us
-#Right SLF3 FD
+#Right SLF3 FDC
     t_value_effect_size <- summary(post_hoc_SLF3_R_FDC_ancova_mod) 
     #for C vs. SCD 
     DPRC_neuropsych_data_CvSCD_SLF3_R <- subset(SLF_data, SLF_data$Group == 1 | SLF_data$Group == 2)
@@ -1650,7 +1657,7 @@ t_value_effect_size <- summary(post_hoc_SLF3_R_FDC_covar_mod)
     #for C vs. mMCI 
     DPRC_neuropsych_data_CvmMCI_SLF3_R <- subset(SLF_data, SLF_data$Group == 1 | SLF_data$Group == 4)
     DPRC_neuropsych_data_CvmMCI_SLF3_R$Group <- droplevels(DPRC_neuropsych_data_CvmMCI_SLF3_R$Group)
-    cohensD(mn_FD_SLF3_R ~ Group, data = DPRC_neuropsych_data_CvmMCI_SLF3_R) #this looks like Hedges' g? 
+    cohensD(mn_FDC_SLF3_R ~ Group, data = DPRC_neuropsych_data_CvmMCI_SLF3_R) #this looks like Hedges' g? 
     group_number <-dplyr::count(DPRC_neuropsych_data_CvmMCI_SLF3_R, Group) #count number of participants per group
     mult.r_value_2covar_mod<-summary(lm(mn_FDC_SLF3_R ~ Age + Sex, data = DPRC_neuropsych_data_CvmMCI_SLF3_R)) #create multiple regression between age, sex, and y-var, and get square root of mult-r squared as the r-value
     r_value <- sqrt(mult.r_value_2covar_mod$r.squared) #find correlation value (r) between dependent variable
@@ -1659,150 +1666,150 @@ t_value_effect_size <- summary(post_hoc_SLF3_R_FDC_covar_mod)
     
 
 #plot data
-#For FD - mean 
-#whole SLF FD (violin plot)
-ggplot(SLF_data, aes(x = Group, y = mn_FD_SLF)) + 
+#For FDC - mean 
+#whole SLF FDC (violin plot)
+ggplot(SLF_data, aes(x = Group, y = mn_FDC_SLF)) + 
     geom_boxplot(width = 0.1, fill = "white", outlier.size = 1, aes(colour = Group)) + 
     stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Group)) + 
     xlab("Group") + 
-    ylab("Fibre Density (FD)") +
+    ylab("Fibre Density (FDC)") +
     scale_x_discrete(labels = c("1" = "Control", "2" = "SCD", "3" = "aMCI", "4" = "mMCI", "5" = "AD")) + 
     theme_classic() +
     theme(legend.position = "none") +
     geom_violin(trim = FALSE, alpha = .5, aes(fill = Group, colour = Group), size = 1)
 
-#whole SLF FD (raincloud plot)
-ggplot(SLF_data, aes(x = Group, y = mn_FD_SLF, fill = Group)) + 
+#whole SLF FDC (raincloud plot)
+ggplot(SLF_data, aes(x = Group, y = mn_FDC_SLF, fill = Group)) + 
     geom_flat_violin(position = position_nudge(x = .2, y = 0), alpha = .8) +
-    geom_point(aes(y = mn_FD_SLF, color = Group), position = position_jitter(width = .15), size = .5, alpha = 0.8) +
+    geom_point(aes(y = mn_FDC_SLF, color = Group), position = position_jitter(width = .15), size = .5, alpha = 0.8) +
     geom_boxplot(width = 0.1, fill = "white", outlier.size = 1, aes(colour = Group)) + 
     stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Group)) + 
     xlab("Group") + 
-    ylab("Fibre Density (FD)") +
+    ylab("Fibre Density (FDC)") +
     scale_x_discrete(labels = c("1" = "Control", "2" = "SCD", "3" = "aMCI", "4" = "mMCI", "5" = "AD")) + 
     theme_classic() +
     theme(legend.position = "none") +
     coord_flip()
 
-#left SLF FD (violin plot)
-ggplot(SLF_data, aes(x = Group, y = mn_FD_SLF_L)) + 
+#left SLF FDC (violin plot)
+ggplot(SLF_data, aes(x = Group, y = mn_FDC_SLF_L)) + 
     geom_boxplot(width = 0.1, fill = "white", outlier.size = 1, aes(colour = Group)) + 
     stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Group)) + 
     xlab("Group") + 
-    ylab("Fibre Density (FD)") +
+    ylab("Fibre Density (FDC)") +
     scale_x_discrete(labels = c("1" = "Control", "2" = "SCD", "3" = "aMCI", "4" = "mMCI", "5" = "AD")) + 
     theme_classic() +
     theme(legend.position = "none") +
     geom_violin(trim = FALSE, alpha = .5, aes(fill = Group, colour = Group), size = 1)
 
-#left SLF FD (raincloud plot)
-ggplot(SLF_data, aes(x = Group, y = mn_FD_SLF_L, fill = Group)) + 
+#left SLF FDC (raincloud plot)
+ggplot(SLF_data, aes(x = Group, y = mn_FDC_SLF_L, fill = Group)) + 
     geom_flat_violin(position = position_nudge(x = .2, y = 0), alpha = .8) +
-    geom_point(aes(y = mn_FD_SLF_L, color = Group), position = position_jitter(width = .15), size = .5, alpha = 0.8) +
+    geom_point(aes(y = mn_FDC_SLF_L, color = Group), position = position_jitter(width = .15), size = .5, alpha = 0.8) +
     geom_boxplot(width = 0.1, fill = "white", outlier.size = 1, aes(colour = Group)) + 
     stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Group)) + 
     xlab("Group") + 
-    ylab("Fibre Density (FD)") +
+    ylab("Fibre Density (FDC)") +
     scale_x_discrete(labels = c("1" = "Control", "2" = "SCD", "3" = "aMCI", "4" = "mMCI", "5" = "AD")) + 
     theme_classic() +
     theme(legend.position = "none") +
     coord_flip()
 
-#right SLF FD (violin plot)
-ggplot(SLF_data, aes(x = Group, y = mn_FD_SLF_R)) + 
+#right SLF FDC (violin plot)
+ggplot(SLF_data, aes(x = Group, y = mn_FDC_SLF_R)) + 
     geom_boxplot(width = 0.1, fill = "white", outlier.size = 1, aes(colour = Group)) + 
     stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Group)) + 
     xlab("Group") + 
-    ylab("Fibre Density (FD)") +
+    ylab("Fibre Density (FDC)") +
     scale_x_discrete(labels = c("1" = "Control", "2" = "SCD", "3" = "aMCI", "4" = "mMCI", "5" = "AD")) + 
     theme_classic() +
     theme(legend.position = "none") +
     geom_violin(trim = FALSE, alpha = .5, aes(fill = Group, colour = Group), size = 1)
 
-#right SLF FD (raincloud plot)
-ggplot(SLF_data, aes(x = Group, y = mn_FD_SLF_R, fill = Group)) + 
+#right SLF FDC (raincloud plot)
+ggplot(SLF_data, aes(x = Group, y = mn_FDC_SLF_R, fill = Group)) + 
     geom_flat_violin(position = position_nudge(x = .2, y = 0), alpha = .8) +
-    geom_point(aes(y = mn_FD_SLF_R, color = Group), position = position_jitter(width = .15), size = .5, alpha = 0.8) +
+    geom_point(aes(y = mn_FDC_SLF_R, color = Group), position = position_jitter(width = .15), size = .5, alpha = 0.8) +
     geom_boxplot(width = 0.1, fill = "white", outlier.size = 1, aes(colour = Group)) + 
     stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Group)) + 
     xlab("Group") + 
-    ylab("Fibre Density (FD)") +
+    ylab("Fibre Density (FDC)") +
     scale_x_discrete(labels = c("1" = "Control", "2" = "SCD", "3" = "aMCI", "4" = "mMCI", "5" = "AD")) + 
     theme_classic() +
     theme(legend.position = "none") +
     coord_flip()
 
 
-#plot the 6 tracts out separately (for FD)
+#plot the 6 tracts out separately (for FDC)
 #Left SLF 1: 
-ggplot(SLF_data, aes(x = Group, y = mn_FD_SLF1_L, fill = Group)) + 
+ggplot(SLF_data, aes(x = Group, y = mn_FDC_SLF1_L, fill = Group)) + 
   geom_flat_violin(position = position_nudge(x = .2, y = 0), alpha = .8) +
-  geom_point(aes(y = mn_FD_SLF1_L, color = Group), position = position_jitter(width = .15), size = .5, alpha = 0.8) +
+  geom_point(aes(y = mn_FDC_SLF1_L, color = Group), position = position_jitter(width = .15), size = .5, alpha = 0.8) +
   geom_boxplot(width = 0.1, fill = "white", outlier.size = 1, aes(colour = Group)) + 
   stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Group)) + 
   xlab("Group") + 
-  ylab("Left SLF 1 Fibre Density (FD)") +
+  ylab("Left SLF 1 Fibre Density (FDC)") +
   scale_x_discrete(labels = c("1" = "Control", "2" = "SCD", "3" = "aMCI", "4" = "mMCI", "5" = "AD")) + 
   #theme_classic() +
   theme(legend.position = "none") +
   theme(panel.background = element_blank(),axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank(), axis.title.y=element_blank(), axis.text.y=element_blank(), axis.ticks.y=element_blank())+
   coord_flip()
 #Left SLF 2: 
-ggplot(SLF_data, aes(x = Group, y = mn_FD_SLF2_L, fill = Group)) + 
+ggplot(SLF_data, aes(x = Group, y = mn_FDC_SLF2_L, fill = Group)) + 
   geom_flat_violin(position = position_nudge(x = .2, y = 0), alpha = .8) +
-  geom_point(aes(y = mn_FD_SLF2_L, color = Group), position = position_jitter(width = .15), size = .5, alpha = 0.8) +
+  geom_point(aes(y = mn_FDC_SLF2_L, color = Group), position = position_jitter(width = .15), size = .5, alpha = 0.8) +
   geom_boxplot(width = 0.1, fill = "white", outlier.size = 1, aes(colour = Group)) + 
   stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Group)) + 
   xlab("Group") + 
-  ylab("Left SLF 2 Fibre Density (FD)") +
+  ylab("Left SLF 2 Fibre Density (FDC)") +
   scale_x_discrete(labels = c("1" = "Control", "2" = "SCD", "3" = "aMCI", "4" = "mMCI", "5" = "AD")) + 
   theme(legend.position = "none") +
   theme(panel.background = element_blank(),axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank(), axis.title.y=element_blank(), axis.text.y=element_blank(), axis.ticks.y=element_blank())+
   coord_flip()
 #Left SLF 3: 
-ggplot(SLF_data, aes(x = Group, y = mn_FD_SLF3_L, fill = Group)) + 
+ggplot(SLF_data, aes(x = Group, y = mn_FDC_SLF3_L, fill = Group)) + 
   geom_flat_violin(position = position_nudge(x = .2, y = 0), alpha = .8) +
-  geom_point(aes(y = mn_FD_SLF3_L, color = Group), position = position_jitter(width = .15), size = .5, alpha = 0.8) +
+  geom_point(aes(y = mn_FDC_SLF3_L, color = Group), position = position_jitter(width = .15), size = .5, alpha = 0.8) +
   geom_boxplot(width = 0.1, fill = "white", outlier.size = 1, aes(colour = Group)) + 
   stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Group)) + 
   xlab("Group") + 
-  ylab("Left SLF 3 Fibre Density (FD)") +
+  ylab("Left SLF 3 Fibre Density (FDC)") +
   scale_x_discrete(labels = c("1" = "Control", "2" = "SCD", "3" = "aMCI", "4" = "mMCI", "5" = "AD")) + 
   theme(legend.position = "none") +
   theme(panel.background = element_blank(),axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank(), axis.title.y=element_blank(), axis.text.y=element_blank(), axis.ticks.y=element_blank())+
   coord_flip()
 #Right SLF 1: 
-ggplot(SLF_data, aes(x = Group, y = mn_FD_SLF1_R, fill = Group)) + 
+ggplot(SLF_data, aes(x = Group, y = mn_FDC_SLF1_R, fill = Group)) + 
   geom_flat_violin(position = position_nudge(x = .2, y = 0), alpha = .8) +
-  geom_point(aes(y = mn_FD_SLF1_R, color = Group), position = position_jitter(width = .15), size = .5, alpha = 0.8) +
+  geom_point(aes(y = mn_FDC_SLF1_R, color = Group), position = position_jitter(width = .15), size = .5, alpha = 0.8) +
   geom_boxplot(width = 0.1, fill = "white", outlier.size = 1, aes(colour = Group)) + 
   stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Group)) + 
   xlab("Group") + 
-  ylab("Right SLF 1 Fibre Density (FD)") +
+  ylab("Right SLF 1 Fibre Density (FDC)") +
   scale_x_discrete(labels = c("1" = "Control", "2" = "SCD", "3" = "aMCI", "4" = "mMCI", "5" = "AD")) + 
   theme(legend.position = "none") +
   theme(panel.background = element_blank(),axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank(), axis.title.y=element_blank(), axis.text.y=element_blank(), axis.ticks.y=element_blank())+
   coord_flip()
 #Right SLF 2: 
-ggplot(SLF_data, aes(x = Group, y = mn_FD_SLF2_R, fill = Group)) + 
+ggplot(SLF_data, aes(x = Group, y = mn_FDC_SLF2_R, fill = Group)) + 
   geom_flat_violin(position = position_nudge(x = .2, y = 0), alpha = .8) +
-  geom_point(aes(y = mn_FD_SLF2_R, color = Group), position = position_jitter(width = .15), size = .5, alpha = 0.8) +
+  geom_point(aes(y = mn_FDC_SLF2_R, color = Group), position = position_jitter(width = .15), size = .5, alpha = 0.8) +
   geom_boxplot(width = 0.1, fill = "white", outlier.size = 1, aes(colour = Group)) + 
   stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Group)) + 
   xlab("Group") + 
-  ylab("Right SLF 2 Fibre Density (FD)") +
+  ylab("Right SLF 2 Fibre Density (FDC)") +
   scale_x_discrete(labels = c("1" = "Control", "2" = "SCD", "3" = "aMCI", "4" = "mMCI", "5" = "AD")) + 
   theme(legend.position = "none") +
   theme(panel.background = element_blank(),axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank(), axis.title.y=element_blank(), axis.text.y=element_blank(), axis.ticks.y=element_blank())+
   coord_flip()
 #Right SLF 3: 
-ggplot(SLF_data, aes(x = Group, y = mn_FD_SLF3_R, fill = Group)) + 
+ggplot(SLF_data, aes(x = Group, y = mn_FDC_SLF3_R, fill = Group)) + 
   geom_flat_violin(position = position_nudge(x = .2, y = 0), alpha = .8) +
-  geom_point(aes(y = mn_FD_SLF3_R, color = Group), position = position_jitter(width = .15), size = .5, alpha = 0.8) +
+  geom_point(aes(y = mn_FDC_SLF3_R, color = Group), position = position_jitter(width = .15), size = .5, alpha = 0.8) +
   geom_boxplot(width = 0.1, fill = "white", outlier.size = 1, aes(colour = Group)) + 
   stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Group)) + 
   xlab("Group") + 
-  ylab("Right SLF 3 Fibre Density (FD)") +
+  ylab("Right SLF 3 Fibre Density (FDC)") +
   scale_x_discrete(labels = c("1" = "Control", "2" = "SCD", "3" = "aMCI", "4" = "mMCI", "5" = "AD")) + 
   theme(legend.position = "none") +
   theme(panel.background = element_blank(),axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank(), axis.title.y=element_blank(), axis.text.y=element_blank(), axis.ticks.y=element_blank())+
@@ -1811,12 +1818,12 @@ ggplot(SLF_data, aes(x = Group, y = mn_FD_SLF3_R, fill = Group)) +
 
 
 
-#FD - median
-# ggplot(SLF_data, aes(x = Group, y = md_FD)) + 
+#FDC - median
+# ggplot(SLF_data, aes(x = Group, y = md_FDC)) + 
 #     geom_boxplot(width = 0.5, fill = "white", outlier.size = 1, aes(colour = Group)) + 
 #     stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Group)) + 
 #     xlab("Group_status") + 
-#     ylab("FD") +
+#     ylab("FDC") +
 #     scale_x_discrete(labels = c("1" = "Control", "2" = "SCD", "3" = "aMCI", "4" = "mMCI", "5" = "AD")) + 
 #     theme_classic() +
 #     theme(legend.position = "none")
@@ -1981,12 +1988,12 @@ ggplot(SLF_data, aes(x = Group, y = mn_FDC_SLF_R, fill = Group)) +
     coord_flip()
 
 
-#FDC - median
-# ggplot(SLF_data, aes(x = Group, y = md_FDC)) + 
+#FD - median
+# ggplot(SLF_data, aes(x = Group, y = md_FD)) + 
 #     geom_boxplot(width = 0.5, fill = "white", outlier.size = 1, aes(colour = Group)) + 
 #     stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Group)) + 
 #     xlab("Group_status") + 
-#     ylab("FDC") +
+#     ylab("FD") +
 #     scale_x_discrete(labels = c("1" = "Control", "2" = "SCD", "3" = "aMCI", "4" = "mMCI", "5" = "AD")) + 
 #     theme_classic() +
 #     theme(legend.position = "none")
@@ -2782,34 +2789,34 @@ rownames(PLS_FD_corr_matrix) <-c('Left SLF1','Left SLF2','Left SLF3','Right SLF1
 corrplot(PLS_FD_corr_matrix, method = "color", tl.col = "black",col=colorRampPalette(c("blue","white","red"))(200),is.corr=FALSE)
 
 #for all 5 inhibition tests data:
-#for FD:
+#for FDC:
 #barplot
 neuropsych_test_names_PLS <- c('TMT-B/TMT-A','Interference Effect','Category Switching','HayTime2-HayTime1','HayTotError')
-PLS_FD_bootstrap_corr_values<- c(0.16149837,
+PLS_FDC_bootstrap_corr_values<- c(0.16149837,
                                  0.16679218,
                                  0.13629955,
                                  0.13754775,
                                  0.022352515)*-1 
-ulimit_PLS_FD_barplot <- c(0.305668428540230,
+ulimit_PLS_FDC_barplot <- c(0.305668428540230,
                            0.273633107542992,
                            0.230966039001942,
                            0.255266830325127,
                            0.125505715608597)*-1
-llimit_PLS_FD_barplot <- c(0.0500048007816076,
+llimit_PLS_FDC_barplot <- c(0.0500048007816076,
                            0.0757585018873215,
                            0.0616370067000389,
                            0.0363335870206356,
                            -0.0591596905142069)*-1
 
 significance_legend<-c('Reliably Contributes to Latent Variable','Reliably Contributes to Latent Variable','Reliably Contributes to Latent Variable','Reliably Contributes to Latent Variable','Does Not Reliably Contribute to Latent Variable')
-df_PLS_FD_barplot <- data.frame(neuropsych_test_names_PLS,significance_legend,PLS_FD_bootstrap_corr_values,ulimit_PLS_FD_barplot,llimit_PLS_FD_barplot)
+df_PLS_FDC_barplot <- data.frame(neuropsych_test_names_PLS,significance_legend,PLS_FDC_bootstrap_corr_values,ulimit_PLS_FDC_barplot,llimit_PLS_FDC_barplot)
 #convert to factor variables
-df_PLS_FD_barplot$neuropsych_test_names_PLS <- factor(df_PLS_FD_barplot$neuropsych_test_names_PLS, levels=c('TMT-B/TMT-A','Interference Effect','Category Switching','HayTime2-HayTime1','HayTotError'))
-df_PLS_FD_barplot$significance_legend <- factor(df_PLS_FD_barplot$significance_legend, levels=c('Reliably Contributes to Latent Variable','Does Not Reliably Contribute to Latent Variable'))
-#barplot(PLS_FD_bootstrap_corr_values, xlab = "Neuropsychological Assessment", ylab = "Bootstrap Correlation Value")
-ggplot(data=df_PLS_FD_barplot,(aes(x=neuropsych_test_names_PLS, y=PLS_FD_bootstrap_corr_values,fill=significance_legend)))+
+df_PLS_FDC_barplot$neuropsych_test_names_PLS <- factor(df_PLS_FDC_barplot$neuropsych_test_names_PLS, levels=c('TMT-B/TMT-A','Interference Effect','Category Switching','HayTime2-HayTime1','HayTotError'))
+df_PLS_FDC_barplot$significance_legend <- factor(df_PLS_FDC_barplot$significance_legend, levels=c('Reliably Contributes to Latent Variable','Does Not Reliably Contribute to Latent Variable'))
+#barplot(PLS_FDC_bootstrap_corr_values, xlab = "Neuropsychological Assessment", ylab = "Bootstrap Correlation Value")
+ggplot(data=df_PLS_FDC_barplot,(aes(x=neuropsych_test_names_PLS, y=PLS_FDC_bootstrap_corr_values,fill=significance_legend)))+
   geom_bar(stat="identity")+
-  geom_errorbar(aes(x=neuropsych_test_names_PLS,ymin=llimit_PLS_FD_barplot,ymax=ulimit_PLS_FD_barplot))+
+  geom_errorbar(aes(x=neuropsych_test_names_PLS,ymin=llimit_PLS_FDC_barplot,ymax=ulimit_PLS_FDC_barplot))+
   xlab("Neuropsychological Assessment") + 
   ylab("Correlation Values") +
   scale_fill_manual(values=c("steelblue","light grey"))+
@@ -2818,19 +2825,19 @@ ggplot(data=df_PLS_FD_barplot,(aes(x=neuropsych_test_names_PLS, y=PLS_FD_bootstr
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1)) #adjust x-labels
 
 
-#for inhibition 5 FD:
-PLS_output_FD_inhib5_data <- c(-0.045088284,	-0.16490521,	-0.12426596,	-0.098743699,	-0.13778134,	-0.15541276,
+#for inhibition 5 FDC:
+PLS_output_FDC_inhib5_data <- c(-0.045088284,	-0.16490521,	-0.12426596,	-0.098743699,	-0.13778134,	-0.15541276,
                                -0.056572367,	-0.15917349,	-0.16711017,	-0.089174040,	-0.13429688,	-0.15822305,
                                -0.012648485,	-0.18558364,	-0.12191153,	-0.041127983,	-0.11259479,	-0.047797780,
                                -0.038812712,	-0.15740234,	-0.068443902,	-0.011714508,	-0.15725270,	-0.11359754,
                                -0.051465657,	-0.074342854,	-0.040595248,	0.017224338,	0.027178751,	0.059770372)
 #create correlation matrix
-PLS_FD_inhib5_corr_matrix <- matrix(PLS_output_FD_inhib5_data,nrow=6,ncol=5)
+PLS_FDC_inhib5_corr_matrix <- matrix(PLS_output_FDC_inhib5_data,nrow=6,ncol=5)
 #add in row and column names to the matrix
-colnames(PLS_FD_inhib5_corr_matrix) <-c('TMT-B/TMT-A','Interference Effect','Category Switching','HayTime2-HayTime1','HayTotError')
-rownames(PLS_FD_inhib5_corr_matrix) <-c('Left SLF1','Left SLF2','Left SLF3','Right SLF1','Right SLF2','Right SLF3')
+colnames(PLS_FDC_inhib5_corr_matrix) <-c('TMT-B/TMT-A','Interference Effect','Category Switching','HayTime2-HayTime1','HayTotError')
+rownames(PLS_FDC_inhib5_corr_matrix) <-c('Left SLF1','Left SLF2','Left SLF3','Right SLF1','Right SLF2','Right SLF3')
 #plot correlation heatmap
-corrplot(PLS_FD_inhib5_corr_matrix, method = "color", tl.col = "black",col=colorRampPalette(c("blue","white","red"))(200),is.corr=FALSE)
+corrplot(PLS_FDC_inhib5_corr_matrix, method = "color", tl.col = "black",col=colorRampPalette(c("blue","white","red"))(200),is.corr=FALSE)
 
 # #for FDC:
 # PLS_output_FDC_data <- c(-0.023494439,	-0.10839374,	-0.017945150,	-0.072824180,	-0.097034164,	-0.024255082,
@@ -2857,20 +2864,20 @@ corrplot(PLS_FD_inhib5_corr_matrix, method = "color", tl.col = "black",col=color
 # 
 # 
 # #for all 4 inhibition scores (raw):
-# #for FD (raw):
-# PLS_output_FD_inhib_data <- c(-0.059311923,	-0.23900978,	-0.16617303,	-0.21059912,	-0.21506317,	-0.17036039,
+# #for FDC (raw):
+# PLS_output_FDC_inhib_data <- c(-0.059311923,	-0.23900978,	-0.16617303,	-0.21059912,	-0.21506317,	-0.17036039,
 #                               -0.055880506,	-0.22353986,	-0.22384585,	-0.13991968,	-0.16974939,	-0.16966677,
 #                               -0.010789142,	-0.24867000,	-0.16986607,	-0.10432350,	-0.14096898,	-0.043302536,
 #                               -0.056938894,	-0.24372567,	-0.12331681,	-0.083641596,	-0.17522530,	-0.12001289)
 # #create correlation matrix
-# PLS_FD_inhib_corr_matrix <- matrix(PLS_output_FD_inhib_data,nrow=6,ncol=4)
+# PLS_FDC_inhib_corr_matrix <- matrix(PLS_output_FDC_inhib_data,nrow=6,ncol=4)
 # #add in row and column names to the matrix
-# colnames(PLS_FD_inhib_corr_matrix) <-c('TMT-B','Inhibition','Category Switching','HayTime2')
-# rownames(PLS_FD_inhib_corr_matrix) <-c('Left SLF1','Left SLF2','Left SLF3','Right SLF1','Right SLF2','Right SLF3')
+# colnames(PLS_FDC_inhib_corr_matrix) <-c('TMT-B','Inhibition','Category Switching','HayTime2')
+# rownames(PLS_FDC_inhib_corr_matrix) <-c('Left SLF1','Left SLF2','Left SLF3','Right SLF1','Right SLF2','Right SLF3')
 # #plot correlation heatmap
 # cols <-brewer.pal(11,"PuOr")
 # pal<-colorRampPalette(cols)
-# corrplot(PLS_FD_inhib_corr_matrix, method = "color", tl.col = "black", col=pal(20), cl.lim=c(-.25,.10), is.corr=FALSE)
+# corrplot(PLS_FDC_inhib_corr_matrix, method = "color", tl.col = "black", col=pal(20), cl.lim=c(-.25,.10), is.corr=FALSE)
 # 
 # #for FDC (raw):
 # PLS_output_FDC_inhib_data <- c(-0.081275888,-0.15651974,	-0.078872435,	-0.14735183,	-0.16034850,	-0.10748158,
@@ -2888,20 +2895,20 @@ corrplot(PLS_FD_inhib5_corr_matrix, method = "color", tl.col = "black",col=color
 # corrplot(PLS_FDC_inhib_corr_matrix, method = "color", tl.col = "black", col=pal(20), cl.lim=c(-.25,.10), is.corr=FALSE)
 # 
 # #for all 4 inhibition zscores:
-# #for FD (zscore):
-# PLS_output_FD_inhib_zdata <- c(-0.0013060169,0.17507555,	0.10720466,	0.13353334,	0.20028476,	0.16079105,
+# #for FDC (zscore):
+# PLS_output_FDC_inhib_zdata <- c(-0.0013060169,0.17507555,	0.10720466,	0.13353334,	0.20028476,	0.16079105,
 #                                0.041074198,	 0.18999904,	0.17024736,	0.094471522,0.16638769,	0.12157550,
 #                                0.035442751,	 0.26104787,	0.20363601,	0.10262322,	0.17455740,	0.085880652,
 #                                0.012074957,	 0.10491857,	0.050221156,-0.019955613,0.072782405,0.076411277)
 # #create correlation matrix
-# PLS_FD_inhib_zcorr_matrix <- matrix(PLS_output_FD_inhib_zdata,nrow=6,ncol=4)
+# PLS_FDC_inhib_zcorr_matrix <- matrix(PLS_output_FDC_inhib_zdata,nrow=6,ncol=4)
 # #add in row and column names to the matrix
-# colnames(PLS_FD_inhib_zcorr_matrix) <-c('TMT-B','Inhibition','Category Switching','HayTime2')
-# rownames(PLS_FD_inhib_zcorr_matrix) <-c('Left SLF1','Left SLF2','Left SLF3','Right SLF1','Right SLF2','Right SLF3')
+# colnames(PLS_FDC_inhib_zcorr_matrix) <-c('TMT-B','Inhibition','Category Switching','HayTime2')
+# rownames(PLS_FDC_inhib_zcorr_matrix) <-c('Left SLF1','Left SLF2','Left SLF3','Right SLF1','Right SLF2','Right SLF3')
 # #plot correlation heatmap
 # cols <-brewer.pal(11,"PuOr")
 # pal<-colorRampPalette(cols)
-# corrplot(PLS_FD_inhib_zcorr_matrix, method = "color", tl.col = "black", col=pal(20), cl.lim=c(-.15,.30), is.corr=FALSE)
+# corrplot(PLS_FDC_inhib_zcorr_matrix, method = "color", tl.col = "black", col=pal(20), cl.lim=c(-.15,.30), is.corr=FALSE)
 # 
 # #for FDC (zscore):
 # PLS_output_FDC_inhib_zdata <- c(0.00096392963,	0.094259106,-0.0015320014,0.060975134,	0.12675491,	0.052631572,
@@ -2919,8 +2926,8 @@ corrplot(PLS_FD_inhib5_corr_matrix, method = "color", tl.col = "black",col=color
 # corrplot(PLS_FDC_inhib_zcorr_matrix, method = "color", tl.col = "black", col=pal(20), cl.lim=c(-.15,.30), is.corr=FALSE)
 
 # #for 7 inhibition (inhibition + inhib rate) scores:
-# #for FD:
-# PLS_output_FD_inhibRate_data <- c(-0.059311923,	-0.23900978,-0.16617303,-0.21059912,-0.21506317,-0.17036039,
+# #for FDC:
+# PLS_output_FDC_inhibRate_data <- c(-0.059311923,	-0.23900978,-0.16617303,-0.21059912,-0.21506317,-0.17036039,
 #                               -0.055880506,	-0.22353986,-0.22384585,-0.13991968,-0.16974939,-0.16966677,
 #                               -0.010789142,	-0.24867000,-0.16986607,-0.10432350,-0.14096898,-0.043302536,
 #                               -0.056938894,	-0.24372567,-0.12331681,-0.083641596,-0.17522530,-0.12001289,
@@ -2928,12 +2935,12 @@ corrplot(PLS_FD_inhib5_corr_matrix, method = "color", tl.col = "black",col=color
 #                               -0.049341843,	-0.15497588,-0.18023990,-0.11758253,-0.11222965,-0.12720178,
 #                               -0.023481816,	-0.13349116,-0.12111595,-0.10928466,-0.12700854,-0.14178012)
 # #transpose the values
-# PLS_FD_inhibRate_corr_matrix <- t(matrix(PLS_output_FD_inhibRate_data,nrow=6,ncol=7))
+# PLS_FDC_inhibRate_corr_matrix <- t(matrix(PLS_output_FDC_inhibRate_data,nrow=6,ncol=7))
 # #add in row and column names to the matrix
-# rownames(PLS_FD_inhibRate_corr_matrix) <-c('TMT-B','Inhibition','Category Switching','HayTime2','TMT-B/TMT-A','Inhibition/Colour Naming','Inhibition/Word Reading')
-# colnames(PLS_FD_inhibRate_corr_matrix) <-c('Left SLF1','Left SLF2','Left SLF3','Right SLF1','Right SLF2','Right SLF3')
+# rownames(PLS_FDC_inhibRate_corr_matrix) <-c('TMT-B','Inhibition','Category Switching','HayTime2','TMT-B/TMT-A','Inhibition/Colour Naming','Inhibition/Word Reading')
+# colnames(PLS_FDC_inhibRate_corr_matrix) <-c('Left SLF1','Left SLF2','Left SLF3','Right SLF1','Right SLF2','Right SLF3')
 # #plot correlation heatmap
-# corrplot(PLS_FD_inhibRate_corr_matrix, method = "color", tl.col = "black", cl.lim=c(-.25,.10), is.corr=FALSE)
+# corrplot(PLS_FDC_inhibRate_corr_matrix, method = "color", tl.col = "black", cl.lim=c(-.25,.10), is.corr=FALSE)
 # 
 # #for FDC:
 # PLS_output_FDC_inhib_data <- c(-0.081275888,-0.15651974,	-0.078872435,	-0.14735183,	-0.16034850,	-0.10748158,
@@ -2952,52 +2959,52 @@ corrplot(PLS_FD_inhib5_corr_matrix, method = "color", tl.col = "black",col=color
 # corrplot(PLS_FDC_inhib_corr_matrix, method = "color", tl.col = "black", cl.lim=c(-.25,.10), is.corr=FALSE)
 # 
 # #for 3 inhibition rate scores (raw):
-# #for FD (raw):
-# PLS_output_FD_3inhibRate_data <- c(0.012781640,	-0.10718581,	-0.12468886,	-0.077844985,	-0.052113518,	-0.062034946,
+# #for FDC (raw):
+# PLS_output_FDC_3inhibRate_data <- c(0.012781640,	-0.10718581,	-0.12468886,	-0.077844985,	-0.052113518,	-0.062034946,
 #                                    -0.049341843,-0.15497588,	-0.18023990,	-0.11758253,	-0.11222965,	-0.12720178,
 #                                    -0.023481816	,-0.13349116,	-0.12111595,	-0.10928466,	-0.12700854,	-0.14178012)
 # #create correlation matrix
-# PLS_FD_3inhibRate_corr_matrix <- matrix(PLS_output_FD_3inhibRate_data,nrow=6,ncol=3)
+# PLS_FDC_3inhibRate_corr_matrix <- matrix(PLS_output_FDC_3inhibRate_data,nrow=6,ncol=3)
 # #add in row and column names to the matrix
-# colnames(PLS_FD_3inhibRate_corr_matrix) <-c('TMT-B/TMT-A','Inhibition/Colour Naming','Inhibition/Word Reading')
-# rownames(PLS_FD_3inhibRate_corr_matrix) <-c('Left SLF1','Left SLF2','Left SLF3','Right SLF1','Right SLF2','Right SLF3')
+# colnames(PLS_FDC_3inhibRate_corr_matrix) <-c('TMT-B/TMT-A','Inhibition/Colour Naming','Inhibition/Word Reading')
+# rownames(PLS_FDC_3inhibRate_corr_matrix) <-c('Left SLF1','Left SLF2','Left SLF3','Right SLF1','Right SLF2','Right SLF3')
 # #plot correlation heatmap
 # cols <-brewer.pal(11,"PuOr")
 # pal<-colorRampPalette(cols)
-# corrplot(PLS_FD_3inhibRate_corr_matrix, method = "color", tl.col = "black", col=pal(20), cl.lim=c(-.25,.10), is.corr=FALSE)
+# corrplot(PLS_FDC_3inhibRate_corr_matrix, method = "color", tl.col = "black", col=pal(20), cl.lim=c(-.25,.10), is.corr=FALSE)
 # 
 # #for 3 inhibition rate scores (z-score):
-# #for FD (z-score):
-# PLS_output_FD_3inhibRate_zdata <- c(-0.014584403,	0.10287708,	0.11998189,	0.072596632,0.050804809,0.060715336,
+# #for FDC (z-score):
+# PLS_output_FDC_3inhibRate_zdata <- c(-0.014584403,	0.10287708,	0.11998189,	0.072596632,0.050804809,0.060715336,
 #                                    0.046708338,	    0.14920010,	0.17539965,	0.11107749,	0.11057993,	0.12645018,
 #                                    0.023481816,	    0.13349117,	0.12111593,	0.10928468,	0.12700854,	0.14178011)
 # #create correlation matrix
-# PLS_FD_3inhibRate_zcorr_matrix <- matrix(PLS_output_FD_3inhibRate_zdata,nrow=6,ncol=3)
+# PLS_FDC_3inhibRate_zcorr_matrix <- matrix(PLS_output_FDC_3inhibRate_zdata,nrow=6,ncol=3)
 # #add in row and column names to the matrix
-# colnames(PLS_FD_3inhibRate_zcorr_matrix) <-c('TMT-B/TMT-A','Inhibition/Colour Naming','Inhibition/Word Reading')
-# rownames(PLS_FD_3inhibRate_zcorr_matrix) <-c('Left SLF1','Left SLF2','Left SLF3','Right SLF1','Right SLF2','Right SLF3')
+# colnames(PLS_FDC_3inhibRate_zcorr_matrix) <-c('TMT-B/TMT-A','Inhibition/Colour Naming','Inhibition/Word Reading')
+# rownames(PLS_FDC_3inhibRate_zcorr_matrix) <-c('Left SLF1','Left SLF2','Left SLF3','Right SLF1','Right SLF2','Right SLF3')
 # #plot correlation heatmap
 # cols <-brewer.pal(11,"PuOr")
 # pal<-colorRampPalette(cols)
-# corrplot(PLS_FD_3inhibRate_zcorr_matrix, method = "color", tl.col = "black", col=pal(20), cl.lim=c(-.15,.30), is.corr=FALSE)
+# corrplot(PLS_FDC_3inhibRate_zcorr_matrix, method = "color", tl.col = "black", col=pal(20), cl.lim=c(-.15,.30), is.corr=FALSE)
 # 
 # 
 # 
 # #for 4 processing speed scores (raw):
-# #for FD (raw):
-# PLS_output_FD_ProcSpeed_data <- c(-0.052887432,	-0.19881813,	-0.098845303,	-0.15199682,	-0.18395258,	-0.10515217,
+# #for FDC (raw):
+# PLS_output_FDC_ProcSpeed_data <- c(-0.052887432,	-0.19881813,	-0.098845303,	-0.15199682,	-0.18395258,	-0.10515217,
 #                                   -0.081713542,	-0.19632770,	-0.18399397,	-0.090451822,	-0.17019776,	-0.15496008,
 #                                   -0.021202313,	-0.11567444,	-0.084804416,	-0.039748233,	-0.099011421,	-0.065692201,
 #                                   -0.074153230,	-0.16982189,	-0.071893364,	-0.10415857,	-0.012070606,	-0.027570801)
 # #create correlation matrix
-# PLS_FD_ProcSpeed_corr_matrix <- matrix(PLS_output_FD_ProcSpeed_data,nrow=6,ncol=4)
+# PLS_FDC_ProcSpeed_corr_matrix <- matrix(PLS_output_FDC_ProcSpeed_data,nrow=6,ncol=4)
 # #add in row and column names to the matrix
-# colnames(PLS_FD_ProcSpeed_corr_matrix) <-c('TMT-A','Colour Naming','Word Reading','Haytime1')
-# rownames(PLS_FD_ProcSpeed_corr_matrix) <-c('Left SLF1','Left SLF2','Left SLF3','Right SLF1','Right SLF2','Right SLF3')
+# colnames(PLS_FDC_ProcSpeed_corr_matrix) <-c('TMT-A','Colour Naming','Word Reading','Haytime1')
+# rownames(PLS_FDC_ProcSpeed_corr_matrix) <-c('Left SLF1','Left SLF2','Left SLF3','Right SLF1','Right SLF2','Right SLF3')
 # #plot correlation heatmap
 # cols <-brewer.pal(11,"PuOr")
 # pal<-colorRampPalette(cols)
-# corrplot(PLS_FD_ProcSpeed_corr_matrix, method = "color", tl.col = "black", col=pal(20), cl.lim=c(-.25,.10), is.corr=FALSE)
+# corrplot(PLS_FDC_ProcSpeed_corr_matrix, method = "color", tl.col = "black", col=pal(20), cl.lim=c(-.25,.10), is.corr=FALSE)
 # 
 # #for FDC (raw):
 # PLS_output_FDC_ProcSpeed_data <- c(-0.023494413,	-0.10839376,	-0.017945161,	-0.072824195,	-0.097034149,	-0.024255071,
@@ -3015,24 +3022,24 @@ corrplot(PLS_FD_inhib5_corr_matrix, method = "color", tl.col = "black",col=color
 # corrplot(PLS_FDC_ProcSpeed_corr_matrix, method = "color", tl.col = "black", col=pal(20), cl.lim=c(-.25,.10), is.corr=FALSE)
 # 
 # #for 4 processing speed scores (zscores):
-# #for FD (zscores):
-# PLS_output_FD_ProcSpeed_zdata <- c(0.0023706811,0.11799329,	0.019205261,0.066913955,	0.14844789,	0.082191922,
+# #for FDC (zscores):
+# PLS_output_FDC_ProcSpeed_zdata <- c(0.0023706811,0.11799329,	0.019205261,0.066913955,	0.14844789,	0.082191922,
 #                                    0.074899413,	0.18496436,	0.15534791,	0.046362143,	0.17685394,	0.15339230,
 #                                    0.0091149900,0.080202527,0.035712484,-0.0028785698,	0.078847423,0.050994072,
 #                                    0.094311088,	0.17657560,	0.065742359,0.085854836,	0.050265390,0.050757453)
 # #create correlation matrix
-# PLS_FD_ProcSpeed_zcorr_matrix <- matrix(PLS_output_FD_ProcSpeed_zdata,nrow=6,ncol=4)
+# PLS_FDC_ProcSpeed_zcorr_matrix <- matrix(PLS_output_FDC_ProcSpeed_zdata,nrow=6,ncol=4)
 # #add in row and column names to the matrix
-# colnames(PLS_FD_ProcSpeed_zcorr_matrix) <-c('TMT-A','Colour Naming','Word Reading','Haytime1')
-# rownames(PLS_FD_ProcSpeed_zcorr_matrix) <-c('Left SLF1','Left SLF2','Left SLF3','Right SLF1','Right SLF2','Right SLF3')
+# colnames(PLS_FDC_ProcSpeed_zcorr_matrix) <-c('TMT-A','Colour Naming','Word Reading','Haytime1')
+# rownames(PLS_FDC_ProcSpeed_zcorr_matrix) <-c('Left SLF1','Left SLF2','Left SLF3','Right SLF1','Right SLF2','Right SLF3')
 # #plot correlation heatmap
 # cols <-brewer.pal(11,"PuOr")
 # pal<-colorRampPalette(cols)
-# corrplot(PLS_FD_ProcSpeed_zcorr_matrix, method = "color", tl.col = "black", col=pal(20), cl.lim=c(-.15,.30), is.corr=FALSE)
+# corrplot(PLS_FDC_ProcSpeed_zcorr_matrix, method = "color", tl.col = "black", col=pal(20), cl.lim=c(-.15,.30), is.corr=FALSE)
 # 
 # #for all 13 behavioural scores (no HayError and have included Inhibition Rate scores):
-# #for FD:
-# PLS_output_FD_13data <- c(-0.052887432,	-0.19881806,	-0.098845303,	-0.15199679,	-0.18395256,    -0.10515221,
+# #for FDC:
+# PLS_output_FDC_13data <- c(-0.052887432,	-0.19881806,	-0.098845303,	-0.15199679,	-0.18395256,    -0.10515221,
 #                         -0.059311930,	-0.23900978,	-0.16617306,	-0.21059908,	-0.21506318,	-0.17036040,
 #                         -0.081713542,	-0.19632770,	-0.18399400,	-0.090451777,	-0.17019773,	-0.15496007,
 #                         -0.021202305,	-0.11567443,	-0.084804401,	-0.039748240,	-0.099011421,	-0.065692201,
@@ -3046,17 +3053,17 @@ corrplot(PLS_FD_inhib5_corr_matrix, method = "color", tl.col = "black",col=color
 #                         -0.049341865,	-0.15497589,	-0.18023989,	-0.11758254,	-0.11222964,	-0.12720178,
 #                         -0.023481827,	-0.13349116,	-0.12111592,	-0.10928465,	-0.12700856,	-0.14178014)
 # #create correlation matrix
-# PLS_FD_13corr_matrix <- matrix(PLS_output_FD_13data,nrow=6,ncol=13)
+# PLS_FDC_13corr_matrix <- matrix(PLS_output_FDC_13data,nrow=6,ncol=13)
 # #add in row and column names to the matrix
-# colnames(PLS_FD_13corr_matrix) <-c('TMT-A','TMT-B','Colour Naming','Word Reading','Inhibition','Letter Fluency','Category Fluency','Category Switching','Haytime1','HayTime2','TMT-B/TMT-A','Inhibition/Colour Naming','Inhibition/Word Reading')
-# rownames(PLS_FD_13corr_matrix) <-c('Left SLF1','Left SLF2','Left SLF3','Right SLF1','Right SLF2','Right SLF3')
+# colnames(PLS_FDC_13corr_matrix) <-c('TMT-A','TMT-B','Colour Naming','Word Reading','Inhibition','Letter Fluency','Category Fluency','Category Switching','Haytime1','HayTime2','TMT-B/TMT-A','Inhibition/Colour Naming','Inhibition/Word Reading')
+# rownames(PLS_FDC_13corr_matrix) <-c('Left SLF1','Left SLF2','Left SLF3','Right SLF1','Right SLF2','Right SLF3')
 # #plot correlation heatmap
 # cols <-brewer.pal(11,"PuOr")
 # pal<-colorRampPalette(cols)
-# corrplot(PLS_FD_13corr_matrix, method = "color", tl.col = "black", col=pal(20), cl.lim=c(-.25,.10), is.corr=FALSE)
+# corrplot(PLS_FDC_13corr_matrix, method = "color", tl.col = "black", col=pal(20), cl.lim=c(-.25,.10), is.corr=FALSE)
 # 
-# #reordered variables for FD (raw): 
-# PLS_output_FD_reordered_13data <- c(-0.052887432,	-0.19881806,	-0.098845303,	-0.15199679,	-0.18395256,	-0.10515221,
+# #reordered variables for FDC (raw): 
+# PLS_output_FDC_reordered_13data <- c(-0.052887432,	-0.19881806,	-0.098845303,	-0.15199679,	-0.18395256,	-0.10515221,
 #                                     -0.081713542,	-0.19632770,	-0.18399400,	-0.090451777,	-0.17019773,	-0.15496007,
 #                                     -0.021202305,	-0.11567443,	-0.084804401,	-0.039748240,	-0.099011421,	-0.065692201,
 #                                     -0.074153244,	-0.16982186,	-0.071893349,	-0.10415857,	-0.012070614,	-0.027570795,
@@ -3070,14 +3077,14 @@ corrplot(PLS_FD_inhib5_corr_matrix, method = "color", tl.col = "black",col=color
 #                                     -0.012210054,	-0.22325370,	-0.21712132,	-0.10130999,	-0.17594329,	-0.14812309,
 #                                     -0.0098307850,	-0.22235556,	-0.20072870,	-0.048246328,	-0.15880926,	-0.10259723)
 # #create correlation matrix
-# PLS_FD_reordered_13corr_matrix <- matrix(PLS_output_FD_reordered_13data,nrow=6,ncol=13)
+# PLS_FDC_reordered_13corr_matrix <- matrix(PLS_output_FDC_reordered_13data,nrow=6,ncol=13)
 # #add in row and column names to the matrix
-# colnames(PLS_FD_reordered_13corr_matrix) <-c('TMT-A','Colour Naming','Word Reading','Haytime1','TMT-B','Inhibition','Category Switching','HayTime2','TMT-B/TMT-A','Inhibition/ColourNaming','Inhibition/WordReading','Letter Fluency','Category Fluency')
-# rownames(PLS_FD_reordered_13corr_matrix) <-c('Left SLF1','Left SLF2','Left SLF3','Right SLF1','Right SLF2','Right SLF3')
+# colnames(PLS_FDC_reordered_13corr_matrix) <-c('TMT-A','Colour Naming','Word Reading','Haytime1','TMT-B','Inhibition','Category Switching','HayTime2','TMT-B/TMT-A','Inhibition/ColourNaming','Inhibition/WordReading','Letter Fluency','Category Fluency')
+# rownames(PLS_FDC_reordered_13corr_matrix) <-c('Left SLF1','Left SLF2','Left SLF3','Right SLF1','Right SLF2','Right SLF3')
 # #plot correlation heatmap
 # cols <-brewer.pal(11,"PuOr")
 # pal<-colorRampPalette(cols)
-# corrplot(PLS_FD_reordered_13corr_matrix, method = "color", tl.col = "black", col=pal(20), cl.lim=c(-.25,.10), is.corr=FALSE)
+# corrplot(PLS_FDC_reordered_13corr_matrix, method = "color", tl.col = "black", col=pal(20), cl.lim=c(-.25,.10), is.corr=FALSE)
 # 
 # #for FDC (raw):
 # PLS_output_FDC_13data <- c(-0.023494439,	-0.10839374,	-0.017945150,	-0.072824180,	-0.097034164,	-0.024255082,
@@ -3127,8 +3134,8 @@ corrplot(PLS_FD_inhib5_corr_matrix, method = "color", tl.col = "black",col=color
 # pal<-colorRampPalette(cols)
 # corrplot(PLS_FDC_reordered_13corr_matrix, method = "color", tl.col = "black", col=pal(20), cl.lim=c(-.25,.10), is.corr=FALSE)
 # 
-# #reordered variables for FD (z-scores): 
-# PLS_output_FD_reordered_13zdata <- c(0.0023706625,	0.11799330,	0.019205257,0.066913947,	0.14844790,	0.082191937,
+# #reordered variables for FDC (z-scores): 
+# PLS_output_FDC_reordered_13zdata <- c(0.0023706625,	0.11799330,	0.019205257,0.066913947,	0.14844790,	0.082191937,
 #                                      0.074899398,	0.18496436,	0.15534791,	0.046362136,	0.17685390,	0.15339229,
 #                                      0.0091150058,	0.080202542,0.035712466,-0.0028785770,	0.078847438,0.050994072,
 #                                      0.094311066,	0.17657560,	0.065742359,0.085854851,	0.050265402,0.050757475,
@@ -3142,14 +3149,14 @@ corrplot(PLS_FD_inhib5_corr_matrix, method = "color", tl.col = "black",col=color
 #                                      0.0091575170,	0.22464813,	0.20742762,	0.088974096,	0.16642311,	0.13465299,
 #                                      0.024852181,	0.21469341,	0.15587012,	0.0050964309,	0.16240194,	0.091314487)
 # #create correlation matrix
-# PLS_FD_reordered_13zcorr_matrix <- matrix(PLS_output_FD_reordered_13zdata,nrow=6,ncol=13)
+# PLS_FDC_reordered_13zcorr_matrix <- matrix(PLS_output_FDC_reordered_13zdata,nrow=6,ncol=13)
 # #add in row and column names to the matrix
-# colnames(PLS_FD_reordered_13zcorr_matrix) <-c('TMT-A','Colour Naming','Word Reading','Haytime1','TMT-B','Inhibition','Category Switching','HayTime2','TMT-B/TMT-A','Inhibition/ColourNaming','Inhibition/WordReading','Letter Fluency','Category Fluency')
-# rownames(PLS_FD_reordered_13zcorr_matrix) <-c('Left SLF1','Left SLF2','Left SLF3','Right SLF1','Right SLF2','Right SLF3')
+# colnames(PLS_FDC_reordered_13zcorr_matrix) <-c('TMT-A','Colour Naming','Word Reading','Haytime1','TMT-B','Inhibition','Category Switching','HayTime2','TMT-B/TMT-A','Inhibition/ColourNaming','Inhibition/WordReading','Letter Fluency','Category Fluency')
+# rownames(PLS_FDC_reordered_13zcorr_matrix) <-c('Left SLF1','Left SLF2','Left SLF3','Right SLF1','Right SLF2','Right SLF3')
 # #plot correlation heatmap
 # cols <-brewer.pal(11,"PuOr")
 # pal<-colorRampPalette(cols)
-# corrplot(PLS_FD_reordered_13zcorr_matrix, method = "color", tl.col = "black", col=pal(20), cl.lim=c(-.15,.30), is.corr=FALSE)
+# corrplot(PLS_FDC_reordered_13zcorr_matrix, method = "color", tl.col = "black", col=pal(20), cl.lim=c(-.15,.30), is.corr=FALSE)
 # 
 # 
 # #reordered variables for FDC (z-scores): 
@@ -3204,15 +3211,15 @@ proc_speed_average_zscore<-rowMeans(proc_speed_zscores_data_noNAS[,6:9])
 proc_speed_zscores_data_noNAS['proc_speed_average_zscore'] <- proc_speed_average_zscore
 #measure the correlation for processing speed
 #Whole SLF vs processing speed -
-cor.test(proc_speed_zscores_data_noNAS$mn_FD_SLF, proc_speed_zscores_data_noNAS$proc_speed_average_zscore)
+cor.test(proc_speed_zscores_data_noNAS$mn_FDC_SLF, proc_speed_zscores_data_noNAS$proc_speed_average_zscore)
 cor.test(proc_speed_zscores_data_noNAS$mn_FC_SLF, proc_speed_zscores_data_noNAS$proc_speed_average_zscore)
 cor.test(proc_speed_zscores_data_noNAS$mn_FDC_SLF, proc_speed_zscores_data_noNAS$proc_speed_average_zscore)
 #Left SLF vs processing speed
-cor.test(proc_speed_zscores_data_noNAS$mn_FD_SLF_L, proc_speed_zscores_data_noNAS$proc_speed_average_zscore)
+cor.test(proc_speed_zscores_data_noNAS$mn_FDC_SLF_L, proc_speed_zscores_data_noNAS$proc_speed_average_zscore)
 cor.test(proc_speed_zscores_data_noNAS$mn_FC_SLF_L, proc_speed_zscores_data_noNAS$proc_speed_average_zscore)
 cor.test(proc_speed_zscores_data_noNAS$mn_FDC_SLF_L, proc_speed_zscores_data_noNAS$proc_speed_average_zscore)
 #Right SLF vs processing speed
-cor.test(proc_speed_zscores_data_noNAS$mn_FD_SLF_R, proc_speed_zscores_data_noNAS$proc_speed_average_zscore)
+cor.test(proc_speed_zscores_data_noNAS$mn_FDC_SLF_R, proc_speed_zscores_data_noNAS$proc_speed_average_zscore)
 cor.test(proc_speed_zscores_data_noNAS$mn_FC_SLF_R, proc_speed_zscores_data_noNAS$proc_speed_average_zscore)
 cor.test(proc_speed_zscores_data_noNAS$mn_FDC_SLF_R, proc_speed_zscores_data_noNAS$proc_speed_average_zscore)
 
@@ -3239,15 +3246,15 @@ inhibition_average_zscore<-rowMeans(inhibition_zscores_data_noNAS[,6:9])
 inhibition_zscores_data_noNAS['inhibition_average_zscore'] <- inhibition_average_zscore
 #measure the correlation for inhibition
 #Whole SLF vs inhibition -
-cor.test(inhibition_zscores_data_noNAS$mn_FD_SLF, inhibition_zscores_data_noNAS$inhibition_average_zscore)
+cor.test(inhibition_zscores_data_noNAS$mn_FDC_SLF, inhibition_zscores_data_noNAS$inhibition_average_zscore)
 cor.test(inhibition_zscores_data_noNAS$mn_FC_SLF, inhibition_zscores_data_noNAS$inhibition_average_zscore)
 cor.test(inhibition_zscores_data_noNAS$mn_FDC_SLF, inhibition_zscores_data_noNAS$inhibition_average_zscore)
 #Left SLF vs inhibition
-cor.test(inhibition_zscores_data_noNAS$mn_FD_SLF_L, inhibition_zscores_data_noNAS$inhibition_average_zscore)
+cor.test(inhibition_zscores_data_noNAS$mn_FDC_SLF_L, inhibition_zscores_data_noNAS$inhibition_average_zscore)
 cor.test(inhibition_zscores_data_noNAS$mn_FC_SLF_L, inhibition_zscores_data_noNAS$inhibition_average_zscore)
 cor.test(inhibition_zscores_data_noNAS$mn_FDC_SLF_L, inhibition_zscores_data_noNAS$inhibition_average_zscore)
 #Right SLF vs inhibition
-cor.test(inhibition_zscores_data_noNAS$mn_FD_SLF_R, inhibition_zscores_data_noNAS$inhibition_average_zscore)
+cor.test(inhibition_zscores_data_noNAS$mn_FDC_SLF_R, inhibition_zscores_data_noNAS$inhibition_average_zscore)
 cor.test(inhibition_zscores_data_noNAS$mn_FC_SLF_R, inhibition_zscores_data_noNAS$inhibition_average_zscore)
 cor.test(inhibition_zscores_data_noNAS$mn_FDC_SLF_R, inhibition_zscores_data_noNAS$inhibition_average_zscore)
 
@@ -3272,56 +3279,56 @@ generation_average_zscore<-rowMeans(generation_zscores_data_noNAS[,6:7])
 generation_zscores_data_noNAS['generation_average_zscore'] <- generation_average_zscore
 #measure the correlation for generation
 #Whole SLF vs generation -
-cor.test(generation_zscores_data_noNAS$mn_FD_SLF, generation_zscores_data_noNAS$generation_average_zscore)
+cor.test(generation_zscores_data_noNAS$mn_FDC_SLF, generation_zscores_data_noNAS$generation_average_zscore)
 cor.test(generation_zscores_data_noNAS$mn_FC_SLF, generation_zscores_data_noNAS$generation_average_zscore)
 cor.test(generation_zscores_data_noNAS$mn_FDC_SLF, generation_zscores_data_noNAS$generation_average_zscore)
 #Left SLF vs generation
-cor.test(generation_zscores_data_noNAS$mn_FD_SLF_L, generation_zscores_data_noNAS$generation_average_zscore)
+cor.test(generation_zscores_data_noNAS$mn_FDC_SLF_L, generation_zscores_data_noNAS$generation_average_zscore)
 cor.test(generation_zscores_data_noNAS$mn_FC_SLF_L, generation_zscores_data_noNAS$generation_average_zscore)
 cor.test(generation_zscores_data_noNAS$mn_FDC_SLF_L, generation_zscores_data_noNAS$generation_average_zscore)
 #Right SLF vs generation
-cor.test(generation_zscores_data_noNAS$mn_FD_SLF_R, generation_zscores_data_noNAS$generation_average_zscore)
+cor.test(generation_zscores_data_noNAS$mn_FDC_SLF_R, generation_zscores_data_noNAS$generation_average_zscore)
 cor.test(generation_zscores_data_noNAS$mn_FC_SLF_R, generation_zscores_data_noNAS$generation_average_zscore)
 cor.test(generation_zscores_data_noNAS$mn_FDC_SLF_R, generation_zscores_data_noNAS$generation_average_zscore)
 
 #examine partial correlation (age and sex as covariates) for this:
 #Processing speed
 #Whole SLF vs processing speed -
-pcor.test(proc_speed_zscores_data_noNAS$mn_FD_SLF, proc_speed_zscores_data_noNAS$proc_speed_average_zscore, proc_speed_zscores_data_noNAS[,c("Age", "Sex_binary")])
+pcor.test(proc_speed_zscores_data_noNAS$mn_FDC_SLF, proc_speed_zscores_data_noNAS$proc_speed_average_zscore, proc_speed_zscores_data_noNAS[,c("Age", "Sex_binary")])
 pcor.test(proc_speed_zscores_data_noNAS$mn_FC_SLF, proc_speed_zscores_data_noNAS$proc_speed_average_zscore, proc_speed_zscores_data_noNAS[,c("Age", "Sex_binary")])
 pcor.test(proc_speed_zscores_data_noNAS$mn_FDC_SLF, proc_speed_zscores_data_noNAS$proc_speed_average_zscore, proc_speed_zscores_data_noNAS[,c("Age", "Sex_binary")])
 #Left SLF vs processing speed -
-pcor.test(proc_speed_zscores_data_noNAS$mn_FD_SLF_L, proc_speed_zscores_data_noNAS$proc_speed_average_zscore, proc_speed_zscores_data_noNAS[,c("Age", "Sex_binary")])
+pcor.test(proc_speed_zscores_data_noNAS$mn_FDC_SLF_L, proc_speed_zscores_data_noNAS$proc_speed_average_zscore, proc_speed_zscores_data_noNAS[,c("Age", "Sex_binary")])
 pcor.test(proc_speed_zscores_data_noNAS$mn_FC_SLF_L, proc_speed_zscores_data_noNAS$proc_speed_average_zscore, proc_speed_zscores_data_noNAS[,c("Age", "Sex_binary")])
 pcor.test(proc_speed_zscores_data_noNAS$mn_FDC_SLF_L, proc_speed_zscores_data_noNAS$proc_speed_average_zscore, proc_speed_zscores_data_noNAS[,c("Age", "Sex_binary")])
 #Right SLF vs processing speed -
-pcor.test(proc_speed_zscores_data_noNAS$mn_FD_SLF_R, proc_speed_zscores_data_noNAS$proc_speed_average_zscore, proc_speed_zscores_data_noNAS[,c("Age", "Sex_binary")])
+pcor.test(proc_speed_zscores_data_noNAS$mn_FDC_SLF_R, proc_speed_zscores_data_noNAS$proc_speed_average_zscore, proc_speed_zscores_data_noNAS[,c("Age", "Sex_binary")])
 pcor.test(proc_speed_zscores_data_noNAS$mn_FC_SLF_R, proc_speed_zscores_data_noNAS$proc_speed_average_zscore, proc_speed_zscores_data_noNAS[,c("Age", "Sex_binary")])
 pcor.test(proc_speed_zscores_data_noNAS$mn_FDC_SLF_R, proc_speed_zscores_data_noNAS$proc_speed_average_zscore, proc_speed_zscores_data_noNAS[,c("Age", "Sex_binary")])
 #Inhibition
 #Whole SLF vs inhibition -
-pcor.test(inhibition_zscores_data_noNAS$mn_FD_SLF, inhibition_zscores_data_noNAS$inhibition_average_zscore, inhibition_zscores_data_noNAS[,c("Age", "Sex_binary")])
+pcor.test(inhibition_zscores_data_noNAS$mn_FDC_SLF, inhibition_zscores_data_noNAS$inhibition_average_zscore, inhibition_zscores_data_noNAS[,c("Age", "Sex_binary")])
 pcor.test(inhibition_zscores_data_noNAS$mn_FC_SLF, inhibition_zscores_data_noNAS$inhibition_average_zscore, inhibition_zscores_data_noNAS[,c("Age", "Sex_binary")])
 pcor.test(inhibition_zscores_data_noNAS$mn_FDC_SLF, inhibition_zscores_data_noNAS$inhibition_average_zscore, inhibition_zscores_data_noNAS[,c("Age", "Sex_binary")])
 #Left SLF vs inhibition -
-pcor.test(inhibition_zscores_data_noNAS$mn_FD_SLF_L, inhibition_zscores_data_noNAS$inhibition_average_zscore, inhibition_zscores_data_noNAS[,c("Age", "Sex_binary")])
+pcor.test(inhibition_zscores_data_noNAS$mn_FDC_SLF_L, inhibition_zscores_data_noNAS$inhibition_average_zscore, inhibition_zscores_data_noNAS[,c("Age", "Sex_binary")])
 pcor.test(inhibition_zscores_data_noNAS$mn_FC_SLF_L, inhibition_zscores_data_noNAS$inhibition_average_zscore, inhibition_zscores_data_noNAS[,c("Age", "Sex_binary")])
 pcor.test(inhibition_zscores_data_noNAS$mn_FDC_SLF_L, inhibition_zscores_data_noNAS$inhibition_average_zscore, inhibition_zscores_data_noNAS[,c("Age", "Sex_binary")])
 #Right SLF vs inhibition -
-pcor.test(inhibition_zscores_data_noNAS$mn_FD_SLF_R, inhibition_zscores_data_noNAS$inhibition_average_zscore, inhibition_zscores_data_noNAS[,c("Age", "Sex_binary")])
+pcor.test(inhibition_zscores_data_noNAS$mn_FDC_SLF_R, inhibition_zscores_data_noNAS$inhibition_average_zscore, inhibition_zscores_data_noNAS[,c("Age", "Sex_binary")])
 pcor.test(inhibition_zscores_data_noNAS$mn_FC_SLF_R, inhibition_zscores_data_noNAS$inhibition_average_zscore, inhibition_zscores_data_noNAS[,c("Age", "Sex_binary")])
 pcor.test(inhibition_zscores_data_noNAS$mn_FDC_SLF_R, inhibition_zscores_data_noNAS$inhibition_average_zscore, inhibition_zscores_data_noNAS[,c("Age", "Sex_binary")])
 #Generation
 #Whole SLF vs generation -
-pcor.test(generation_zscores_data_noNAS$mn_FD_SLF, generation_zscores_data_noNAS$generation_average_zscore, generation_zscores_data_noNAS[,c("Age", "Sex_binary")])
+pcor.test(generation_zscores_data_noNAS$mn_FDC_SLF, generation_zscores_data_noNAS$generation_average_zscore, generation_zscores_data_noNAS[,c("Age", "Sex_binary")])
 pcor.test(generation_zscores_data_noNAS$mn_FC_SLF, generation_zscores_data_noNAS$generation_average_zscore, generation_zscores_data_noNAS[,c("Age", "Sex_binary")])
 pcor.test(generation_zscores_data_noNAS$mn_FDC_SLF, generation_zscores_data_noNAS$generation_average_zscore, generation_zscores_data_noNAS[,c("Age", "Sex_binary")])
 #Left SLF vs generation -
-pcor.test(generation_zscores_data_noNAS$mn_FD_SLF_L, generation_zscores_data_noNAS$generation_average_zscore, generation_zscores_data_noNAS[,c("Age", "Sex_binary")])
+pcor.test(generation_zscores_data_noNAS$mn_FDC_SLF_L, generation_zscores_data_noNAS$generation_average_zscore, generation_zscores_data_noNAS[,c("Age", "Sex_binary")])
 pcor.test(generation_zscores_data_noNAS$mn_FC_SLF_L, generation_zscores_data_noNAS$generation_average_zscore, generation_zscores_data_noNAS[,c("Age", "Sex_binary")])
 pcor.test(generation_zscores_data_noNAS$mn_FDC_SLF_L, generation_zscores_data_noNAS$generation_average_zscore, generation_zscores_data_noNAS[,c("Age", "Sex_binary")])
 #Right SLF vs generation -
-pcor.test(generation_zscores_data_noNAS$mn_FD_SLF_R, generation_zscores_data_noNAS$generation_average_zscore, generation_zscores_data_noNAS[,c("Age", "Sex_binary")])
+pcor.test(generation_zscores_data_noNAS$mn_FDC_SLF_R, generation_zscores_data_noNAS$generation_average_zscore, generation_zscores_data_noNAS[,c("Age", "Sex_binary")])
 pcor.test(generation_zscores_data_noNAS$mn_FC_SLF_R, generation_zscores_data_noNAS$generation_average_zscore, generation_zscores_data_noNAS[,c("Age", "Sex_binary")])
 pcor.test(generation_zscores_data_noNAS$mn_FDC_SLF_R, generation_zscores_data_noNAS$generation_average_zscore, generation_zscores_data_noNAS[,c("Age", "Sex_binary")])
 
@@ -5121,7 +5128,7 @@ SLF_data_TrailsA$Sex_binary <- as.numeric(SLF_data_TrailsA$Sex_binary)
 
 gp.cor <- SLF_data_TrailsA %>%
     split(.$Group) %>%  
-    map(~corr.test(x = .x %>% dplyr::select(mn_FD_SLF, TrailsA.Raw),
+    map(~corr.test(x = .x %>% dplyr::select(mn_FDC_SLF, TrailsA.Raw),
                    use = "everything",
                    method = "pearson",
                    adjust = "none",
@@ -5207,40 +5214,40 @@ map(gp.cor, ~.x$r)
 # 
 # 
 # #look at descriptive stats of the whole SLF FBA metrics between groups
-# SLF_FD_3groups_descrip <- describeBy(SLF_data$mn_FD_SLF, SLF_data$Three_Groups)
+# SLF_FDC_3groups_descrip <- describeBy(SLF_data$mn_FDC_SLF, SLF_data$Three_Groups)
 # SLF_FC_3groups_descrip <- describeBy(SLF_data$mn_FC_SLF, SLF_data$Three_Groups)
 # SLF_FDC_3groups_descrip <- describeBy(SLF_data$mn_FDC_SLF, SLF_data$Three_Groups)
 # 
 # #look at descriptive stats of the Left SLF FBA metrics between groups
-# SLF_FD_L_3groups_descrip <- describeBy(SLF_data$mn_FD_SLF_L, SLF_data$Three_Groups)
+# SLF_FDC_L_3groups_descrip <- describeBy(SLF_data$mn_FDC_SLF_L, SLF_data$Three_Groups)
 # SLF_FC_L_3groups_descrip <- describeBy(SLF_data$mn_FC_SLF_L, SLF_data$Three_Groups)
 # SLF_FDC_L_3groups_descrip <- describeBy(SLF_data$mn_FDC_SLF_L, SLF_data$Three_Groups)
 # 
 # 
 # #look at descriptive stats of the Right SLF FBA metrics between groups
-# SLF_FD_R_3groups_descrip <- describeBy(SLF_data$mn_FD_SLF_R, SLF_data$Three_Groups)
+# SLF_FDC_R_3groups_descrip <- describeBy(SLF_data$mn_FDC_SLF_R, SLF_data$Three_Groups)
 # SLF_FC_R_3groups_descrip <- describeBy(SLF_data$mn_FC_SLF_R, SLF_data$Three_Groups)
 # SLF_FDC_R_3groups_descrip <- describeBy(SLF_data$mn_FDC_SLF_R, SLF_data$Three_Groups)
 # 
 # 
 # #run ANOVA to see if there are significant differences between groups
-# #for FD
+# #for FDC
 # #mean
-# SLF_FD_3groups_mod <- lm(mn_FD_SLF ~ Three_Groups, data = SLF_data)
-# SLF_FD_3groups_mod_L <- lm(mn_FD_SLF_L ~ Three_Groups, data = SLF_data)
-# SLF_FD_3groups_mod_R <- lm(mn_FD_SLF_R ~ Three_Groups, data = SLF_data)
+# SLF_FDC_3groups_mod <- lm(mn_FDC_SLF ~ Three_Groups, data = SLF_data)
+# SLF_FDC_3groups_mod_L <- lm(mn_FDC_SLF_L ~ Three_Groups, data = SLF_data)
+# SLF_FDC_3groups_mod_R <- lm(mn_FDC_SLF_R ~ Three_Groups, data = SLF_data)
 # #run ANOVA
-# anova(SLF_FD_3groups_mod)
-# anova(SLF_FD_3groups_mod_L)
-# anova(SLF_FD_3groups_mod_R)
+# anova(SLF_FDC_3groups_mod)
+# anova(SLF_FDC_3groups_mod_L)
+# anova(SLF_FDC_3groups_mod_R)
 # #run Bayesian ANOVA
-# anovaBF(mn_FD_SLF ~ Three_Groups, data = SLF_data) 
-# anovaBF(mn_FD_SLF_L ~ Three_Groups, data = SLF_data) 
-# anovaBF(mn_FD_SLF_R ~ Three_Groups, data = SLF_data) 
+# anovaBF(mn_FDC_SLF ~ Three_Groups, data = SLF_data) 
+# anovaBF(mn_FDC_SLF_L ~ Three_Groups, data = SLF_data) 
+# anovaBF(mn_FDC_SLF_R ~ Three_Groups, data = SLF_data) 
 # #calculate the effect size (eta-squared)
-# etaSquared(SLF_FD_3groups_mod)
-# etaSquared(SLF_FD_3groups_mod_L)
-# etaSquared(SLF_FD_3groups_mod_R)
+# etaSquared(SLF_FDC_3groups_mod)
+# etaSquared(SLF_FDC_3groups_mod_L)
+# etaSquared(SLF_FDC_3groups_mod_R)
 # 
 # #for FC
 # #mean
@@ -5271,102 +5278,102 @@ map(gp.cor, ~.x$r)
 # anovaBF(mn_FDC_SLF_R ~ Three_Groups, data = SLF_data) 
 # 
 # #run pairwise comparisons, given that the F-test was significant. 
-# post_hoc_SLF_FD_3groups_mod <- glht(SLF_FD_3groups_mod, linfct = mcp(Three_Groups = "Tukey"))
-# summary(post_hoc_SLF_FD_3groups_mod)
-# confint(post_hoc_SLF_FD_3groups_mod)
+# post_hoc_SLF_FDC_3groups_mod <- glht(SLF_FDC_3groups_mod, linfct = mcp(Three_Groups = "Tukey"))
+# summary(post_hoc_SLF_FDC_3groups_mod)
+# confint(post_hoc_SLF_FDC_3groups_mod)
 # 
-# post_hoc_SLF_FD_3groups_mod_L <- glht(SLF_FD_3groups_mod_L, linfct = mcp(Three_Groups = "Tukey"))
-# summary(post_hoc_SLF_FD_3groups_mod_L)
-# confint(post_hoc_SLF_FD_3groups_mod_L)
+# post_hoc_SLF_FDC_3groups_mod_L <- glht(SLF_FDC_3groups_mod_L, linfct = mcp(Three_Groups = "Tukey"))
+# summary(post_hoc_SLF_FDC_3groups_mod_L)
+# confint(post_hoc_SLF_FDC_3groups_mod_L)
 # 
-# post_hoc_SLF_FD_3groups_mod_R <- glht(SLF_FD_3groups_mod_R, linfct = mcp(Three_Groups = "Tukey"))
-# summary(post_hoc_SLF_FD_3groups_mod_R)
-# confint(post_hoc_SLF_FD_3groups_mod_R)
+# post_hoc_SLF_FDC_3groups_mod_R <- glht(SLF_FDC_3groups_mod_R, linfct = mcp(Three_Groups = "Tukey"))
+# summary(post_hoc_SLF_FDC_3groups_mod_R)
+# confint(post_hoc_SLF_FDC_3groups_mod_R)
 # 
-# #conduct power analysis for the whole FD
-# SLF_FD_3groups_means <- c(SLF_FD_3groups_descrip$`1`$mean, SLF_FD_3groups_descrip$`2`$mean, SLF_FD_3groups_descrip$`3`$mean, SLF_FD_3groups_descrip$`4`$mean, SLF_FD_3groups_descrip$`5`$mean)
-# power_SLF_FD_3groups_n <- power.anova.test(groups = length(SLF_FD_3groups_means), between.var = anova(SLF_FD_3groups_mod)$`Sum Sq`[1], within.var = anova(SLF_FD_3groups_mod)$`Sum Sq`[2], power = .8, sig.level = 0.05)
-# power_SLF_FD_3groups_power<- power.anova.test(groups = length(SLF_FD_3groups_means), between.var = anova(SLF_FD_3groups_mod)$`Sum Sq`[1], within.var = anova(SLF_FD_3groups_mod)$`Sum Sq`[2], n = 41, sig.level = 0.05)
-# #conduct power analysis for the left FD
-# SLF_FD_L_3groups_means <- c(SLF_FD_L_3groups_descrip$`1`$mean, SLF_FD_L_3groups_descrip$`2`$mean, SLF_FD_L_3groups_descrip$`3`$mean, SLF_FD_L_3groups_descrip$`4`$mean, SLF_FD_L_3groups_descrip$`5`$mean)
-# power_SLF_FD_L_3groups_n <- power.anova.test(groups = length(SLF_FD_L_3groups_means), between.var = anova(SLF_FD_3groups_mod_L)$`Sum Sq`[1], within.var = anova(SLF_FD_3groups_mod_L)$`Sum Sq`[2], power = .8, sig.level = 0.05)
-# power_SLF_FD_L_3groups_power<- power.anova.test(groups = length(SLF_FD_L_3groups_means), between.var = anova(SLF_FD_3groups_mod_L)$`Sum Sq`[1], within.var = anova(SLF_FD_3groups_mod_L)$`Sum Sq`[2], n = 41, sig.level = 0.05)
-# #conduct power analysis for the right FD
-# SLF_FD_R_3groups_means <- c(SLF_FD_R_3groups_descrip$`1`$mean, SLF_FD_R_3groups_descrip$`2`$mean, SLF_FD_R_3groups_descrip$`3`$mean, SLF_FD_R_3groups_descrip$`4`$mean, SLF_FD_R_3groups_descrip$`5`$mean)
-# power_SLF_FD_R_3groups_n <- power.anova.test(groups = length(SLF_FD_R_3groups_means), between.var = anova(SLF_FD_3groups_mod_R)$`Sum Sq`[1], within.var = anova(SLF_FD_3groups_mod_R)$`Sum Sq`[2], power = .8, sig.level = 0.05)
-# power_SLF_FD_R_3groups_power<- power.anova.test(groups = length(SLF_FD_R_3groups_means), between.var = anova(SLF_FD_3groups_mod_R)$`Sum Sq`[1], within.var = anova(SLF_FD_3groups_mod_R)$`Sum Sq`[2], n = 41, sig.level = 0.05)
+# #conduct power analysis for the whole FDC
+# SLF_FDC_3groups_means <- c(SLF_FDC_3groups_descrip$`1`$mean, SLF_FDC_3groups_descrip$`2`$mean, SLF_FDC_3groups_descrip$`3`$mean, SLF_FDC_3groups_descrip$`4`$mean, SLF_FDC_3groups_descrip$`5`$mean)
+# power_SLF_FDC_3groups_n <- power.anova.test(groups = length(SLF_FDC_3groups_means), between.var = anova(SLF_FDC_3groups_mod)$`Sum Sq`[1], within.var = anova(SLF_FDC_3groups_mod)$`Sum Sq`[2], power = .8, sig.level = 0.05)
+# power_SLF_FDC_3groups_power<- power.anova.test(groups = length(SLF_FDC_3groups_means), between.var = anova(SLF_FDC_3groups_mod)$`Sum Sq`[1], within.var = anova(SLF_FDC_3groups_mod)$`Sum Sq`[2], n = 41, sig.level = 0.05)
+# #conduct power analysis for the left FDC
+# SLF_FDC_L_3groups_means <- c(SLF_FDC_L_3groups_descrip$`1`$mean, SLF_FDC_L_3groups_descrip$`2`$mean, SLF_FDC_L_3groups_descrip$`3`$mean, SLF_FDC_L_3groups_descrip$`4`$mean, SLF_FDC_L_3groups_descrip$`5`$mean)
+# power_SLF_FDC_L_3groups_n <- power.anova.test(groups = length(SLF_FDC_L_3groups_means), between.var = anova(SLF_FDC_3groups_mod_L)$`Sum Sq`[1], within.var = anova(SLF_FDC_3groups_mod_L)$`Sum Sq`[2], power = .8, sig.level = 0.05)
+# power_SLF_FDC_L_3groups_power<- power.anova.test(groups = length(SLF_FDC_L_3groups_means), between.var = anova(SLF_FDC_3groups_mod_L)$`Sum Sq`[1], within.var = anova(SLF_FDC_3groups_mod_L)$`Sum Sq`[2], n = 41, sig.level = 0.05)
+# #conduct power analysis for the right FDC
+# SLF_FDC_R_3groups_means <- c(SLF_FDC_R_3groups_descrip$`1`$mean, SLF_FDC_R_3groups_descrip$`2`$mean, SLF_FDC_R_3groups_descrip$`3`$mean, SLF_FDC_R_3groups_descrip$`4`$mean, SLF_FDC_R_3groups_descrip$`5`$mean)
+# power_SLF_FDC_R_3groups_n <- power.anova.test(groups = length(SLF_FDC_R_3groups_means), between.var = anova(SLF_FDC_3groups_mod_R)$`Sum Sq`[1], within.var = anova(SLF_FDC_3groups_mod_R)$`Sum Sq`[2], power = .8, sig.level = 0.05)
+# power_SLF_FDC_R_3groups_power<- power.anova.test(groups = length(SLF_FDC_R_3groups_means), between.var = anova(SLF_FDC_3groups_mod_R)$`Sum Sq`[1], within.var = anova(SLF_FDC_3groups_mod_R)$`Sum Sq`[2], n = 41, sig.level = 0.05)
 # 
 # 
 # 
 # #plot data
-# #for FD - mean
-# #whole SLF FD (violin plot)
-# ggplot(SLF_data, aes(x = Three_Groups, y = mn_FD_SLF)) + 
+# #for FDC - mean
+# #whole SLF FDC (violin plot)
+# ggplot(SLF_data, aes(x = Three_Groups, y = mn_FDC_SLF)) + 
 #     geom_boxplot(width = 0.1, fill = "white", outlier.size = 1, aes(colour = Three_Groups)) + 
 #     stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Three_Groups)) + 
 #     xlab("Group") + 
-#     ylab("Fibre Density (FD)") +
+#     ylab("Fibre Density (FDC)") +
 #     scale_x_discrete(labels = c("1" = "Non-impaired", "3" = "MCI", "5" = "AD")) + 
 #     theme_classic() +
 #     theme(legend.position = "none") +
 #     geom_violin(trim = FALSE, alpha = .5, aes(fill = Three_Groups, colour = Three_Groups), size = 1)
 # 
-# #whole SLF FD (raincloud plot)
-# ggplot(SLF_data, aes(x = Three_Groups, y = mn_FD_SLF, fill = Three_Groups)) + 
+# #whole SLF FDC (raincloud plot)
+# ggplot(SLF_data, aes(x = Three_Groups, y = mn_FDC_SLF, fill = Three_Groups)) + 
 #     geom_flat_violin(position = position_nudge(x = .2, y = 0), alpha = .8) +
-#     geom_point(aes(y = mn_FD_SLF, color = Three_Groups), position = position_jitter(width = .15), size = .5, alpha = 0.8) +
+#     geom_point(aes(y = mn_FDC_SLF, color = Three_Groups), position = position_jitter(width = .15), size = .5, alpha = 0.8) +
 #     geom_boxplot(width = 0.1, fill = "white", outlier.size = 1, aes(colour = Three_Groups)) + 
 #     stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Three_Groups)) + 
 #     xlab("Group") + 
-#     ylab("Fibre Density (FD)") +
+#     ylab("Fibre Density (FDC)") +
 #     scale_x_discrete(labels = c("1" = "Control", "2" = "SCD", "3" = "aMCI", "4" = "mMCI", "5" = "AD")) + 
 #     theme_classic() +
 #     theme(legend.position = "none") +
 #     coord_flip()
 # 
-# #left SLF FD (violin plot)
-# ggplot(SLF_data, aes(x = Three_Groups, y = mn_FD_SLF_L)) + 
+# #left SLF FDC (violin plot)
+# ggplot(SLF_data, aes(x = Three_Groups, y = mn_FDC_SLF_L)) + 
 #     geom_boxplot(width = 0.1, fill = "white", outlier.size = 1, aes(colour = Three_Groups)) + 
 #     stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Three_Groups)) + 
 #     xlab("Group") + 
-#     ylab("Fibre Density (FD)") +
+#     ylab("Fibre Density (FDC)") +
 #     scale_x_discrete(labels = c("1" = "Non-impaired", "3" = "MCI", "5" = "AD")) + 
 #     theme_classic() +
 #     theme(legend.position = "none") +
 #     geom_violin(trim = FALSE, alpha = .5, aes(fill = Three_Groups, colour = Three_Groups), size = 1)
 # 
-# #left SLF FD (raincloud plot)
-# ggplot(SLF_data, aes(x = Three_Groups, y = mn_FD_SLF_L, fill = Three_Groups)) + 
+# #left SLF FDC (raincloud plot)
+# ggplot(SLF_data, aes(x = Three_Groups, y = mn_FDC_SLF_L, fill = Three_Groups)) + 
 #     geom_flat_violin(position = position_nudge(x = .2, y = 0), alpha = .8) +
-#     geom_point(aes(y = mn_FD_SLF_L, color = Three_Groups), position = position_jitter(width = .15), size = .5, alpha = 0.8) +
+#     geom_point(aes(y = mn_FDC_SLF_L, color = Three_Groups), position = position_jitter(width = .15), size = .5, alpha = 0.8) +
 #     geom_boxplot(width = 0.1, fill = "white", outlier.size = 1, aes(colour = Three_Groups)) + 
 #     stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Three_Groups)) + 
 #     xlab("Group") + 
-#     ylab("Fibre Density (FD)") +
+#     ylab("Fibre Density (FDC)") +
 #     scale_x_discrete(labels = c("1" = "Control", "2" = "SCD", "3" = "aMCI", "4" = "mMCI", "5" = "AD")) + 
 #     theme_classic() +
 #     theme(legend.position = "none") +
 #     coord_flip()
 # 
-# #right SLF FD (violin plot)
-# ggplot(SLF_data, aes(x = Three_Groups, y = mn_FD_SLF_R)) + 
+# #right SLF FDC (violin plot)
+# ggplot(SLF_data, aes(x = Three_Groups, y = mn_FDC_SLF_R)) + 
 #     geom_boxplot(width = 0.1, fill = "white", outlier.size = 1, aes(colour = Three_Groups)) + 
 #     stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Three_Groups)) + 
 #     xlab("Group") + 
-#     ylab("Fibre Density (FD)") +
+#     ylab("Fibre Density (FDC)") +
 #     scale_x_discrete(labels = c("1" = "Non-impaired", "3" = "MCI", "5" = "AD")) + 
 #     theme_classic() +
 #     theme(legend.position = "none") +
 #     geom_violin(trim = FALSE, alpha = .5, aes(fill = Three_Groups, colour = Three_Groups), size = 1)
 # 
-# #right SLF FD (raincloud plot)
-# ggplot(SLF_data, aes(x = Three_Groups, y = mn_FD_SLF_R, fill = Three_Groups)) + 
+# #right SLF FDC (raincloud plot)
+# ggplot(SLF_data, aes(x = Three_Groups, y = mn_FDC_SLF_R, fill = Three_Groups)) + 
 #     geom_flat_violin(position = position_nudge(x = .2, y = 0), alpha = .8) +
-#     geom_point(aes(y = mn_FD_SLF_R, color = Three_Groups), position = position_jitter(width = .15), size = .5, alpha = 0.8) +
+#     geom_point(aes(y = mn_FDC_SLF_R, color = Three_Groups), position = position_jitter(width = .15), size = .5, alpha = 0.8) +
 #     geom_boxplot(width = 0.1, fill = "white", outlier.size = 1, aes(colour = Three_Groups)) + 
 #     stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Three_Groups)) + 
 #     xlab("Group") + 
-#     ylab("Fibre Density (FD)") +
+#     ylab("Fibre Density (FDC)") +
 #     scale_x_discrete(labels = c("1" = "Control", "2" = "SCD", "3" = "aMCI", "4" = "mMCI", "5" = "AD")) + 
 #     theme_classic() +
 #     theme(legend.position = "none") +
@@ -5447,5 +5454,806 @@ map(gp.cor, ~.x$r)
 
 
 
+#removing AD group (group 5) from analysis (covariate age & sex)
+SLF_data_noAD<-SLF_data %>%
+  group_by(Group) %>%
+  filter(!any(Group == "5"))
 
+#descriptive data for total sample (n = 202):
+#look at descriptive stats of the Left SLF1 FBA metrics between groups
+SLF1_FD_L_descrip <- describeBy(SLF_data_noAD$mn_FD_SLF1_L, SLF_data_noAD$Group)
+SLF1_FC_L_descrip <- describeBy(SLF_data_noAD$mn_FC_SLF1_L, SLF_data_noAD$Group)
+SLF1_FDC_L_descrip <- describeBy(SLF_data_noAD$mn_FDC_SLF1_L, SLF_data_noAD$Group)
+mean(SLF_data_noAD$mn_FD_SLF1_L)
+sd(SLF_data_noAD$mn_FD_SLF1_L)
+mean(SLF_data_noAD$mn_FC_SLF1_L)
+sd(SLF_data_noAD$mn_FC_SLF1_L)
+mean(SLF_data_noAD$mn_FDC_SLF1_L)
+sd(SLF_data_noAD$mn_FDC_SLF1_L)
+#look at descriptive stats of the Left SLF2 FBA metrics between groups
+SLF2_FD_L_descrip <- describeBy(SLF_data_noAD$mn_FD_SLF2_L, SLF_data_noAD$Group)
+SLF2_FC_L_descrip <- describeBy(SLF_data_noAD$mn_FC_SLF2_L, SLF_data_noAD$Group)
+SLF2_FDC_L_descrip <- describeBy(SLF_data_noAD$mn_FDC_SLF2_L, SLF_data_noAD$Group)
+mean(SLF_data_noAD$mn_FD_SLF2_L)
+sd(SLF_data_noAD$mn_FD_SLF2_L)
+mean(SLF_data_noAD$mn_FC_SLF2_L)
+sd(SLF_data_noAD$mn_FC_SLF2_L)
+mean(SLF_data_noAD$mn_FDC_SLF2_L)
+sd(SLF_data_noAD$mn_FDC_SLF2_L)
+#look at descriptive stats of the Left SLF2 FBA metrics between groups
+SLF3_FD_L_descrip <- describeBy(SLF_data_noAD$mn_FD_SLF3_L, SLF_data_noAD$Group)
+SLF3_FC_L_descrip <- describeBy(SLF_data_noAD$mn_FC_SLF3_L, SLF_data_noAD$Group)
+SLF3_FDC_L_descrip <- describeBy(SLF_data_noAD$mn_FDC_SLF3_L, SLF_data_noAD$Group)
+mean(SLF_data_noAD$mn_FD_SLF3_L)
+sd(SLF_data_noAD$mn_FD_SLF3_L)
+mean(SLF_data_noAD$mn_FC_SLF3_L)
+sd(SLF_data_noAD$mn_FC_SLF3_L)
+mean(SLF_data_noAD$mn_FDC_SLF3_L)
+sd(SLF_data_noAD$mn_FDC_SLF3_L)
+#look at descriptive stats of the Right SLF1 FBA metrics between groups
+SLF1_FD_R_descrip <- describeBy(SLF_data_noAD$mn_FD_SLF1_R, SLF_data_noAD$Group)
+SLF1_FC_R_descrip <- describeBy(SLF_data_noAD$mn_FC_SLF1_R, SLF_data_noAD$Group)
+SLF1_FDC_R_descrip <- describeBy(SLF_data_noAD$mn_FDC_SLF1_R, SLF_data_noAD$Group)
+mean(SLF_data_noAD$mn_FD_SLF1_R)
+sd(SLF_data_noAD$mn_FD_SLF1_R)
+mean(SLF_data_noAD$mn_FC_SLF1_R)
+sd(SLF_data_noAD$mn_FC_SLF1_R)
+mean(SLF_data_noAD$mn_FDC_SLF1_R)
+sd(SLF_data_noAD$mn_FDC_SLF1_R)
+#look at descriptive stats of the Right SLF2 FBA metrics between groups
+SLF2_FD_R_descrip <- describeBy(SLF_data_noAD$mn_FD_SLF2_R, SLF_data_noAD$Group)
+SLF2_FC_R_descrip <- describeBy(SLF_data_noAD$mn_FC_SLF2_R, SLF_data_noAD$Group)
+SLF2_FDC_R_descrip <- describeBy(SLF_data_noAD$mn_FDC_SLF2_R, SLF_data_noAD$Group)
+mean(SLF_data_noAD$mn_FD_SLF2_R)
+sd(SLF_data_noAD$mn_FD_SLF2_R)
+mean(SLF_data_noAD$mn_FC_SLF2_R)
+sd(SLF_data_noAD$mn_FC_SLF2_R)
+mean(SLF_data_noAD$mn_FDC_SLF2_R)
+sd(SLF_data_noAD$mn_FDC_SLF2_R)
+#look at descriptive stats of the Right SLF2 FBA metrics between groups
+SLF3_FD_R_descrip <- describeBy(SLF_data_noAD$mn_FD_SLF3_R, SLF_data_noAD$Group)
+SLF3_FC_R_descrip <- describeBy(SLF_data_noAD$mn_FC_SLF3_R, SLF_data_noAD$Group)
+SLF3_FDC_R_descrip <- describeBy(SLF_data_noAD$mn_FDC_SLF3_R, SLF_data_noAD$Group)
+mean(SLF_data_noAD$mn_FD_SLF3_R)
+sd(SLF_data_noAD$mn_FD_SLF3_R)
+mean(SLF_data_noAD$mn_FC_SLF3_R)
+sd(SLF_data_noAD$mn_FC_SLF3_R)
+mean(SLF_data_noAD$mn_FDC_SLF3_R)
+sd(SLF_data_noAD$mn_FDC_SLF3_R)
+
+
+
+#ANOVA groups differences between 4 groups (C, SCD, aMCI, and mMCI)
+#FD
+SLF1_FD_2covar_mod_L_noAD <- lm(mn_FD_SLF1_L ~ Group + Age + Sex, data = SLF_data_noAD)
+anova(SLF1_FD_2covar_mod_L_noAD)
+SLF2_FD_2covar_mod_L_noAD <- lm(mn_FD_SLF2_L ~ Group + Age + Sex, data = SLF_data_noAD)
+anova(SLF2_FD_2covar_mod_L_noAD)
+SLF3_FD_2covar_mod_L_noAD <- lm(mn_FD_SLF3_L ~ Group + Age + Sex, data = SLF_data_noAD)
+anova(SLF3_FD_2covar_mod_L_noAD)
+SLF1_FD_2covar_mod_R_noAD <- lm(mn_FD_SLF1_R ~ Group + Age + Sex, data = SLF_data_noAD)
+anova(SLF1_FD_2covar_mod_R_noAD)
+SLF2_FD_2covar_mod_R_noAD <- lm(mn_FD_SLF2_R ~ Group + Age + Sex, data = SLF_data_noAD)
+anova(SLF2_FD_2covar_mod_R_noAD)
+SLF3_FD_2covar_mod_R_noAD <- lm(mn_FD_SLF3_R ~ Group + Age + Sex, data = SLF_data_noAD)
+anova(SLF3_FD_2covar_mod_R_noAD)
+#FC
+SLF1_FC_2covar_mod_L_noAD <- lm(mn_FC_SLF1_L ~ Group + Age + Sex, data = SLF_data_noAD)
+anova(SLF1_FC_2covar_mod_L_noAD)
+SLF2_FC_2covar_mod_L_noAD <- lm(mn_FC_SLF2_L ~ Group + Age + Sex, data = SLF_data_noAD)
+anova(SLF2_FC_2covar_mod_L_noAD)
+SLF3_FC_2covar_mod_L_noAD <- lm(mn_FC_SLF3_L ~ Group + Age + Sex, data = SLF_data_noAD)
+anova(SLF3_FC_2covar_mod_L_noAD)
+SLF1_FC_2covar_mod_R_noAD <- lm(mn_FC_SLF1_R ~ Group + Age + Sex, data = SLF_data_noAD)
+anova(SLF1_FC_2covar_mod_R_noAD)
+SLF2_FC_2covar_mod_R_noAD <- lm(mn_FC_SLF2_R ~ Group + Age + Sex, data = SLF_data_noAD)
+anova(SLF2_FC_2covar_mod_R_noAD)
+SLF3_FC_2covar_mod_R_noAD <- lm(mn_FC_SLF3_R ~ Group + Age + Sex, data = SLF_data_noAD)
+anova(SLF3_FC_2covar_mod_R_noAD)
+#FDC
+SLF1_FDC_2covar_mod_L_noAD <- lm(mn_FDC_SLF1_L ~ Group + Age + Sex, data = SLF_data_noAD)
+anova(SLF1_FDC_2covar_mod_L_noAD)
+SLF2_FDC_2covar_mod_L_noAD <- lm(mn_FDC_SLF2_L ~ Group + Age + Sex, data = SLF_data_noAD)
+anova(SLF2_FDC_2covar_mod_L_noAD)
+SLF3_FDC_2covar_mod_L_noAD <- lm(mn_FDC_SLF3_L ~ Group + Age + Sex, data = SLF_data_noAD)
+anova(SLF3_FDC_2covar_mod_L_noAD)
+SLF1_FDC_2covar_mod_R_noAD <- lm(mn_FDC_SLF1_R ~ Group + Age + Sex, data = SLF_data_noAD)
+anova(SLF1_FDC_2covar_mod_R_noAD)
+SLF2_FDC_2covar_mod_R_noAD <- lm(mn_FDC_SLF2_R ~ Group + Age + Sex, data = SLF_data_noAD)
+anova(SLF2_FDC_2covar_mod_R_noAD)
+SLF3_FDC_2covar_mod_R_noAD <- lm(mn_FDC_SLF3_R ~ Group + Age + Sex, data = SLF_data_noAD)
+anova(SLF3_FDC_2covar_mod_R_noAD)
+
+#calculate the effect size (eta-squared) - for ANCOVA (sex & age)
+#FD
+etaSquared(SLF1_FD_2covar_mod_L_noAD)
+etaSquared(SLF2_FD_2covar_mod_L_noAD)
+etaSquared(SLF3_FD_2covar_mod_L_noAD)
+etaSquared(SLF1_FD_2covar_mod_R_noAD)
+etaSquared(SLF2_FD_2covar_mod_R_noAD)
+etaSquared(SLF3_FD_2covar_mod_R_noAD)
+#FC
+etaSquared(SLF1_FC_2covar_mod_L_noAD)
+etaSquared(SLF2_FC_2covar_mod_L_noAD)
+etaSquared(SLF3_FC_2covar_mod_L_noAD)
+etaSquared(SLF1_FC_2covar_mod_R_noAD)
+etaSquared(SLF2_FC_2covar_mod_R_noAD)
+etaSquared(SLF3_FC_2covar_mod_R_noAD)
+#FDC
+etaSquared(SLF1_FDC_2covar_mod_L_noAD)
+etaSquared(SLF2_FDC_2covar_mod_L_noAD)
+etaSquared(SLF3_FDC_2covar_mod_L_noAD)
+etaSquared(SLF1_FDC_2covar_mod_R_noAD)
+etaSquared(SLF2_FDC_2covar_mod_R_noAD)
+etaSquared(SLF3_FDC_2covar_mod_R_noAD)
+
+
+#linear trend
+#add in trend Group variable
+Trend_Group <- as.numeric(SLF_data_noAD$Group)
+#FD
+SLF1_L_FD_LinTrend_2covar_mod_noAD <- lm(mn_FD_SLF1_L ~ Trend_Group + Group + Age + Sex, data = SLF_data_noAD)
+anova(SLF1_L_FD_LinTrend_2covar_mod_noAD)
+summary(SLF1_L_FD_LinTrend_2covar_mod_noAD) 
+SLF2_L_FD_LinTrend_2covar_mod_noAD <- lm(mn_FD_SLF2_L ~ Trend_Group + Group + Age + Sex, data = SLF_data_noAD)
+anova(SLF2_L_FD_LinTrend_2covar_mod_noAD)
+summary(SLF2_L_FD_LinTrend_2covar_mod_noAD) 
+SLF3_L_FD_LinTrend_2covar_mod_noAD <- lm(mn_FD_SLF3_L ~ Trend_Group + Group + Age + Sex, data = SLF_data_noAD)
+anova(SLF3_L_FD_LinTrend_2covar_mod_noAD)
+summary(SLF3_L_FD_LinTrend_2covar_mod_noAD)
+SLF1_R_FD_LinTrend_2covar_mod_noAD <- lm(mn_FD_SLF1_R ~ Trend_Group + Group + Age + Sex, data = SLF_data_noAD)
+anova(SLF1_R_FD_LinTrend_2covar_mod_noAD)
+summary(SLF1_R_FD_LinTrend_2covar_mod_noAD) 
+SLF2_R_FD_LinTrend_2covar_mod_noAD <- lm(mn_FD_SLF2_R ~ Trend_Group + Group + Age + Sex, data = SLF_data_noAD)
+anova(SLF2_R_FD_LinTrend_2covar_mod_noAD)
+summary(SLF2_R_FD_LinTrend_2covar_mod_noAD) 
+SLF3_R_FD_LinTrend_2covar_mod_noAD <- lm(mn_FD_SLF3_R ~ Trend_Group + Group + Age + Sex, data = SLF_data_noAD)
+anova(SLF3_R_FD_LinTrend_2covar_mod_noAD)
+summary(SLF3_R_FD_LinTrend_2covar_mod_noAD) 
+#FC
+SLF1_L_FC_LinTrend_2covar_mod_noAD <- lm(mn_FC_SLF1_L ~ Trend_Group + Group + Age + Sex, data = SLF_data_noAD)
+anova(SLF1_L_FC_LinTrend_2covar_mod_noAD)
+summary(SLF1_L_FC_LinTrend_2covar_mod_noAD) 
+SLF2_L_FC_LinTrend_2covar_mod_noAD <- lm(mn_FC_SLF2_L ~ Trend_Group + Group + Age + Sex, data = SLF_data_noAD)
+anova(SLF2_L_FC_LinTrend_2covar_mod_noAD)
+summary(SLF2_L_FC_LinTrend_2covar_mod_noAD) 
+SLF3_L_FC_LinTrend_2covar_mod_noAD <- lm(mn_FC_SLF3_L ~ Trend_Group + Group + Age + Sex, data = SLF_data_noAD)
+anova(SLF3_L_FC_LinTrend_2covar_mod_noAD)
+summary(SLF3_L_FC_LinTrend_2covar_mod_noAD)
+SLF1_R_FC_LinTrend_2covar_mod_noAD <- lm(mn_FC_SLF1_R ~ Trend_Group + Group + Age + Sex, data = SLF_data_noAD)
+anova(SLF1_R_FC_LinTrend_2covar_mod_noAD)
+summary(SLF1_R_FC_LinTrend_2covar_mod_noAD) 
+SLF2_R_FC_LinTrend_2covar_mod_noAD <- lm(mn_FC_SLF2_R ~ Trend_Group + Group + Age + Sex, data = SLF_data_noAD)
+anova(SLF2_R_FC_LinTrend_2covar_mod_noAD)
+summary(SLF2_R_FC_LinTrend_2covar_mod_noAD) 
+SLF3_R_FC_LinTrend_2covar_mod_noAD <- lm(mn_FC_SLF3_R ~ Trend_Group + Group + Age + Sex, data = SLF_data_noAD)
+anova(SLF3_R_FC_LinTrend_2covar_mod_noAD)
+summary(SLF3_R_FC_LinTrend_2covar_mod_noAD) 
+#FDC
+SLF1_L_FDC_LinTrend_2covar_mod_noAD <- lm(mn_FDC_SLF1_L ~ Trend_Group + Group + Age + Sex, data = SLF_data_noAD)
+anova(SLF1_L_FDC_LinTrend_2covar_mod_noAD)
+summary(SLF1_L_FDC_LinTrend_2covar_mod_noAD) 
+SLF2_L_FDC_LinTrend_2covar_mod_noAD <- lm(mn_FDC_SLF2_L ~ Trend_Group + Group + Age + Sex, data = SLF_data_noAD)
+anova(SLF2_L_FDC_LinTrend_2covar_mod_noAD)
+summary(SLF2_L_FDC_LinTrend_2covar_mod_noAD) 
+SLF3_L_FDC_LinTrend_2covar_mod_noAD <- lm(mn_FDC_SLF3_L ~ Trend_Group + Group + Age + Sex, data = SLF_data_noAD)
+anova(SLF3_L_FDC_LinTrend_2covar_mod_noAD)
+summary(SLF3_L_FDC_LinTrend_2covar_mod_noAD)
+SLF1_R_FDC_LinTrend_2covar_mod_noAD <- lm(mn_FDC_SLF1_R ~ Trend_Group + Group + Age + Sex, data = SLF_data_noAD)
+anova(SLF1_R_FDC_LinTrend_2covar_mod_noAD)
+summary(SLF1_R_FDC_LinTrend_2covar_mod_noAD) 
+SLF2_R_FDC_LinTrend_2covar_mod_noAD <- lm(mn_FDC_SLF2_R ~ Trend_Group + Group + Age + Sex, data = SLF_data_noAD)
+anova(SLF2_R_FDC_LinTrend_2covar_mod_noAD)
+summary(SLF2_R_FDC_LinTrend_2covar_mod_noAD) 
+SLF3_R_FDC_LinTrend_2covar_mod_noAD <- lm(mn_FDC_SLF3_R ~ Trend_Group + Group + Age + Sex, data = SLF_data_noAD)
+anova(SLF3_R_FDC_LinTrend_2covar_mod_noAD)
+summary(SLF3_R_FDC_LinTrend_2covar_mod_noAD) 
+
+#post hoc for anova, covariates (age & sex)
+#FD
+#Left SLF 3
+post_hoc_SLF3_L_FD_ancova_mod_noAD <- glht(SLF3_FD_2covar_mod_L_noAD, linfct = mcp(Group = "Tukey"))
+summary(post_hoc_SLF3_L_FD_ancova_mod_noAD)
+confint(post_hoc_SLF3_L_FD_ancova_mod_noAD)
+#effect size for sig. post hoc tests (with age as covariate)
+#Left SLF3 FD
+t_value_effect_size <- summary(post_hoc_SLF3_L_FD_ancova_mod_noAD) 
+  #for C vs. SCD 
+  DPRC_neuropsych_data_CvSCD_SLF3_L <- subset(SLF_data_noAD, SLF_data_noAD$Group == 1 | SLF_data_noAD$Group == 2)
+  DPRC_neuropsych_data_CvSCD_SLF3_L$Group <- droplevels(DPRC_neuropsych_data_CvSCD_SLF3_L$Group)
+  group_number <-dplyr::count(DPRC_neuropsych_data_CvSCD_SLF3_L, Group) #count number of participants per group
+  mult.r_value_covar_mod<-summary(lm(mn_FD_SLF3_L ~ Age, data = DPRC_neuropsych_data_CvSCD_SLF3_L)) #create multiple regression between age and y-var, and get square root of mult-r squared as the r-value
+  r_value <- sqrt(mult.r_value_covar_mod$r.squared) #find correlation value (r) between dependent variable
+  a.tes(t=t_value_effect_size$test$tstat['2 - 1'],n.1=as.numeric(group_number['1','n']),n.2=as.numeric(group_number['2','n']),R=r_value,q=1) #calculate Cohen's D with the covariate of age
+  #for C vs. mMCI 
+  DPRC_neuropsych_data_CvmMCI_SLF3_L <- subset(SLF_data_noAD, SLF_data_noAD$Group == 1 | SLF_data_noAD$Group == 4)
+  DPRC_neuropsych_data_CvmMCI_SLF3_L$Group <- droplevels(DPRC_neuropsych_data_CvmMCI_SLF3_L$Group)
+  group_number <-dplyr::count(DPRC_neuropsych_data_CvmMCI_SLF3_L, Group) #count number of participants per group
+  mult.r_value_covar_mod<-summary(lm(mn_FD_SLF3_L ~ Age, data = DPRC_neuropsych_data_CvmMCI_SLF3_L)) #create multiple regression between age and y-var, and get square root of mult-r squared as the r-value
+  r_value <- sqrt(mult.r_value_covar_mod$r.squared) #find correlation value (r) between dependent variable
+  a.tes(t=t_value_effect_size$test$tstat['4 - 1'],n.1=as.numeric(group_number['1','n']),n.2=as.numeric(group_number['2','n']),R=r_value,q=1) #calculate Cohen's D with the covariate of age
+
+#Right SLF 2 and 3
+post_hoc_SLF2_R_FD_ancova_mod_noAD <- glht(SLF2_FD_2covar_mod_R_noAD, linfct = mcp(Group = "Tukey"))
+summary(post_hoc_SLF2_R_FD_ancova_mod_noAD)
+confint(post_hoc_SLF2_R_FD_ancova_mod_noAD)
+#effect size for sig. post hoc tests (with age as covariate)
+#Right SLF2 FD
+t_value_effect_size <- summary(post_hoc_SLF2_R_FD_ancova_mod_noAD) 
+  #for C vs. mMCI 
+  DPRC_neuropsych_data_CvmMCI_SLF2_R <- subset(SLF_data_noAD, SLF_data_noAD$Group == 1 | SLF_data_noAD$Group == 2)
+  DPRC_neuropsych_data_CvmMCI_SLF2_R$Group <- droplevels(DPRC_neuropsych_data_CvmMCI_SLF2_R$Group)
+  group_number <-dplyr::count(DPRC_neuropsych_data_CvmMCI_SLF2_R, Group) #count number of participants per group
+  mult.r_value_covar_mod<-summary(lm(mn_FD_SLF2_R ~ Age, data = DPRC_neuropsych_data_CvmMCI_SLF2_R)) #create multiple regression between age and y-var, and get square root of mult-r squared as the r-value
+  r_value <- sqrt(mult.r_value_covar_mod$r.squared) #find correlation value (r) between dependent variable
+  a.tes(t=t_value_effect_size$test$tstat['4 - 1'],n.1=as.numeric(group_number['1','n']),n.2=as.numeric(group_number['2','n']),R=r_value,q=1) #calculate Cohen's D with the covariate of age
+
+post_hoc_SLF3_R_FD_ancova_mod_noAD <- glht(SLF3_FD_2covar_mod_R_noAD, linfct = mcp(Group = "Tukey"))
+summary(post_hoc_SLF3_R_FD_ancova_mod_noAD)
+confint(post_hoc_SLF3_R_FD_ancova_mod_noAD)
+#effect size for sig. post hoc tests (with age as covariate)
+#Left SLF3 FD
+t_value_effect_size <- summary(post_hoc_SLF3_R_FD_ancova_mod_noAD) 
+  #for C vs. SCD 
+  DPRC_neuropsych_data_CvSCD_SLF3_R <- subset(SLF_data_noAD, SLF_data_noAD$Group == 1 | SLF_data_noAD$Group == 2)
+  DPRC_neuropsych_data_CvSCD_SLF3_R$Group <- droplevels(DPRC_neuropsych_data_CvSCD_SLF3_R$Group)
+  group_number <-dplyr::count(DPRC_neuropsych_data_CvSCD_SLF3_R, Group) #count number of participants per group
+  mult.r_value_covar_mod<-summary(lm(mn_FD_SLF3_R ~ Age, data = DPRC_neuropsych_data_CvSCD_SLF3_R)) #create multiple regression between age and y-var, and get square root of mult-r squared as the r-value
+  r_value <- sqrt(mult.r_value_covar_mod$r.squared) #find correlation value (r) between dependent variable
+  a.tes(t=t_value_effect_size$test$tstat['2 - 1'],n.1=as.numeric(group_number['1','n']),n.2=as.numeric(group_number['2','n']),R=r_value,q=1) #calculate Cohen's D with the covariate of age
+  #for C vs. mMCI 
+  DPRC_neuropsych_data_CvmMCI_SLF3_R <- subset(SLF_data_noAD, SLF_data_noAD$Group == 1 | SLF_data_noAD$Group == 4)
+  DPRC_neuropsych_data_CvmMCI_SLF3_R$Group <- droplevels(DPRC_neuropsych_data_CvmMCI_SLF3_R$Group)
+  group_number <-dplyr::count(DPRC_neuropsych_data_CvmMCI_SLF3_R, Group) #count number of participants per group
+  mult.r_value_covar_mod<-summary(lm(mn_FD_SLF3_L ~ Age, data = DPRC_neuropsych_data_CvmMCI_SLF3_R)) #create multiple regression between age and y-var, and get square root of mult-r squared as the r-value
+  r_value <- sqrt(mult.r_value_covar_mod$r.squared) #find correlation value (r) between dependent variable
+  a.tes(t=t_value_effect_size$test$tstat['4 - 1'],n.1=as.numeric(group_number['1','n']),n.2=as.numeric(group_number['2','n']),R=r_value,q=1) #calculate Cohen's D with the covariate of age
+
+
+#Plotting graphs via ggplot2
+#for FD: just with left and right SLF 1, 2, 3
+SLF_data_FD <- dplyr::select(SLF_data_noAD, 
+                              ParticipantID,
+                              Group,
+                              mn_FD_SLF1_L,
+                              mn_FD_SLF2_L,
+                              mn_FD_SLF3_L,
+                              mn_FD_SLF1_R,
+                              mn_FD_SLF2_R,
+                              mn_FD_SLF3_R)
+SLF_data_FD_noAD_long <- gather(SLF_data_noAD, 
+                            "SLF_type",
+                            "FD_metric",
+                            mn_FD_SLF1_L,
+                            mn_FD_SLF2_L,
+                            mn_FD_SLF3_L,
+                            mn_FD_SLF1_R,
+                            mn_FD_SLF2_R,
+                            mn_FD_SLF3_R)
+#Separate the groups - All tracts SLF FD (raincloud plot)
+#R default colours for 5 groups (https://www.statology.org/ggplot-default-colors/):
+#scale_color_manual(values = c("#F8766D", "#A3A500", "#00BF7D", "#00B0F6", "#E76BF3")
+
+group.colours <- c("1" = "#F8766D", "2" = "#A3A500", "3" ="#00BF7D", "4" = "#00B0F6")
+#group.colours <- c("C" = "#F8766D", "SCD" = "#A3A500", "aMCI" ="#00BF7D", "mMCI" = "#00B0F6")
+#version 1
+ggplot(SLF_data_FD_noAD_long, aes(x = SLF_type, y = FD_metric, fill=Group)) + 
+  geom_flat_violin(scale="width", alpha = .8, position = position_dodge(width=0.8)) +
+  #geom_point(aes(y = FD_metric, colour = Group), size = .5, alpha = 0.8, position = position_dodge(width=0.5)) +
+  geom_boxplot(width = 0.1, fill = "white", outlier.size = 0, aes(colour = Group), position = position_dodge(width=0.8)) + 
+  #scale_fill_discrete(labels=c("1" = "C", "2" = "SCD", "3"= "aMCI", "4"= "mMCI"))+
+  stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Group), position = position_dodge(width=0.8)) + 
+  guides(colour=FALSE)+
+  guides(fill = guide_legend(override.aes = list(shape = NA)))+
+  xlab("SLF Tract") + 
+  ylab("Fibre Density (FD)") +
+  scale_x_discrete(labels = c("mn_FD_SLF1_L" = "Left SLF1","mn_FD_SLF2_L" = "Left SLF2","mn_FD_SLF3_L" = "Left SLF3","mn_FD_SLF1_R" = "Right SLF1","mn_FD_SLF2_R" = "Right SLF2","mn_FD_SLF3_R" = "Right SLF3")) + 
+  scale_fill_manual(values=group.colours)+
+  scale_color_manual(values = group.colours)+
+  theme_classic()+
+  theme(axis.title.x = element_text(size = 22),axis.title.y = element_text(size = 22),axis.text.x = element_text(size = 18),axis.text.y = element_text(size = 18))+
+  coord_flip()
+
+#version 2
+ggplot(SLF_data_FD_noAD_long, aes(x = SLF_type, y = FD_metric)) + 
+  geom_flat_violin(scale="width", alpha = .8, position = position_dodge(width=0.8)) +
+  geom_boxplot(width = 0.1, fill = "white", outlier.size = 0, aes(colour = Group), position = position_dodge(width=0.8)) + 
+  stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Group), position = position_dodge(width=0.8)) + 
+  guides(colour=FALSE)+
+  guides(fill = guide_legend(override.aes = list(shape = NA)))+
+  xlab("SLF Tract") + 
+  ylab("Fibre Density (FD)") +
+  scale_x_discrete(labels = c("mn_FD_SLF1_L" = "Left SLF1","mn_FD_SLF2_L" = "Left SLF2","mn_FD_SLF3_L" = "Left SLF3","mn_FD_SLF1_R" = "Right SLF1","mn_FD_SLF2_R" = "Right SLF2","mn_FD_SLF3_R" = "Right SLF3")) + 
+  scale_color_manual(values = c("#F8766D", "#A3A500", "#00BF7D", "#00B0F6"))+
+  theme_classic()+
+  theme(axis.title.x = element_text(size = 22),axis.title.y = element_text(size = 22),axis.text.x = element_text(size = 18),axis.text.y = element_text(size = 18))+
+  coord_flip()
+
+
+#plot 95% Confidence Interval (separated confidence intervals and separated SLF tracts only)
+SLF_FD_95CI_data_no_combined_SLF <- data.frame(SLF_group_number = c('1','1','2','3','3'),
+                                                SLF_type = c('Left_SLF3','Left_SLF3','Right_SLF2','Right_SLF3', 'Right_SLF3'),
+                                                Group_contrast = c('C > SCD','C > mMCI','C > mMCI','C > SCD','C > mMCI'),
+                                                estimate_diff = c(0.0128785,0.0152952,0.019938,0.0140354,0.0185203),
+                                                lower = c(0.0248848,0.0278578,0.038762,0.0271993,0.0322941), 
+                                                upper = c(0.0008721,0.0027326,0.001114,0.0008715,0.0047465))  
+#plot data
+ggplot(SLF_FD_95CI_data_no_combined_SLF, aes(x=SLF_group_number, y=estimate_diff, colour=Group_contrast))+
+  geom_point(position = position_dodge(width=0.5), size=5)+
+  geom_errorbar(aes(ymin=lower, ymax=upper), size=1.5, position = position_dodge(width=0.5))+
+  xlab("FD") + 
+  ylab("95% Confidence Interval")+
+  scale_x_discrete(labels = c("1" = "Left SLF 3", "2" = "Right SLF 2", "3" = "Right SLF 3"))+
+  scale_color_manual(values = c("#00B0F6", "#A3A500"))+
+  labs(colour='Group Contrast')+   
+  theme_classic()+
+  theme(axis.title.x = element_text(size = 22),axis.title.y = element_text(size = 22),axis.text.x = element_text(size = 18),axis.text.y = element_text(size = 18))+
+  coord_flip()
+
+
+#plot group comparisons separately for sig. SLF tracts
+#Left SLF 3 FD (raincloud plot)
+ggplot(SLF_data_noAD, aes(x = Group, y = mn_FD_SLF3_L, fill = Group)) +
+  geom_flat_violin(position = position_nudge(x = .2, y = 0), alpha = .8) +
+  geom_point(aes(y = mn_FD_SLF, color = Group), position = position_jitter(width = .15), size = .5, alpha = 0.8) +
+  geom_boxplot(width = 0.1, fill = "white", outlier.size = 1, aes(colour = Group)) +
+  stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Group)) +
+  xlab("Group") +
+  ylab("Left SLF 3 FD") +
+  scale_x_discrete(labels = c("1" = "Control", "2" = "SCD", "3" = "aMCI", "4" = "mMCI", "5" = "AD")) +
+  scale_fill_manual(values=group.colours)+
+  scale_color_manual(values = group.colours)+
+  theme_classic() +
+  theme(axis.title.x = element_text(size = 22),axis.title.y = element_text(size = 22),axis.text.x = element_text(size = 18),axis.text.y = element_text(size = 18))+
+  theme(legend.position = "none") +
+  coord_flip()
+#Right SLF 3 FD (raincloud plot)
+ggplot(SLF_data_noAD, aes(x = Group, y = mn_FD_SLF3_R, fill = Group)) +
+  geom_flat_violin(position = position_nudge(x = .2, y = 0), alpha = .8) +
+  geom_point(aes(y = mn_FD_SLF, color = Group), position = position_jitter(width = .15), size = .5, alpha = 0.8) +
+  geom_boxplot(width = 0.1, fill = "white", outlier.size = 1, aes(colour = Group)) +
+  stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Group)) +
+  xlab("Group") +
+  ylab("Right SLF 3 FD") +
+  scale_x_discrete(labels = c("1" = "Control", "2" = "SCD", "3" = "aMCI", "4" = "mMCI", "5" = "AD")) +
+  scale_fill_manual(values=group.colours)+
+  scale_color_manual(values = group.colours)+
+  theme_classic() +
+  theme(axis.title.x = element_text(size = 22),axis.title.y = element_text(size = 22),axis.text.x = element_text(size = 18),axis.text.y = element_text(size = 18))+
+  theme(legend.position = "none") +
+  coord_flip()
+#Right SLF 2 FD (raincloud plot)
+ggplot(SLF_data_noAD, aes(x = Group, y = mn_FD_SLF2_R, fill = Group)) +
+  geom_flat_violin(position = position_nudge(x = .2, y = 0), alpha = .8) +
+  geom_point(aes(y = mn_FD_SLF, color = Group), position = position_jitter(width = .15), size = .5, alpha = 0.8) +
+  geom_boxplot(width = 0.1, fill = "white", outlier.size = 1, aes(colour = Group)) +
+  stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Group)) +
+  xlab("Group") +
+  ylab("Right SLF 2 FD") +
+  scale_x_discrete(labels = c("1" = "Control", "2" = "SCD", "3" = "aMCI", "4" = "mMCI", "5" = "AD")) +
+  scale_fill_manual(values=group.colours)+
+  scale_color_manual(values = group.colours)+
+  theme_classic() +
+  theme(axis.title.x = element_text(size = 22),axis.title.y = element_text(size = 22),axis.text.x = element_text(size = 18),axis.text.y = element_text(size = 18))+
+  theme(legend.position = "none") +
+  coord_flip()
+
+
+
+
+
+
+
+#Run contrast analysis (i.e., one-way ANOVA, b/c covariates) between C vs. AD group
+#set up dataframe to only have C and AD group
+#removing SCD, aMCI, and mMCI groups (group 2, 3, 4) from analysis
+SLF_data_C_AD<- SLF_data %>%
+  group_by(Group) %>%
+  filter(!any(Group == "2")) %>%
+  filter(!any(Group == "3")) %>%
+  filter(!any(Group == "4"))
+#change factor levels to '2' for calc. effect size
+SLF_data_C_AD <- SLF_data_C_AD %>% mutate(Group = factor(Group, levels = c(1, 5)))
+
+
+#descriptive stats for C and AD groups
+#descriptive data for total sample (n = 62):
+  #look at descriptive stats of the Left SLF1 FBA metrics between groups
+  mean(SLF_data_C_AD$mn_FD_SLF1_L)
+  sd(SLF_data_C_AD$mn_FD_SLF1_L)
+  mean(SLF_data_C_AD$mn_FC_SLF1_L)
+  sd(SLF_data_C_AD$mn_FC_SLF1_L)
+  mean(SLF_data_C_AD$mn_FDC_SLF1_L)
+  sd(SLF_data_C_AD$mn_FDC_SLF1_L)
+  #look at descriptive stats of the Left SLF2 FBA metrics between groups
+  mean(SLF_data_C_AD$mn_FD_SLF2_L)
+  sd(SLF_data_C_AD$mn_FD_SLF2_L)
+  mean(SLF_data_C_AD$mn_FC_SLF2_L)
+  sd(SLF_data_C_AD$mn_FC_SLF2_L)
+  mean(SLF_data_C_AD$mn_FDC_SLF2_L)
+  sd(SLF_data_C_AD$mn_FDC_SLF2_L)
+  #look at descriptive stats of the Left SLF3 FBA metrics between groups
+  mean(SLF_data_C_AD$mn_FD_SLF3_L)
+  sd(SLF_data_C_AD$mn_FD_SLF3_L)
+  mean(SLF_data_C_AD$mn_FC_SLF3_L)
+  sd(SLF_data_C_AD$mn_FC_SLF3_L)
+  mean(SLF_data_C_AD$mn_FDC_SLF3_L)
+  sd(SLF_data_C_AD$mn_FDC_SLF3_L)
+  #look at descriptive stats of the Right SLF1 FBA metrics between groups
+  mean(SLF_data_C_AD$mn_FD_SLF1_R)
+  sd(SLF_data_C_AD$mn_FD_SLF1_R)
+  mean(SLF_data_C_AD$mn_FC_SLF1_R)
+  sd(SLF_data_C_AD$mn_FC_SLF1_R)
+  mean(SLF_data_C_AD$mn_FDC_SLF1_R)
+  sd(SLF_data_C_AD$mn_FDC_SLF1_R)
+  #look at descriptive stats of the Right SLF2 FBA metrics between groups
+  mean(SLF_data_C_AD$mn_FD_SLF2_R)
+  sd(SLF_data_C_AD$mn_FD_SLF2_R)
+  mean(SLF_data_C_AD$mn_FC_SLF2_R)
+  sd(SLF_data_C_AD$mn_FC_SLF2_R)
+  mean(SLF_data_C_AD$mn_FDC_SLF2_R)
+  sd(SLF_data_C_AD$mn_FDC_SLF2_R)
+  #look at descriptive stats of the Right SLF3 FBA metrics between groups
+  mean(SLF_data_C_AD$mn_FD_SLF3_R)
+  sd(SLF_data_C_AD$mn_FD_SLF3_R)
+  mean(SLF_data_C_AD$mn_FC_SLF3_R)
+  sd(SLF_data_C_AD$mn_FC_SLF3_R)
+  mean(SLF_data_C_AD$mn_FDC_SLF3_R)
+  sd(SLF_data_C_AD$mn_FDC_SLF3_R)
+
+#SLF differences between C vs. AD group w/ age and sex as covariates ----------#
+#ANOVA groups differences between 2 groups (C and AD)
+  #FD
+  SLF1_FD_2covar_mod_L_C_AD <- lm(mn_FD_SLF1_L ~ Group + Age + Sex, data = SLF_data_C_AD)
+  anova(SLF1_FD_2covar_mod_L_C_AD) #not sig
+  SLF2_FD_2covar_mod_L_C_AD <- lm(mn_FD_SLF2_L ~ Group + Age + Sex, data = SLF_data_C_AD)
+  anova(SLF2_FD_2covar_mod_L_C_AD) #sig
+  SLF3_FD_2covar_mod_L_C_AD <- lm(mn_FD_SLF3_L ~ Group + Age + Sex, data = SLF_data_C_AD)
+  anova(SLF3_FD_2covar_mod_L_C_AD) #sig
+  SLF1_FD_2covar_mod_R_C_AD <- lm(mn_FD_SLF1_R ~ Group + Age + Sex, data = SLF_data_C_AD)
+  anova(SLF1_FD_2covar_mod_R_C_AD) #sig
+  SLF2_FD_2covar_mod_R_C_AD <- lm(mn_FD_SLF2_R ~ Group + Age + Sex, data = SLF_data_C_AD)
+  anova(SLF2_FD_2covar_mod_R_C_AD) #sig
+  SLF3_FD_2covar_mod_R_C_AD <- lm(mn_FD_SLF3_R ~ Group + Age + Sex, data = SLF_data_C_AD)
+  anova(SLF3_FD_2covar_mod_R_C_AD) #sig
+  #FC
+  SLF1_FC_2covar_mod_L_C_AD <- lm(mn_FC_SLF1_L ~ Group + Age + Sex, data = SLF_data_C_AD)
+  anova(SLF1_FC_2covar_mod_L_C_AD) #not sig
+  SLF2_FC_2covar_mod_L_C_AD <- lm(mn_FC_SLF2_L ~ Group + Age + Sex, data = SLF_data_C_AD)
+  anova(SLF2_FC_2covar_mod_L_C_AD) #not sig
+  SLF3_FC_2covar_mod_L_C_AD <- lm(mn_FC_SLF3_L ~ Group + Age + Sex, data = SLF_data_C_AD)
+  anova(SLF3_FC_2covar_mod_L_C_AD) #not sig
+  SLF1_FC_2covar_mod_R_C_AD <- lm(mn_FC_SLF1_R ~ Group + Age + Sex, data = SLF_data_C_AD)
+  anova(SLF1_FC_2covar_mod_R_C_AD) #not sig
+  SLF2_FC_2covar_mod_R_C_AD <- lm(mn_FC_SLF2_R ~ Group + Age + Sex, data = SLF_data_C_AD)
+  anova(SLF2_FC_2covar_mod_R_C_AD) #not sig
+  SLF3_FC_2covar_mod_R_C_AD <- lm(mn_FC_SLF3_R ~ Group + Age + Sex, data = SLF_data_C_AD)
+  anova(SLF3_FC_2covar_mod_R_C_AD) #not sig
+  #FDC
+  SLF1_FDC_2covar_mod_L_C_AD <- lm(mn_FDC_SLF1_L ~ Group + Age + Sex, data = SLF_data_C_AD)
+  anova(SLF1_FDC_2covar_mod_L_C_AD) #not sig
+  SLF2_FDC_2covar_mod_L_C_AD <- lm(mn_FDC_SLF2_L ~ Group + Age + Sex, data = SLF_data_C_AD)
+  anova(SLF2_FDC_2covar_mod_L_C_AD) #sig
+  SLF3_FDC_2covar_mod_L_C_AD <- lm(mn_FDC_SLF3_L ~ Group + Age + Sex, data = SLF_data_C_AD)
+  anova(SLF3_FDC_2covar_mod_L_C_AD) #not sig
+  SLF1_FDC_2covar_mod_R_C_AD <- lm(mn_FDC_SLF1_R ~ Group + Age + Sex, data = SLF_data_C_AD)
+  anova(SLF1_FDC_2covar_mod_R_C_AD) #sig
+  SLF2_FDC_2covar_mod_R_C_AD <- lm(mn_FDC_SLF2_R ~ Group + Age + Sex, data = SLF_data_C_AD)
+  anova(SLF2_FDC_2covar_mod_R_C_AD) #sig
+  SLF3_FDC_2covar_mod_R_C_AD <- lm(mn_FDC_SLF3_R ~ Group + Age + Sex, data = SLF_data_C_AD)
+  anova(SLF3_FDC_2covar_mod_R_C_AD) #sig
+
+#calculate the effect size (eta-squared) - for ANCOVA (sex & age)
+  #FD
+  etaSquared(SLF1_FD_2covar_mod_L_C_AD)
+  etaSquared(SLF2_FD_2covar_mod_L_C_AD)
+  etaSquared(SLF3_FD_2covar_mod_L_C_AD)
+  etaSquared(SLF1_FD_2covar_mod_R_C_AD)
+  etaSquared(SLF2_FD_2covar_mod_R_C_AD)
+  etaSquared(SLF3_FD_2covar_mod_R_C_AD)
+  #FC
+  etaSquared(SLF1_FC_2covar_mod_L_C_AD)
+  etaSquared(SLF2_FC_2covar_mod_L_C_AD)
+  etaSquared(SLF3_FC_2covar_mod_L_C_AD)
+  etaSquared(SLF1_FC_2covar_mod_R_C_AD)
+  etaSquared(SLF2_FC_2covar_mod_R_C_AD)
+  etaSquared(SLF3_FC_2covar_mod_R_C_AD)
+  #FDC
+  etaSquared(SLF1_FDC_2covar_mod_L_C_AD)
+  etaSquared(SLF2_FDC_2covar_mod_L_C_AD)
+  etaSquared(SLF3_FDC_2covar_mod_L_C_AD)
+  etaSquared(SLF1_FDC_2covar_mod_R_C_AD)
+  etaSquared(SLF2_FDC_2covar_mod_R_C_AD)
+  etaSquared(SLF3_FDC_2covar_mod_R_C_AD)
+
+#calculate the 95CI for C vs. AD in FD
+  #for Left SLF 2
+  SLF2_FD_2covar_mod_L_C_AD <- lm(mn_FD_SLF2_L ~ Group + Age + Sex, data = SLF_data_C_AD)
+  anova(SLF2_FD_2covar_mod_L_C_AD) #sig with the variable 'Group' has a significant effect overall,
+  summary(SLF2_FD_2covar_mod_L_C_AD)  #not sig with the specific contrast between Group5 (AD) and the reference (C)
+  confint(SLF2_FD_2covar_mod_L_C_AD) #95%CI passes over zero
+  
+  #for Left SLF 3
+  SLF3_FD_2covar_mod_L_C_AD <- lm(mn_FD_SLF3_L ~ Group + Age + Sex, data = SLF_data_C_AD)
+  anova(SLF3_FD_2covar_mod_L_C_AD) #sig
+  summary(SLF3_FD_2covar_mod_L_C_AD)  #sig 
+  confint(SLF3_FD_2covar_mod_L_C_AD) 
+  
+  #for Right SLF 1
+  SLF1_FD_2covar_mod_R_C_AD <- lm(mn_FD_SLF1_R ~ Group + Age + Sex, data = SLF_data_C_AD)
+  anova(SLF1_FD_2covar_mod_R_C_AD) #sig
+  summary(SLF1_FD_2covar_mod_R_C_AD) #sig
+  confint(SLF1_FD_2covar_mod_R_C_AD)
+  
+  #for Right SLF 2
+  SLF2_FD_2covar_mod_R_C_AD <- lm(mn_FD_SLF2_R ~ Group + Age + Sex, data = SLF_data_C_AD)
+  anova(SLF2_FD_2covar_mod_R_C_AD) #sig
+  summary(SLF2_FD_2covar_mod_R_C_AD) #sig
+  confint(SLF2_FD_2covar_mod_R_C_AD)
+  
+  #for Right SLF 3
+  SLF3_FD_2covar_mod_R_C_AD <- lm(mn_FD_SLF3_R ~ Group + Age + Sex, data = SLF_data_C_AD)
+  anova(SLF3_FD_2covar_mod_R_C_AD) #sig
+  summary(SLF3_FD_2covar_mod_R_C_AD) #sig
+  confint(SLF3_FD_2covar_mod_R_C_AD)
+
+#generate figures for C vs. AD comparison
+  #Plotting graphs via ggplot2
+  #for FD: just with left and right SLF 1, 2, 3
+  SLF_data_FD_C_AD <- dplyr::select(SLF_data_C_AD, 
+                               ParticipantID,
+                               Group,
+                               mn_FD_SLF1_L,
+                               mn_FD_SLF2_L,
+                               mn_FD_SLF3_L,
+                               mn_FD_SLF1_R,
+                               mn_FD_SLF2_R,
+                               mn_FD_SLF3_R)
+  SLF_data_FD_C_AD_long <- gather(SLF_data_C_AD, 
+                                  "SLF_type",
+                                  "FD_metric",
+                                  mn_FD_SLF1_L,
+                                  mn_FD_SLF2_L,
+                                  mn_FD_SLF3_L,
+                                  mn_FD_SLF1_R,
+                                  mn_FD_SLF2_R,
+                                  mn_FD_SLF3_R)
+  #Separate the groups - All tracts SLF FD (raincloud plot)
+  #R default colours for 5 groups (https://www.statology.org/ggplot-default-colors/):
+  #scale_color_manual(values = c("#F8766D", "#A3A500", "#00BF7D", "#00B0F6", "#E76BF3")
+  
+  group.colours <- c("1" = "#F8766D", "5" = "#E76BF3")
+  #group.colours <- c("C" = "#F8766D", "SCD" = "#A3A500", "aMCI" ="#00BF7D", "mMCI" = "#00B0F6","AD" = "#E76BF3")
+  #version 1
+  ggplot(SLF_data_FD_C_AD_long, aes(x = SLF_type, y = FD_metric, fill=Group)) + 
+    geom_flat_violin(scale="width", alpha = .8, position = position_dodge(width=0.8)) +
+    #geom_point(aes(y = FD_metric, colour = Group), size = .5, alpha = 0.8, position = position_dodge(width=0.5)) +
+    geom_boxplot(width = 0.1, fill = "white", outlier.size = 0, aes(colour = Group), position = position_dodge(width=0.8)) + 
+    #scale_fill_discrete(labels=c("1" = "C", "2" = "SCD", "3"= "aMCI", "4"= "mMCI","5"="AD"))+
+    stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Group), position = position_dodge(width=0.8)) + 
+    guides(colour=FALSE)+
+    guides(fill = guide_legend(override.aes = list(shape = NA)))+
+    xlab("SLF Tract") + 
+    ylab("Fibre Density (FD)") +
+    scale_x_discrete(labels = c("mn_FD_SLF1_L" = "Left SLF1","mn_FD_SLF2_L" = "Left SLF2","mn_FD_SLF3_L" = "Left SLF3","mn_FD_SLF1_R" = "Right SLF1","mn_FD_SLF2_R" = "Right SLF2","mn_FD_SLF3_R" = "Right SLF3")) + 
+    scale_fill_manual(values=group.colours, labels = c("1" = "C", "5" = "AD"))+
+    scale_color_manual(values = group.colours, labels = c("1" = "C", "5" = "AD"))+    #scale_fill_manual(values=c("1"="#F8766D","5"="#E76BF3"))+
+    theme_classic()+
+    theme(axis.title.x = element_text(size = 22),axis.title.y = element_text(size = 22),axis.text.x = element_text(size = 18),axis.text.y = element_text(size = 18)+
+    #theme(axis.title.x = element_text(size = 22),axis.title.y = element_text(size = 22),axis.text.x = element_text(size = 18),axis.text.y = element_text(size = 18), legend.position="none")+ #if you want to remove the legend
+    coord_flip()
+  
+  #version 2
+  ggplot(SLF_data_FD_C_AD_long, aes(x = SLF_type, y = FD_metric)) + 
+    geom_flat_violin(scale="width", alpha = .8, position = position_dodge(width=0.8)) +
+    geom_boxplot(width = 0.1, fill = "white", outlier.size = 0, aes(colour = Group), position = position_dodge(width=0.8)) + 
+    stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Group), position = position_dodge(width=0.8)) + 
+    guides(colour=FALSE)+
+    guides(fill = guide_legend(override.aes = list(shape = NA)))+
+    xlab("SLF Tract") + 
+    ylab("Fibre Density (FD)") +
+    scale_x_discrete(labels = c("mn_FD_SLF1_L" = "Left SLF1","mn_FD_SLF2_L" = "Left SLF2","mn_FD_SLF3_L" = "Left SLF3","mn_FD_SLF1_R" = "Right SLF1","mn_FD_SLF2_R" = "Right SLF2","mn_FD_SLF3_R" = "Right SLF3")) + 
+    scale_color_manual(values = c("#F8766D", "#E76BF3"))+
+    theme_classic()+
+    theme(axis.title.x = element_text(size = 22),axis.title.y = element_text(size = 22),axis.text.x = element_text(size = 18),axis.text.y = element_text(size = 18))+
+    coord_flip()
+
+  #plot 95% Confidence Interval (separated confidence intervals and separated SLF tracts only)
+  SLF_FD_95CI_data_no_combined_SLF_CvAD <- data.frame(SLF_group_number = c('1','2','3','4','5'),
+                                                 SLF_type = c('Left_SLF2','Left_SLF3','Right_SLF1','Right_SLF2', 'Right_SLF3'),
+                                                 Group_contrast = c('C > AD','C > AD','C > AD','C > AD','C > AD'),
+                                                 estimate_diff = c(0.0162383,0.0166872,0.0229439,2.094e-02,0.0148583),
+                                                 lower = c(0.034974319,0.029468734,0.038086372,0.0372980340,0.0280043945), 
+                                                 upper = c(-2.497785e-03,0.003905601,0.0078013929,0.0045791193,0.0017121763))  
+  #plot data
+  ggplot(SLF_FD_95CI_data_no_combined_SLF_CvAD, aes(x=SLF_group_number, y=estimate_diff, colour=Group_contrast))+
+    geom_point(position = position_dodge(width=0.5), size=5)+
+    geom_errorbar(aes(ymin=lower, ymax=upper), size=1.5, position = position_dodge(width=0.5))+
+    xlab("FD") + 
+    ylab("95% Confidence Interval")+
+    scale_x_discrete(labels = c("1" = "Left SLF 2", "2" = "Left SLF 3","3" = "Right SLF 1", "4" = "Right SLF 2", "5" = "Right SLF 3"))+
+    scale_color_manual(values = "#E76BF3")+
+    labs(colour='Group Contrast')+   
+    theme_classic()+
+    theme(axis.title.x = element_text(size = 22),axis.title.y = element_text(size = 22),axis.text.x = element_text(size = 18),axis.text.y = element_text(size = 18), plot.margin = margin(r = 30), legend.position="none")+ #if you want to remove the legend)
+    #theme(axis.title.x = element_text(size = 22),axis.title.y = element_text(size = 22),axis.text.x = element_text(size = 18),axis.text.y = element_text(size = 18))+
+    coord_flip()
+  
+
+#plot group comparisons separately for sig. SLF tracts
+  #Left SLF 2 FD (raincloud plot)
+  ggplot(SLF_data_C_AD, aes(x = Group, y = mn_FD_SLF2_L, fill = Group)) +
+    geom_flat_violin(position = position_nudge(x = .2, y = 0), alpha = .8) +
+    geom_point(aes(y = mn_FD_SLF, color = Group), position = position_jitter(width = .15), size = .5, alpha = 0.8) +
+    geom_boxplot(width = 0.1, fill = "white", outlier.size = 1, aes(colour = Group)) +
+    stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Group)) +
+    xlab("Group") +
+    ylab("Left SLF 2 FD") +
+    scale_x_discrete(labels = c("1" = "Control", "5" = "AD")) +
+    scale_fill_manual(values = c("#F8766D", "#E76BF3"))+
+    scale_color_manual(values = c("#F8766D", "#E76BF3"))+
+    theme_classic() +
+    theme(axis.title.x = element_text(size = 22),axis.title.y = element_text(size = 22),axis.text.x = element_text(size = 18),axis.text.y = element_text(size = 18))+
+    theme(legend.position = "none") +
+    coord_flip()
+
+  #Left SLF 3 FD (raincloud plot)
+  ggplot(SLF_data_C_AD, aes(x = Group, y = mn_FD_SLF3_L, fill = Group)) +
+    geom_flat_violin(position = position_nudge(x = .2, y = 0), alpha = .8) +
+    geom_point(aes(y = mn_FD_SLF, color = Group), position = position_jitter(width = .15), size = .5, alpha = 0.8) +
+    geom_boxplot(width = 0.1, fill = "white", outlier.size = 1, aes(colour = Group)) +
+    stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Group)) +
+    xlab("Group") +
+    ylab("Left SLF 3 FD") +
+    scale_x_discrete(labels = c("1" = "Control", "5" = "AD")) +
+    scale_fill_manual(values = c("#F8766D", "#E76BF3"))+
+    scale_color_manual(values = c("#F8766D", "#E76BF3"))+
+    theme_classic() +
+    theme(axis.title.x = element_text(size = 22),axis.title.y = element_text(size = 22),axis.text.x = element_text(size = 18),axis.text.y = element_text(size = 18))+
+    theme(legend.position = "none") +
+    coord_flip()
+  
+  #Right SLF 1 FD (raincloud plot)
+  ggplot(SLF_data_C_AD, aes(x = Group, y = mn_FD_SLF1_R, fill = Group)) +
+    geom_flat_violin(position = position_nudge(x = .2, y = 0), alpha = .8) +
+    geom_point(aes(y = mn_FD_SLF, color = Group), position = position_jitter(width = .15), size = .5, alpha = 0.8) +
+    geom_boxplot(width = 0.1, fill = "white", outlier.size = 1, aes(colour = Group)) +
+    stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Group)) +
+    xlab("Group") +
+    ylab("Right SLF 1 FD") +
+    scale_x_discrete(labels = c("1" = "Control", "5" = "AD")) +
+    scale_fill_manual(values = c("#F8766D", "#E76BF3"))+
+    scale_color_manual(values = c("#F8766D", "#E76BF3"))+
+    theme_classic() +
+    theme(axis.title.x = element_text(size = 22),axis.title.y = element_text(size = 22),axis.text.x = element_text(size = 18),axis.text.y = element_text(size = 18))+
+    theme(legend.position = "none") +
+    coord_flip()
+  
+  #Right SLF 2 FD (raincloud plot)
+  ggplot(SLF_data_C_AD, aes(x = Group, y = mn_FD_SLF2_R, fill = Group)) +
+    geom_flat_violin(position = position_nudge(x = .2, y = 0), alpha = .8) +
+    geom_point(aes(y = mn_FD_SLF, color = Group), position = position_jitter(width = .15), size = .5, alpha = 0.8) +
+    geom_boxplot(width = 0.1, fill = "white", outlier.size = 1, aes(colour = Group)) +
+    stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Group)) +
+    xlab("Group") +
+    ylab("Right SLF 2 FD") +
+    scale_x_discrete(labels = c("1" = "Control", "5" = "AD")) +
+    scale_fill_manual(values = c("#F8766D", "#E76BF3"))+
+    scale_color_manual(values = c("#F8766D", "#E76BF3"))+
+    theme_classic() +
+    theme(axis.title.x = element_text(size = 22),axis.title.y = element_text(size = 22),axis.text.x = element_text(size = 18),axis.text.y = element_text(size = 18))+
+    theme(legend.position = "none") +
+    coord_flip()
+  
+  #Right SLF 3 FD (raincloud plot)
+  ggplot(SLF_data_C_AD, aes(x = Group, y = mn_FD_SLF3_R, fill = Group)) +
+    geom_flat_violin(position = position_nudge(x = .2, y = 0), alpha = .8) +
+    geom_point(aes(y = mn_FD_SLF, color = Group), position = position_jitter(width = .15), size = .5, alpha = 0.8) +
+    geom_boxplot(width = 0.1, fill = "white", outlier.size = 1, aes(colour = Group)) +
+    stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Group)) +
+    xlab("Group") +
+    ylab("Right SLF 3 FD") +
+    scale_x_discrete(labels = c("1" = "Control", "5" = "AD")) +
+    scale_fill_manual(values = c("#F8766D", "#E76BF3"))+
+    scale_color_manual(values = c("#F8766D", "#E76BF3"))+
+    theme_classic() +
+    theme(axis.title.x = element_text(size = 22),axis.title.y = element_text(size = 22),axis.text.x = element_text(size = 18),axis.text.y = element_text(size = 18))+
+    theme(legend.position = "none") +
+    coord_flip()
+  
+  
+  
+  #calculate the 95CI for C vs. AD in FDC
+  #for Left SLF 2
+  SLF2_FDC_2covar_mod_L_C_AD <- lm(mn_FDC_SLF2_L ~ Group + Age + Sex, data = SLF_data_C_AD)
+  anova(SLF2_FDC_2covar_mod_L_C_AD) #sig with the variable 'Group' has a significant effect overall,
+  summary(SLF2_FDC_2covar_mod_L_C_AD)  #sig with the specific contrast between Group5 (AD) and the reference (C)
+  confint(SLF2_FDC_2covar_mod_L_C_AD) #95%CI passes over zero
+
+  #for Right SLF 1
+  SLF1_FDC_2covar_mod_R_C_AD <- lm(mn_FDC_SLF1_R ~ Group + Age + Sex, data = SLF_data_C_AD)
+  anova(SLF1_FDC_2covar_mod_R_C_AD) #sig
+  summary(SLF1_FDC_2covar_mod_R_C_AD) #sig
+  confint(SLF1_FDC_2covar_mod_R_C_AD)
+  
+  #generate figures for C vs. AD comparison
+  #Plotting graphs via ggplot2
+  #for FDC: just with left SLF 2 and right SLF 1
+  SLF_data_FDC_C_AD <- dplyr::select(SLF_data_C_AD, 
+                               ParticipantID,
+                               Group,
+                               mn_FDC_SLF1_L,
+                               mn_FDC_SLF2_L,
+                               mn_FDC_SLF3_L,
+                               mn_FDC_SLF1_R,
+                               mn_FDC_SLF2_R,
+                               mn_FDC_SLF3_R)
+  SLF_data_FDC_C_AD_long <- gather(SLF_data_C_AD, 
+                                  "SLF_type",
+                                  "FDC_metric",
+                                  mn_FDC_SLF1_L,
+                                  mn_FDC_SLF2_L,
+                                  mn_FDC_SLF3_L,
+                                  mn_FDC_SLF1_R,
+                                  mn_FDC_SLF2_R,
+                                  mn_FDC_SLF3_R)
+  #Separate the groups - All tracts SLF FD (raincloud plot)
+  #R default colours for 5 groups (https://www.statology.org/ggplot-default-colors/):
+  #scale_color_manual(values = c("#F8766D", "#A3A500", "#00BF7D", "#00B0F6", "#E76BF3")
+  
+  group.colours <- c("1" = "#F8766D", "5" = "#E76BF3")
+  #group.colours <- c("C" = "#F8766D", "SCD" = "#A3A500", "aMCI" ="#00BF7D", "mMCI" = "#00B0F6","AD" = "#E76BF3")
+  #version 1
+  ggplot(SLF_data_FDC_C_AD_long, aes(x = SLF_type, y = FDC_metric, fill=Group)) + 
+    geom_flat_violin(scale="width", alpha = .8, position = position_dodge(width=0.8)) +
+    geom_boxplot(width = 0.1, fill = "white", outlier.size = 0, aes(colour = Group), position = position_dodge(width=0.8)) + 
+    stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Group), position = position_dodge(width=0.8)) + 
+    guides(colour=FALSE)+
+    guides(fill = guide_legend(override.aes = list(shape = NA)))+
+    xlab("SLF Tract") + 
+    ylab("Fibre Density Cross-section (FDC)") +
+    scale_x_discrete(labels = c("mn_FDC_SLF1_L" = "Left SLF1","mn_FDC_SLF2_L" = "Left SLF2","mn_FDC_SLF3_L" = "Left SLF3","mn_FDC_SLF1_R" = "Right SLF1","mn_FDC_SLF2_R" = "Right SLF2","mn_FDC_SLF3_R" = "Right SLF3")) + 
+    scale_fill_manual(values=group.colours, labels = c("1" = "C", "5" = "AD"))+
+    scale_color_manual(values = group.colours, labels = c("1" = "C", "5" = "AD"))+    #scale_fill_manual(values=c("1"="#F8766D","5"="#E76BF3"))+
+    theme_classic()+
+    #theme(axis.title.x = element_text(size = 22),axis.title.y = element_text(size = 22),axis.text.x = element_text(size = 18),axis.text.y = element_text(size = 18)+
+    theme(axis.title.x = element_text(size = 22),axis.title.y = element_text(size = 22),axis.text.x = element_text(size = 18),axis.text.y = element_text(size = 18), legend.position="none")+ #if you want to remove the legend
+    coord_flip()
+  
+  #version 2
+  ggplot(SLF_data_FDC_C_AD_long, aes(x = SLF_type, y = FDC_metric)) + 
+    geom_flat_violin(scale="width", alpha = .8, position = position_dodge(width=0.8)) +
+    geom_boxplot(width = 0.1, fill = "white", outlier.size = 0, aes(colour = Group), position = position_dodge(width=0.8)) + 
+    stat_summary(fun = mean, geom = "point", shape = 19, size = 2, aes(colour = Group), position = position_dodge(width=0.8)) + 
+    guides(colour=FALSE)+
+    guides(fill = guide_legend(override.aes = list(shape = NA)))+
+    xlab("SLF Tract") + 
+    ylab("Fibre Density Cross-section (FDC)") +
+    scale_x_discrete(labels = c("mn_FDC_SLF1_L" = "Left SLF1","mn_FDC_SLF2_L" = "Left SLF2","mn_FDC_SLF3_L" = "Left SLF3","mn_FDC_SLF1_R" = "Right SLF1","mn_FDC_SLF2_R" = "Right SLF2","mn_FDC_SLF3_R" = "Right SLF3")) + 
+    scale_color_manual(values = c("#F8766D", "#E76BF3"))+
+    theme_classic()+
+    theme(axis.title.x = element_text(size = 22),axis.title.y = element_text(size = 22),axis.text.x = element_text(size = 18),axis.text.y = element_text(size = 18))+
+    coord_flip()
+  
+  #plot 95% Confidence Interval (separated confidence intervals and separated SLF tracts only)
+  SLF_FDC_95CI_data_no_combined_SLF_CvAD <- data.frame(SLF_group_number = c('1','2'),
+                                                      SLF_type = c('Left_SLF2','Right_SLF1'),
+                                                      Group_contrast = c('C > AD','C > AD'),
+                                                      estimate_diff = c(0.0447525,0.048869),
+                                                      lower = c(0.076904842,0.074221328), 
+                                                      upper = c(0.0126001753,2.351607e-02))  
+  #plot data
+  ggplot(SLF_FDC_95CI_data_no_combined_SLF_CvAD, aes(x=SLF_group_number, y=estimate_diff, colour=Group_contrast))+
+    geom_point(position = position_dodge(width=0.5), size=5)+
+    geom_errorbar(aes(ymin=lower, ymax=upper), size=1.5, position = position_dodge(width=0.5))+
+    xlab("FD") + 
+    ylab("95% Confidence Interval")+
+    scale_x_discrete(labels = c("1" = "Left SLF 2", "2" = "Left SLF 3","3" = "Right SLF 1", "4" = "Right SLF 2", "5" = "Right SLF 3"))+
+    scale_color_manual(values = "#E76BF3")+
+    labs(colour='Group Contrast')+   
+    theme_classic()+
+    theme(axis.title.x = element_text(size = 22),axis.title.y = element_text(size = 22),axis.text.x = element_text(size = 18),axis.text.y = element_text(size = 18), plot.margin = margin(r = 30), legend.position="none")+ #if you want to remove the legend)
+    #theme(axis.title.x = element_text(size = 22),axis.title.y = element_text(size = 22),axis.text.x = element_text(size = 18),axis.text.y = element_text(size = 18))+
+    coord_flip()
+   
 

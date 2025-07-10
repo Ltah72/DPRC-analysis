@@ -518,8 +518,14 @@ get_anova_table(aov_SLF2_L_FDC_mod)
 #for left SLF 3
 aov_SLF3_L_FD_mod <- anova_test(data=SLF_data, dv=mn_FD_SLF3_L, wid=Individual_number, between=Group, within=Timepoint, effect.size = "pes")
 get_anova_table(aov_SLF3_L_FD_mod) 
+
 aov_SLF3_L_FC_mod <- anova_test(data=SLF_data, dv=mn_FC_SLF3_L, wid=Individual_number, between=Group, within=Timepoint, effect.size = "pes")
 get_anova_table(aov_SLF3_L_FC_mod) 
+#95% CI
+diff_SLF3_L_FC_data <-  SLF_data[SLF_data[, "Timepoint"] == "F2",]$mn_FC_SLF3_L -  SLF_data[SLF_data[, "Timepoint"] == "F0",]$mn_FC_SLF3_L 
+mean(diff_SLF3_L_FC_data)
+confidence_interval(diff_SLF3_L_FC_data,0.95)
+
 aov_SLF3_L_FDC_mod <- anova_test(data=SLF_data, dv=mn_FDC_SLF3_L, wid=Individual_number, between=Group, within=Timepoint, effect.size = "pes")
 get_anova_table(aov_SLF3_L_FDC_mod) 
 #for right SLF 1
@@ -723,7 +729,7 @@ ggplot(SLF_FD_95CI_data, aes(x=SLF_group_number, y=estimate_diff, colour=Group_c
 
 
 
-#FC 95% CI
+#FC 95% CI (2 covariates)
 #plot 95% Confidence Interval (separated confidence intervals and separated SLF tracts only)
 SLF_FC_95CI_data_no_combined_SLF <- data.frame(SLF_group_number = c('1','2','3'),
                                                SLF_type = c('Left_SLF1','Left_SLF2','Right_SLF1'),
@@ -744,7 +750,7 @@ SLF_FC_95CI_data_no_combined_SLF <- data.frame(SLF_group_number = c('1','2','3')
 
 
 
-#plot data
+#plot data (2 covariates)
 ggplot(SLF_FC_95CI_data_no_combined_SLF, aes(x=SLF_group_number, y=estimate_diff, colour=Timepoint_contrast))+
   geom_point(position = position_dodge(width=0.5), size=5)+
   geom_errorbar(aes(ymin=lower, ymax=upper), size=1.5, position = position_dodge(width=0.5))+
@@ -752,10 +758,36 @@ ggplot(SLF_FC_95CI_data_no_combined_SLF, aes(x=SLF_group_number, y=estimate_diff
   ylab("95% Confidence Interval")+
   scale_x_discrete(labels = c("1" = "Left SLF 1", "2" = "Left SLF 2", "3" = "Right SLF 1"))+
   scale_color_manual(values = ("#999999"))+
-  labs(colour='Time Point Contrast')+   
+  labs(colour='Time Point Contrast')+ 
+  #scale_fill_manual(name="Time Point Contrast",labels="Baseline > Two-year follow-up")+ #rename legend labels
   theme_classic()+
   theme(axis.title.x = element_text(size = 22),axis.title.y = element_text(size = 22),axis.text.x = element_text(size = 18),axis.text.y = element_text(size = 18))+
   coord_flip()
+
+
+
+#FC 95% CI (2 covariates + corrected for multiple ANOVA testing FDR)
+#plot 95% Confidence Interval (separated confidence intervals and separated SLF tracts only)
+SLF_FC_95CI_data_no_combined_SLF <- data.frame(SLF_group_number = c('1','2'),
+                                               SLF_type = c('Left_SLF1','Right_SLF1'),
+                                               Timepoint_contrast = c('F0 > F2','F0 > F2'),
+                                               estimate_diff = c(-0.007329525,-0.007308974)*-1,
+                                               lower = c(-0.010635067,-0.010512332)*-1, 
+                                               upper = c(-0.004023983,-0.004105617)*-1)  
+#plot data (2 covariates + corrected for multiple ANOVA testing FDR)
+ggplot(SLF_FC_95CI_data_no_combined_SLF, aes(x=SLF_group_number, y=estimate_diff, colour=Timepoint_contrast))+
+  geom_point(position = position_dodge(width=0.5), size=5)+
+  geom_errorbar(aes(ymin=lower, ymax=upper), size=1.5, position = position_dodge(width=0.5))+
+  xlab("FC") + 
+  ylab("95% Confidence Interval")+
+  scale_x_discrete(labels = c("1" = "Left SLF 1", "2" = "Right SLF 1"))+
+  scale_color_manual(values = ("#999999"))+
+  labs(colour='Time Point Contrast')+ 
+  #scale_fill_manual(name="Time Point Contrast",labels="Baseline > Two-year follow-up")+ #rename legend labels
+  theme_classic()+
+  theme(axis.title.x = element_text(size = 22),axis.title.y = element_text(size = 22),axis.text.x = element_text(size = 18),axis.text.y = element_text(size = 18))+
+  coord_flip()
+
 
 
 #FDC 95% CI
@@ -778,6 +810,62 @@ ggplot(SLF_FDC_95CI_data_no_combined_SLF, aes(x=SLF_group_number, y=estimate_dif
   theme_classic()+
   theme(axis.title.x = element_text(size = 22),axis.title.y = element_text(size = 22),axis.text.x = element_text(size = 18),axis.text.y = element_text(size = 18))+
   coord_flip()
+
+
+
+
+#FC 95% CI (no covariates)
+#plot 95% Confidence Interval (separated confidence intervals and separated SLF tracts only)
+SLF_FC_95CI_data_no_combined_SLF <- data.frame(SLF_group_number = c('1','2','3','4'),
+                                               SLF_type = c('Left_SLF1','Left_SLF2','Left_SLF3','Right_SLF1'),
+                                               Timepoint_contrast = c('F0 > F2','F0 > F2','F0 > F2','F0 > F2'),
+                                               estimate_diff = c(-0.007329525,-0.00368148,-0.001695902,-0.007308974)*-1,
+                                               lower = c(-0.010635067,-0.0070563139,-0.004834490,-0.010512332)*-1, 
+                                               upper = c(-0.004023983,-0.0003066471,0.001442686,-0.004105617)*-1)  
+
+
+#plot data (no covariates)
+ggplot(SLF_FC_95CI_data_no_combined_SLF, aes(x=SLF_group_number, y=estimate_diff, colour=Timepoint_contrast))+
+  geom_point(position = position_dodge(width=0.5), size=5)+
+  geom_errorbar(aes(ymin=lower, ymax=upper), size=1.5, position = position_dodge(width=0.5))+
+  xlab("SLF Tract") + 
+  ylab("95% Confidence Interval")+
+  scale_x_discrete(labels = c("1" = "Left SLF 1", "2" = "Left SLF 2", "3" = "Left SLF 3", "4" = "Right SLF 1"))+
+  scale_color_manual(values = ("#999999"))+
+  labs(colour='Time Point Contrast')+ 
+  #scale_fill_manual(name="Time Point Contrast",labels="Baseline > Two-year follow-up")+ #rename legend labels
+  theme_classic()+
+  theme(axis.title.x = element_text(size = 22),axis.title.y = element_text(size = 22),axis.text.x = element_text(size = 18),axis.text.y = element_text(size = 18))+
+  coord_flip()
+
+
+
+
+#FC 95% CI (no covariates and w/ FDR correction)
+#plot 95% Confidence Interval (separated confidence intervals and separated SLF tracts only)
+SLF_FC_95CI_data_no_combined_SLF <- data.frame(SLF_group_number = c('1','2','3'),
+                                               SLF_type = c('Left_SLF1','Left_SLF2','Right_SLF1'),
+                                               Timepoint_contrast = c('F0 > F2','F0 > F2','F0 > F2'),
+                                               estimate_diff = c(-0.007329525,-0.00368148,-0.007308974)*-1,
+                                               lower = c(-0.010635067,-0.0070563139,-0.010512332)*-1, 
+                                               upper = c(-0.004023983,-0.0003066471,-0.004105617)*-1)  
+
+
+#plot data (no covariates and w/ FDR correction)
+ggplot(SLF_FC_95CI_data_no_combined_SLF, aes(x=SLF_group_number, y=estimate_diff, colour=Timepoint_contrast))+
+  geom_point(position = position_dodge(width=0.5), size=5)+
+  geom_errorbar(aes(ymin=lower, ymax=upper), size=1.5, position = position_dodge(width=0.5))+
+  xlab("SLF Tract") + 
+  ylab("95% Confidence Interval")+
+  scale_x_discrete(labels = c("1" = "Left SLF 1", "2" = "Left SLF 2", "3" = "Right SLF 1"))+
+  scale_color_manual(values = ("#999999"))+
+  labs(colour='Time Point Contrast')+ 
+  #scale_fill_manual(name="Time Point Contrast",labels="Baseline > Two-year follow-up")+ #rename legend labels
+  theme_classic()+
+  theme(axis.title.x = element_text(size = 22),axis.title.y = element_text(size = 22),axis.text.x = element_text(size = 18),axis.text.y = element_text(size = 18))+
+  coord_flip()
+
+
 
 #Run ANCOVA With covariates (age)
 #Left SLF 1
@@ -1018,6 +1106,9 @@ sjstats::eta_sq(aov_SLF2_R_FDC_2covar_mod)
 sjstats::eta_sq(aov_SLF3_R_FD_2covar_mod)
 sjstats::eta_sq(aov_SLF3_R_FC_2covar_mod)
 sjstats::eta_sq(aov_SLF3_R_FDC_2covar_mod)
+
+effectsize::eta_squared(aov_SLF1_L_FC_2covar_mod)
+effectsize::eta_squared(aov_SLF1_R_FC_2covar_mod)
 
 #follow up tests with sig. main effects and interactions
 #Whole SLF FD
