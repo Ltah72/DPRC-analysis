@@ -13,8 +13,9 @@
 # choose & set to your directory. This is where all of your participant 
 #whole-brain connectome files should be. 
 #setwd('V:/Archive/NECTAR_data/LENORE/derivatives/groups/F0/diff_data/cross-sectional/connectome/hcpmmpFiles/weighted/thresholded_connectomes/') #for dMRI cross-sectional data
-setwd('V:/Archive/NECTAR_data/LENORE/derivatives/groups/F2/diff_data/longitudinal/connectome/hcpmmpFiles/weighted/thresholded_connectomes/') #for dMRI longitudinal data
-#setwd('V:/Archive/NECTAR_data/LENORE/derivatives/groups/F0/fMRI_data/connectome/data/hcpmmpFiles/volumetric-space/')  #for fMRI data
+#setwd('V:/Archive/NECTAR_data/LENORE/derivatives/groups/F2/diff_data/longitudinal/connectome/hcpmmpFiles/weighted/thresholded_connectomes/') #for dMRI longitudinal data
+setwd('V:/Archive/NECTAR_data/LENORE/derivatives/groups/F0/fMRI_data/connectome/data/hcpmmpFiles/volumetric-space/')  #for fMRI data
+setwd('V:/conn_project_cross_sec_revised/connectome/data/hcpmmpFiles/volumetric-space')  #for fMRI data
 
 #calculate your node pairs - my chosen nodes are below:
 #nodes <- c(" ")
@@ -28,8 +29,8 @@ files_all <- list.files()  #load the file names into the work space
 for(i in sequence(length(files_all))){
   
   #extract participant name
-  #PAR_NAME = substr(files_all[i], 10, 24) 
-  PAR_NAME = substr(files_all[i], 8, 22) 
+  PAR_NAME = substr(files_all[i], 10, 24) 
+  #PAR_NAME = substr(files_all[i], 8, 22) 
   
     
   fullname <- paste('FPN_BigNodeData_', PAR_NAME, '.csv', sep='')

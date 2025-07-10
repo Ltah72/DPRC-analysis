@@ -22,8 +22,8 @@ write.table(C_avg_csvs, 'C_avg_connectome.csv', sep = ",", row.names= FALSE, col
 
 #for all (collapse across groups)
 #directory <- 'V:/Archive/NECTAR_data/LENORE/derivatives/groups/F0/diff_data/cross-sectional/connectome/hcpmmpFiles/weighted/all_files/'
-directory <- 'V:/Archive/NECTAR_data/LENORE/derivatives/groups/F0/diff_data/cross-sectional/connectome/dkFiles/weighted/fs_default_ordered/all_files/'
-directory <- "V:/Archive/NECTAR_data/LENORE/derivatives/groups/F0/diff_data/cross-sectional/connectome/dkFiles/weighted/fs_default_ordered/thresholded_connectomes/C&SCD"
+directory <- 'V:/Archive/NECTAR_data/LENORE/derivatives/groups/F0/diff_data/cross-sectional/connectome/dkFiles/weighted/fs_default_ordered_thr/all_files/'
+directory <- "V:/Archive/NECTAR_data/LENORE/derivatives/groups/F0/diff_data/cross-sectional/connectome/dkFiles/weighted/fs_default_ordered_thr/consensus_thresholded(step2)"
 
 setwd(directory)
 

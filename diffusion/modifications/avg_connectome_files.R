@@ -11,12 +11,14 @@
 
 
 #define FPN nodes - and put in order
-nodes <- sort(c(73,253,67,247,97,277,98,278,26,206,70,250,71,251,87,267,68,248,83,263,85,265,84,264,86,266,40,220,41,221,55,235,44,224,43,223,36,216,39,219,37,217,48,228,95,275,49,229,117,297,50,230,47,227,42,222,45,225,46,226,29,209,143,323,151,331,150,330,149,329,148,328,116,296,147,327,146,326,145,325,144,324))
+#nodes <- sort(c(73,253,67,247,97,277,98,278,26,206,70,250,71,251,87,267,68,248,83,263,85,265,84,264,86,266,40,220,41,221,55,235,44,224,43,223,36,216,39,219,37,217,48,228,95,275,49,229,117,297,50,230,47,227,42,222,45,225,46,226,29,209,143,323,151,331,150,330,149,329,148,328,116,296,147,327,146,326,145,325,144,324))
 
 
 #for Control (C) group
 # choose & set to your directory
-setwd('V:/Vault/NECTAR_data/LENORE/derivatives/groups/F0/diff_data/cross-sectional/connectome/hcpmmpFiles/weighted/C')  
+#setwd('V:/Vault/NECTAR_data/LENORE/derivatives/groups/F0/diff_data/cross-sectional/connectome/hcpmmpFiles/weighted/C') #hcp  
+setwd('V:/Archive/NECTAR_data/LENORE/derivatives/groups/F0/diff_data/cross-sectional/connectome/dkFiles/weighted/fs_default_ordered/C/thresholded(two_steps)') #dk  
+
 
 files_C <- list.files()  #load the file names into the workspace
 
@@ -26,17 +28,21 @@ for(i in sequence(length(files_C))){
   #save your means in some meaningful way from each csv. 
 }
 write.table(Means_C, 'Control_avg_connectome.csv', sep = ",", row.names= FALSE, col.names = FALSE)
-#for circle plot (360 nodes), remove rows and columns from 361-379.
-Means_C_360nodes <- Means_C[1:360, 1:360]
-write.table(Means_C_360nodes, 'Control_avg_connectome_360nodes.csv', sep = ",", row.names= FALSE, col.names = FALSE)
+#HCP - for circle plot (360 nodes), remove rows and columns from 361-379.
+#Means_C_360nodes <- Means_C[1:360, 1:360]
+#write.table(Means_C_360nodes, 'Control_avg_connectome_360nodes.csv', sep = ",", row.names= FALSE, col.names = FALSE)
+#DK
+Means_C_dk_nodes <- Means_C[1:84, 1:84]
+write.table(Means_C_dk_nodes, 'Control_avg_connectome_dk_nodes.csv', sep = ",", row.names= FALSE, col.names = FALSE)
+
 #delete rows/columns from FPN nodes for comparing FPN averages
-Means_FPN_C <-Means_C[(nodes), (nodes)]
-write.table(Means_FPN_C, 'Control_avg_FPN_connectome.csv', sep = ",", row.names = FALSE, col.names = FALSE)
+#Means_FPN_C <-Means_C[(nodes), (nodes)]
+#write.table(Means_FPN_C, 'Control_avg_FPN_connectome.csv', sep = ",", row.names = FALSE, col.names = FALSE)
 
 
 #for Subjective Cognitive Decline (SCD) group
 # choose & set to your directory
-setwd('V:/Vault/NECTAR_data/LENORE/derivatives/groups/F0/diff_data/cross-sectional/connectome/hcpmmpFiles/weighted/SCD')  
+setwd('V:/Archive/NECTAR_data/LENORE/derivatives/groups/F0/diff_data/cross-sectional/connectome/dkFiles/weighted/fs_default_ordered/SCD/thresholded(two_steps)') #dk  
 
 files_SCD <- list.files()  #load the file names into the workspace
 
@@ -55,7 +61,7 @@ write.table(Means_FPN_SCD, 'SCD_avg_FPN_connectome.csv', sep = ",", row.names = 
 
 #for Amnestic Mild Cognitive Impairment (aMCI) group
 # choose & set to your directory
-setwd('V:/Vault/NECTAR_data/LENORE/derivatives/groups/F0/diff_data/cross-sectional/connectome/hcpmmpFiles/weighted/aMCI')  
+setwd('V:/Archive/NECTAR_data/LENORE/derivatives/groups/F0/diff_data/cross-sectional/connectome/dkFiles/weighted/fs_default_ordered/aMCI/thresholded(two_steps)') #dk  
 
 files_aMCI <- list.files()  #load the file names into the workspace
 
@@ -74,7 +80,7 @@ write.table(Means_FPN_aMCI, 'aMCI_avg_FPN_connectome.csv', sep = ",", row.names 
 
 #for Multiple-Domain Mild Cognitive Impairment group
 # choose & set to your directory
-setwd('V:/Vault/NECTAR_data/LENORE/derivatives/groups/F0/diff_data/cross-sectional/connectome/hcpmmpFiles/weighted/mMCI')  
+setwd('V:/Archive/NECTAR_data/LENORE/derivatives/groups/F0/diff_data/cross-sectional/connectome/dkFiles/weighted/fs_default_ordered/mMCI/thresholded(two_steps)') #dk  
 
 files_mMCI <- list.files()  #load the file names into the workspace
 
@@ -93,7 +99,7 @@ write.table(Means_FPN_mMCI, 'mMCI_avg_FPN_connectome.csv', sep = ",", row.names 
 
 #for Alzheimer's Disease (AD) group
 # choose & set to your directory
-setwd('V:/Vault/NECTAR_data/LENORE/derivatives/groups/F0/diff_data/cross-sectional/connectome/hcpmmpFiles/weighted/AD')  
+setwd('V:/Archive/NECTAR_data/LENORE/derivatives/groups/F0/diff_data/cross-sectional/connectome/dkFiles/weighted/fs_default_ordered/AD/thresholded(two_steps)') #dk  
 
 files_AD <- list.files()  #load the file names into the work space
 
